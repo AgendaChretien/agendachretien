@@ -3,5 +3,8 @@
 @tailwind utilities;
 
 .btn {
-  @apply px-6;
+  @apply px-6 h-12 min-h-12;
+}
+.btn-sm {
+  @apply px-4 h-8 min-h-8;
 }

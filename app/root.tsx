@@ -12,6 +12,30 @@ import { Brand } from "./components/Brand";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
+  {
+    rel: "icon",
+    href: "favicon-light-16x16.png",
+    sizes: "16x16",
+    media: "(prefers-color-scheme: light)",
+  },
+  {
+    rel: "icon",
+    href: "favicon-light-32x32.png",
+    sizes: "32x32",
+    media: "(prefers-color-scheme: light)",
+  },
+  {
+    rel: "icon",
+    href: "favicon-dark-16x16.png",
+    sizes: "16x16",
+    media: "(prefers-color-scheme: dark)",
+  },
+  {
+    rel: "icon",
+    href: "favicon-dark-32x32.png",
+    sizes: "32x32",
+    media: "(prefers-color-scheme: dark)",
+  },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
