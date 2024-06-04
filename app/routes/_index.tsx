@@ -9,6 +9,11 @@ export const meta: MetaFunction = () => {
 
 export default function Index() {
   return (
-    <h1 className="text-3xl font-bold underline text-red-500">Hello world!</h1>
+    <div className="flex items-center justify-center min-h-screen">
+      <h1 className="text-3xl flex-col font-bold underline text-primary flex gap-4">
+        Hello world!
+        <button className="btn btn-primary btn-outline">Click me!</button>
+      </h1>
+    </div>
   );
 }
