@@ -7,6 +7,8 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import stylesheet from "~/assets/tailwind.css?url";
+import { Logo } from "./components/Logo";
+import { Brand } from "./components/Brand";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -22,6 +24,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <header className="py-8">
+          <div className="container mx-auto flex">
+            <div className="flex gap-4 items-center">
+              <Logo className="h-8" />
+              <Brand className="h-5" />
+            </div>
+
+            <div className="ml-auto">
+              <button className="btn btn-outline btn-secondary">
+                Poster un évènement
+              </button>
+            </div>
+          </div>
+        </header>
         {children}
         <ScrollRestoration />
         <Scripts />
