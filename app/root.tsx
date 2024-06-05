@@ -50,7 +50,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <header className="py-8">
           <div className="container mx-auto flex">
-            <div className="flex gap-4 items-center">
+            <div className="flex items-center gap-4">
               <Logo className="h-8" />
               <Brand className="h-5" />
             </div>
