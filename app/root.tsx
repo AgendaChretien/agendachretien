@@ -58,20 +58,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <div className="flex h-svh flex-col items-center justify-center gap-12">
-          <div className="flex items-center justify-center gap-8">
-            <Logo className="h-12" />
-            <Brand className="h-6" />
-          </div>
-          <div className="container mx-auto max-w-[600px] text-center text-xl">
-            <span className="italic opacity-50">
-              “Mais si nous espérons ce que nous ne voyons pas, nous l’attendons
-              avec persévérance.”
-            </span>{" "}
-            <span className="opacity-30">– Romains 8.25</span>
-          </div>
-        </div>
+        <header className="py-8">
+          <div className="container mx-auto flex">
+            <div className="flex items-center gap-4">
+              <Logo className="h-8" />
+              <Brand className="h-5" />
+            </div>
 
+            <div className="ml-auto">
+              <button className="btn btn-outline btn-secondary">
+                Poster un évènement
+              </button>
+            </div>
+          </div>
+        </header>
         {children}
         <ScrollRestoration />
         <Scripts />
