@@ -2,6 +2,10 @@ on:
   push:
     branches:
       - main
+      - dev
+
+env:
+  APP_PATH: ${{ github.ref == 'refs/heads/main' && '/home/mpctxkqx/agendachretien' || '/home/mpctxkqx/agendachretien-dev' }}
 
 jobs:
   deploy:
@@ -23,9 +27,9 @@ jobs:
           REMOTE_HOST: ${{ secrets.SSH_HOST }}
           REMOTE_USER: ${{ secrets.SSH_USER }}
           REMOTE_PORT: 5022
-          ARGS: "-rlgoDzvc -i --delete"
+          ARGS: "-rlgoDzv -i --delete"
           SOURCE: "build public server app.js package.json package-lock.json"
-          TARGET: "/home/mpctxkqx/agendachretien"
+          TARGET: $APP_PATH
           SCRIPT_AFTER: |
-            /usr/sbin/cloudlinux-selector install-modules --json --interpreter=nodejs --app-root=/home/mpctxkqx/agendachretien
-            /usr/sbin/cloudlinux-selector restart --json --interpreter=nodejs --app-root=/home/mpctxkqx/agendachretien
+            /usr/sbin/cloudlinux-selector install-modules --json --interpreter=nodejs --app-root=${{env.APP_PATH}}
+            /usr/sbin/cloudlinux-selector restart --json --interpreter=nodejs --app-root=${{env.APP_PATH}}
