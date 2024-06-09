@@ -6,7 +6,7 @@ export const meta: MetaFunction = () => {
     {
       name: "description",
       content:
-        "Tous les évènement autour de la foi chrétienne à Lyon et sa région",
+        "Tous les évènements autour de la foi chrétienne à Lyon et sa région",
     },
   ];
 };
