@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "@remix-run/react";
 import stylesheet from "~/assets/tailwind.css?url";
 import { Logo } from "./components/Logo";
@@ -38,7 +39,15 @@ export const links: LinksFunction = () => [
   },
 ];
 
+export const loader = () => {
+  return {
+    isPreview: Boolean(process.env.IS_PREVIEW),
+  };
+};
+
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { isPreview } = useLoaderData<typeof loader>();
+
   return (
     <html lang="en">
       <head>
@@ -54,6 +63,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           href="https://fonts.googleapis.com/css2?family=Nunito:ital@0;1&display=swap"
           rel="stylesheet"
         />
+        {isPreview && <meta name="robots" content="noindex, nofollow" />}
         <Meta />
         <Links />
       </head>
