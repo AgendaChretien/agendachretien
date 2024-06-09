@@ -26,6 +26,15 @@
       "~/*": ["./app/*"]
     },
 
+    "plugins": [
+      {
+        "name": "@0no-co/graphqlsp",
+        "tadaOutputLocation": "./app/graphql-env.d.ts",
+        "schema": "http://127.0.0.1:1337/graphql",
+        "trackFieldUsage": false
+      }
+    ],
+
     // Vite takes care of building everything, not tsc.
     "noEmit": true
   }

@@ -66,9 +66,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </div>
 
             <div className="ml-auto">
-              <button className="btn btn-outline btn-secondary">
-                Poster un évènement
-              </button>
+              <button>Poster un évènement</button>
             </div>
           </div>
         </header>
