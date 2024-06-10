@@ -59,7 +59,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <div className="flex h-svh flex-col items-center justify-center gap-12">
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center gap-8">
             <Logo className="h-12" />
             <Brand className="h-6" />
           </div>
