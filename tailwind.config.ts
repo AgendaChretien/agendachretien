@@ -3,18 +3,18 @@ import daisyui, { Config as DaisyUIConfig } from "daisyui";
 
 const colors = {
   main: {
-    DEFAULT: "#3d5a80",
-    100: "#0c1219",
-    200: "#192433",
-    300: "#25364c",
-    400: "#314866",
-    500: "#3d5a80",
-    600: "#5279ab",
-    700: "#7d9ac0",
-    800: "#a8bcd5",
-    900: "#d4ddea",
+    DEFAULT: "#5525d0",
+    100: "#0e0623",
+    200: "#200e4e",
+    300: "#321679",
+    400: "#431da5",
+    500: "#5525d0",
+    600: "#9575e6",
+    700: "#b6a0ee",
+    800: "#d7cbf6",
+    900: "#f8f7fd",
   },
-  alt: {
+  bis: {
     DEFAULT: "#ee6c4d",
     100: "#3a1005",
     200: "#74200b",
@@ -24,7 +24,7 @@ const colors = {
     600: "#f28b71",
     700: "#f5a895",
     800: "#f8c5b8",
-    900: "#fce2dc",
+    900: "#f8f7fd",
   },
 };
 
@@ -45,7 +45,7 @@ export default {
         "agendachretien-light": {
           "color-scheme": "light",
           primary: colors.main.DEFAULT,
-          secondary: colors.alt.DEFAULT,
+          secondary: colors.bis.DEFAULT,
           "base-100": colors.main["900"],
           "base-content": colors.main["100"],
           "--rounded-btn": "1.9rem",
@@ -53,8 +53,8 @@ export default {
         "agendachretien-dark": {
           "color-scheme": "dark",
           primary: colors.main.DEFAULT,
-          secondary: colors.alt["600"],
-          "base-100": colors.main["200"],
+          secondary: colors.bis["600"],
+          "base-100": colors.main["100"],
           "base-content": colors.main["900"],
           "--rounded-btn": "1.9rem",
         },
