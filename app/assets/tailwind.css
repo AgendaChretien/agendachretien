@@ -1,6 +1,13 @@
+@import "../../theme/dist/css/light.css";
+@import "../../theme/dist/css/dark.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  @apply bg-background text-on-background;
+}
 
 .btn {
   @apply px-6 h-12 min-h-12;
