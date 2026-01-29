@@ -1,0 +1,54 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": null,
+  "jsPlugins": ["eslint-plugin-better-tailwindcss"],
+  "categories": {},
+  "rules": {
+    "better-tailwindcss/enforce-consistent-line-wrapping": [0],
+    "better-tailwindcss/enforce-consistent-class-order": [0],
+    "better-tailwindcss/enforce-consistent-variable-syntax": [2],
+    "better-tailwindcss/enforce-consistent-important-position": [2],
+    "better-tailwindcss/enforce-shorthand-classes": [2],
+    "better-tailwindcss/enforce-canonical-classes": [2],
+    "better-tailwindcss/no-duplicate-classes": [2],
+    "better-tailwindcss/no-deprecated-classes": [2],
+    "better-tailwindcss/no-unnecessary-whitespace": [2],
+    "better-tailwindcss/no-unknown-classes": [2],
+    "better-tailwindcss/no-conflicting-classes": [2],
+    "better-tailwindcss/no-restricted-classes": [2]
+  },
+  "settings": {
+    "jsx-a11y": {
+      "polymorphicPropName": null,
+      "components": {},
+      "attributes": {}
+    },
+    "next": {
+      "rootDir": []
+    },
+    "react": {
+      "formComponents": [],
+      "linkComponents": [],
+      "version": null,
+      "componentWrapperFunctions": []
+    },
+    "jsdoc": {
+      "ignorePrivate": false,
+      "ignoreInternal": false,
+      "ignoreReplacesDocs": true,
+      "overrideReplacesDocs": true,
+      "augmentsExtendsReplacesDocs": false,
+      "implementsReplacesDocs": false,
+      "exemptDestructuredRootsFromChecks": false,
+      "tagNamePreference": {}
+    },
+    "vitest": {
+      "typecheck": false
+    }
+  },
+  "env": {
+    "builtin": true
+  },
+  "globals": {},
+  "ignorePatterns": []
+}
