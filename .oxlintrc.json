@@ -44,6 +44,9 @@
     },
     "vitest": {
       "typecheck": false
+    },
+    "better-tailwindcss": {
+      "entryPoint": "app/app.css"
     }
   },
   "env": {
