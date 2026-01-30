@@ -9,6 +9,30 @@ export function meta() {
       name: "description",
       content: "Les rendez-vous chrétiens à ne pas manquer dans votre ville.",
     },
+    {
+      rel: "icon",
+      href: "favicon-light-16x16.png",
+      sizes: "16x16",
+      media: "(prefers-color-scheme: light)",
+    },
+    {
+      rel: "icon",
+      href: "favicon-light-32x32.png",
+      sizes: "32x32",
+      media: "(prefers-color-scheme: light)",
+    },
+    {
+      rel: "icon",
+      href: "favicon-dark-16x16.png",
+      sizes: "16x16",
+      media: "(prefers-color-scheme: dark)",
+    },
+    {
+      rel: "icon",
+      href: "favicon-dark-32x32.png",
+      sizes: "32x32",
+      media: "(prefers-color-scheme: dark)",
+    },
   ];
 }
 
