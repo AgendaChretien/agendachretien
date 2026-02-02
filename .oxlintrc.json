@@ -1,9 +1,11 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": null,
+  "plugins": ["react"],
   "jsPlugins": ["eslint-plugin-better-tailwindcss"],
   "categories": {},
   "rules": {
+    "react/jsx-curly-brace-presence": [2, "never"],
+
     "better-tailwindcss/enforce-consistent-line-wrapping": [0],
     "better-tailwindcss/enforce-consistent-class-order": [0],
     "better-tailwindcss/enforce-consistent-variable-syntax": [2],
@@ -13,7 +15,7 @@
     "better-tailwindcss/no-duplicate-classes": [2],
     "better-tailwindcss/no-deprecated-classes": [2],
     "better-tailwindcss/no-unnecessary-whitespace": [2],
-    "better-tailwindcss/no-unknown-classes": [2],
+    "better-tailwindcss/no-unknown-classes": [2, { "ignore": ["dark"] }],
     "better-tailwindcss/no-conflicting-classes": [2],
     "better-tailwindcss/no-restricted-classes": [2]
   },
