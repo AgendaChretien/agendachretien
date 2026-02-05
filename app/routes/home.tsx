@@ -124,7 +124,7 @@ export default function Home({ loaderData: { events } }: Route.ComponentProps) {
                 <img
                   src={uploadUrl(event.picture.url)}
                   alt={event.title}
-                  className="aspect-video w-full rounded-lg"
+                  className="aspect-video w-full rounded-lg object-cover"
                 />
               )}
               <div className="flex flex-col gap-1">
