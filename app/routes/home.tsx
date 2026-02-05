@@ -4,6 +4,9 @@ import { Brand } from "~/components/brand";
 import Calendar from "~/components/calendar";
 import { Logo } from "~/components/logo";
 import { Button } from "~/components/ui/button";
+import client from "~/lib/client";
+
+import type { Route } from "./+types/home";
 
 export function meta() {
   return [
@@ -11,6 +14,10 @@ export function meta() {
     {
       name: "description",
       content: "Les rendez-vous chrétiens à ne pas manquer dans votre ville.",
+    },
+    {
+      name: "viewport",
+      content: "width=device-width, initial-scale=1",
     },
     {
       rel: "icon",
@@ -39,12 +46,58 @@ export function meta() {
   ];
 }
 
-export default function Home() {
+export async function loader() {
+  const { data } = await client.GET("/events", {
+    params: {
+      query: {
+        populate: "*",
+        pagination: {
+          page: 1,
+          pageSize: 12,
+        },
+      },
+    },
+  });
+
+  return { events: data?.data ?? [] };
+}
+
+type Event = Route.ComponentProps["loaderData"]["events"][number];
+
+function formatTime(time: string) {
+  const [hours, minutes] = time.split(":");
+  if (Number(minutes) === 0) {
+    return `${hours}h`;
+  }
+  return `${hours}h${minutes}`;
+}
+
+function displayDate(event: Event) {
+  const { startDate, endDate, startTime, endTime } = event;
+
+  if (!endDate || startDate === endDate) {
+    const value = new Date(startDate).toLocaleDateString();
+
+    if (startTime && endTime && endTime !== startTime) {
+      return `${value} ${formatTime(startTime)}-${formatTime(endTime)}`;
+    }
+    if (startTime) {
+      return `${value} ${formatTime(startTime)}`;
+    }
+
+    return value;
+  }
+
+  return `${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}`;
+}
+
+export default function Home({ loaderData: { events } }: Route.ComponentProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
+  console.log(events);
   return (
-    <div className="mx-auto flex max-w-5xl flex-col gap-8 p-4">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-8 pb-12">
+      <div className="sticky top-0 mx-auto my-2 flex h-16 w-full max-w-5xl items-center justify-between backdrop-blur-sm">
         <div className="flex items-center gap-4">
           <Logo className="h-10 fill-primary-8 dark:fill-neutral-12" />
           <div className="flex flex-col items-start">
@@ -60,7 +113,27 @@ export default function Home() {
         </Button>
       </div>
 
-      <Calendar current={currentDate} onChange={setCurrentDate} />
+      <div className="mx-auto flex max-w-4xl flex-col gap-12">
+        <Calendar current={currentDate} onChange={setCurrentDate} />
+
+        <div className="grid grid-cols-1 gap-8 xs:grid-cols-2 md:grid-cols-3">
+          {events.map((event) => (
+            <div key={event.id} className="flex flex-col gap-4">
+              {event.picture && (
+                <img
+                  src={`http://localhost:1337${event.picture.url}`}
+                  alt={event.title}
+                  className="aspect-video w-full rounded-lg"
+                />
+              )}
+              <div className="flex flex-col gap-1">
+                <div>{event.title}</div>
+                <div className="text-sm text-muted-foreground">{displayDate(event)}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
