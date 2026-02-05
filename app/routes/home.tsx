@@ -98,7 +98,7 @@ export default function Home({ loaderData: { events } }: Route.ComponentProps) {
   console.log(events);
   return (
     <div className="flex flex-col gap-8 pb-12">
-      <div className="sticky top-0 mx-auto my-2 flex h-16 w-full max-w-5xl items-center justify-between backdrop-blur-sm">
+      <div className="sticky top-0 mx-auto my-2 flex h-16 w-full max-w-5xl items-center justify-between px-4 backdrop-blur-sm">
         <div className="flex items-center gap-4">
           <Logo className="h-10 fill-primary-8 dark:fill-neutral-12" />
           <div className="flex flex-col items-start">
@@ -114,7 +114,7 @@ export default function Home({ loaderData: { events } }: Route.ComponentProps) {
         </Button>
       </div>
 
-      <div className="mx-auto flex max-w-4xl flex-col gap-12">
+      <div className="mx-auto flex max-w-4xl flex-col gap-12 px-4">
         <Calendar current={currentDate} onChange={setCurrentDate} />
 
         <div className="grid grid-cols-1 gap-8 xs:grid-cols-2 md:grid-cols-3">
