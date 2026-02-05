@@ -5,6 +5,7 @@ import Calendar from "~/components/calendar";
 import { Logo } from "~/components/logo";
 import { Button } from "~/components/ui/button";
 import client from "~/lib/client";
+import { uploadUrl } from "~/lib/utils";
 
 import type { Route } from "./+types/home";
 
@@ -121,7 +122,7 @@ export default function Home({ loaderData: { events } }: Route.ComponentProps) {
             <div key={event.id} className="flex flex-col gap-4">
               {event.picture && (
                 <img
-                  src={`http://localhost:1337${event.picture.url}`}
+                  src={uploadUrl(event.picture.url)}
                   alt={event.title}
                   className="aspect-video w-full rounded-lg"
                 />
