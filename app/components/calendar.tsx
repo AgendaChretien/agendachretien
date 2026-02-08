@@ -35,12 +35,12 @@ function CalendarDay({ date, active, disabled, onClick }: CalendarDayProps) {
   return (
     <button
       className={clsx(
-        "flex h-8 w-full items-center justify-center rounded-full transition-colors hover:bg-neutral-2",
+        "flex-center h-8 w-full   rounded-full transition-colors hover:bg-neutral-2",
         active && !disabled && "bg-primary text-primary-foreground hover:bg-primary",
       )}
       onClick={onClick}
     >
-      <span className={clsx(disabled && "opacity-30")}>{date.getDate()}</span>
+      <span className={clsx(disabled && "opacity-40")}>{date.getDate()}</span>
     </button>
   );
 }
@@ -53,14 +53,14 @@ function CalendarMonth({ year, month, current, onChange }: CalendarMonthProps) {
 
   return (
     <div className="grid w-100 grid-cols-7 gap-0.5">
-      {["L", "M", "M", "J", "V", "S", "D"].map((day) => (
-        <div key={day} className="mb-4 flex-center text-xs font-bold text-foreground/20">
+      {["L", "M", "M", "J", "V", "S", "D"].map((day, index) => (
+        <div key={index} className="mb-2 flex-center text-xs font-black text-foreground/20">
           {day}
         </div>
       ))}
 
       {days.map((day) => (
-        <div key={day.toISOString()} className="flex-center h-10">
+        <div key={day.toISOString()} className="flex-center h-8">
           <CalendarDay
             date={day}
             active={isSameDay(day, current)}
