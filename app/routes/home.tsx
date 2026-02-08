@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 
 import { Brand } from "~/components/brand";
 import Calendar from "~/components/calendar";
@@ -98,7 +99,8 @@ export default function Home({ loaderData: { events } }: Route.ComponentProps) {
   return (
     <div className="flex flex-col gap-8 pb-12">
       <div className="sticky top-0 z-10 mx-auto my-2 flex h-16 w-full max-w-5xl items-center justify-between px-4 backdrop-blur-sm">
-        <div className="flex items-center gap-4">
+        <div className="relative flex items-center gap-4">
+          <Link to="/" className="absolute inset-0" aria-label="Retour à la page d'accueil" />
           <Logo className="h-10 fill-primary-8 dark:fill-neutral-12" />
           <div className="flex flex-col items-start">
             <Brand className="h-5 fill-primary-8 dark:fill-neutral-12" />
