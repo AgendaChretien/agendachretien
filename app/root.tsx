@@ -1,5 +1,6 @@
 import {
   isRouteErrorResponse,
+  Link,
   Links,
   Meta,
   Outlet,
@@ -10,6 +11,9 @@ import {
 import type { Route } from "./+types/root";
 
 import "./app.css";
+import { Brand } from "./components/brand";
+import { Logo } from "./components/logo";
+import { Button } from "./components/ui/button";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -34,7 +38,25 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="dark">
-        {children}
+        <div className="flex flex-col gap-8 pb-12">
+          <header className="sticky top-0 z-10 mx-auto my-2 flex h-16 w-full max-w-5xl items-center justify-between px-4 backdrop-blur-sm">
+            <div className="relative flex items-center gap-4">
+              <Link to="/" className="absolute inset-0" aria-label="Retour à la page d'accueil" />
+              <Logo className="h-10 fill-primary-8 dark:fill-neutral-12" />
+              <div className="flex flex-col items-start">
+                <Brand className="h-5 fill-primary-8 dark:fill-neutral-12" />
+                <div className="mt-1 rounded-full rounded-tl-none bg-primary-6 px-1.5 text-xs text-trim-both font-black text-background uppercase dark:bg-primary-8">
+                  Lyon
+                </div>
+              </div>
+            </div>
+
+            <Button size="sm" variant="outline">
+              Proposer un événement
+            </Button>
+          </header>
+          {children}
+        </div>
         <ScrollRestoration />
         <Scripts />
       </body>

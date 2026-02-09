@@ -1,10 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { NavLink } from "react-router";
 
-import { Brand } from "~/components/brand";
 import Calendar from "~/components/calendar";
-import { Logo } from "~/components/logo";
-import { Button } from "~/components/ui/button";
 import client from "~/lib/client";
 import { uploadUrl } from "~/lib/utils";
 
@@ -97,44 +94,31 @@ export default function Home({ loaderData: { events } }: Route.ComponentProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   return (
-    <div className="flex flex-col gap-8 pb-12">
-      <div className="sticky top-0 z-10 mx-auto my-2 flex h-16 w-full max-w-5xl items-center justify-between px-4 backdrop-blur-sm">
-        <div className="relative flex items-center gap-4">
-          <Link to="/" className="absolute inset-0" aria-label="Retour à la page d'accueil" />
-          <Logo className="h-10 fill-primary-8 dark:fill-neutral-12" />
-          <div className="flex flex-col items-start">
-            <Brand className="h-5 fill-primary-8 dark:fill-neutral-12" />
-            <div className="mt-1 rounded-full rounded-tl-none bg-primary-6 px-1.5 text-xs text-trim-both font-black text-background uppercase dark:bg-primary-8">
-              Lyon
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 px-4">
+      <Calendar current={currentDate} onChange={setCurrentDate} />
+
+      <div className="grid grid-cols-1 gap-8 xs:grid-cols-2 md:grid-cols-3">
+        {events.map((event) => (
+          <NavLink
+            to={`/events/${event.documentId}`}
+            key={event.id}
+            className="relative flex flex-col gap-4"
+            viewTransition
+          >
+            {event.picture && (
+              <img
+                src={uploadUrl(event.picture.url)}
+                alt={event.title}
+                className="h-34 w-full rounded-lg object-cover"
+                data-event-picture
+              />
+            )}
+            <div className="flex flex-col gap-1">
+              <div data-event-title>{event.title}</div>
+              <div className="text-sm text-muted-foreground">{displayDate(event)}</div>
             </div>
-          </div>
-        </div>
-
-        <Button size="sm" variant="outline">
-          Proposer un événement
-        </Button>
-      </div>
-
-      <div className="mx-auto flex max-w-4xl flex-col gap-12 px-4">
-        <Calendar current={currentDate} onChange={setCurrentDate} />
-
-        <div className="grid grid-cols-1 gap-8 xs:grid-cols-2 md:grid-cols-3">
-          {events.map((event) => (
-            <div key={event.id} className="flex flex-col gap-4">
-              {event.picture && (
-                <img
-                  src={uploadUrl(event.picture.url)}
-                  alt={event.title}
-                  className="aspect-video w-full rounded-lg object-cover"
-                />
-              )}
-              <div className="flex flex-col gap-1">
-                <div>{event.title}</div>
-                <div className="text-sm text-muted-foreground">{displayDate(event)}</div>
-              </div>
-            </div>
-          ))}
-        </div>
+          </NavLink>
+        ))}
       </div>
     </div>
   );
