@@ -95,7 +95,7 @@ function displayDate(event: Event) {
     return value;
   }
 
-  return `${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}`;
+  return `${new Date(startDate).toLocaleDateString("fr-FR")} - ${new Date(endDate).toLocaleDateString("fr-FR")}`;
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
