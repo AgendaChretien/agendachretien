@@ -18,6 +18,7 @@ async function fetchEvents(page: number) {
     params: {
       query: {
         populate: "*",
+        sort: "startDate",
         pagination: {
           page,
           pageSize: PAGE_SIZE,
