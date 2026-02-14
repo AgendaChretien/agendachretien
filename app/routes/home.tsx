@@ -1,11 +1,32 @@
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { NavLink } from "react-router";
 
 import Calendar from "~/components/calendar";
+import { Button } from "~/components/ui/button";
 import client from "~/lib/client";
 import { uploadUrl } from "~/lib/utils";
 
 import type { Route } from "./+types/home";
+
+const PAGE_SIZE = 12;
+
+type Event = Route.ComponentProps["loaderData"]["events"][number];
+
+async function fetchEvents(page: number) {
+  const { data } = await client.GET("/events", {
+    params: {
+      query: {
+        populate: "*",
+        pagination: {
+          page,
+          pageSize: PAGE_SIZE,
+        },
+      },
+    },
+  });
+  return data?.data ?? [];
+}
 
 export function meta() {
   return [
@@ -46,22 +67,9 @@ export function meta() {
 }
 
 export async function loader() {
-  const { data } = await client.GET("/events", {
-    params: {
-      query: {
-        populate: "*",
-        pagination: {
-          page: 1,
-          pageSize: 12,
-        },
-      },
-    },
-  });
-
-  return { events: data?.data ?? [] };
+  const events = await fetchEvents(1);
+  return { events };
 }
-
-type Event = Route.ComponentProps["loaderData"]["events"][number];
 
 function formatTime(time: string) {
   const [hours, minutes] = time.split(":");
@@ -75,7 +83,7 @@ function displayDate(event: Event) {
   const { startDate, endDate, startTime, endTime } = event;
 
   if (!endDate || startDate === endDate) {
-    const value = new Date(startDate).toLocaleDateString();
+    const value = new Date(startDate).toLocaleDateString("fr-FR");
 
     if (startTime && endTime && endTime !== startTime) {
       return `${value} ${formatTime(startTime)}-${formatTime(endTime)}`;
@@ -90,36 +98,60 @@ function displayDate(event: Event) {
   return `${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}`;
 }
 
-export default function Home({ loaderData: { events } }: Route.ComponentProps) {
+export default function Home({ loaderData }: Route.ComponentProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+    queryKey: ["events"],
+    queryFn: ({ pageParam }) => fetchEvents(pageParam as number),
+    initialPageParam: 1,
+    initialData: {
+      pages: [loaderData.events],
+      pageParams: [1],
+    },
+    getNextPageParam: (lastPage, _allPages, lastPageParam) =>
+      lastPage.length === PAGE_SIZE ? (lastPageParam as number) + 1 : undefined,
+  });
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 px-4">
       <Calendar current={currentDate} onChange={setCurrentDate} />
 
       <div className="grid grid-cols-1 gap-8 xs:grid-cols-2 md:grid-cols-3">
-        {events.map((event) => (
-          <NavLink
-            to={`/events/${event.documentId}`}
-            key={event.id}
-            className="relative flex flex-col gap-4"
-            viewTransition
-          >
-            {event.picture && (
-              <img
-                src={uploadUrl(event.picture.url)}
-                alt={event.title}
-                className="h-34 w-full rounded-lg object-cover"
-                data-event-picture
-              />
-            )}
-            <div className="flex flex-col gap-1">
-              <div data-event-title>{event.title}</div>
-              <div className="text-sm text-muted-foreground">{displayDate(event)}</div>
-            </div>
-          </NavLink>
-        ))}
+        {data.pages.map((page) =>
+          page.map((event) => (
+            <NavLink
+              to={`/events/${event.documentId}`}
+              key={event.id}
+              className="relative flex flex-col gap-4"
+              viewTransition
+            >
+              {event.picture && (
+                <img
+                  src={uploadUrl(event.picture.url)}
+                  alt={event.title}
+                  className="h-34 w-full rounded-lg object-cover"
+                  data-event-picture
+                />
+              )}
+              <div className="flex flex-1 flex-col gap-1">
+                <div className="flex-1" data-event-title>
+                  {event.title}
+                </div>
+                <div className="text-sm text-muted-foreground">{displayDate(event)}</div>
+              </div>
+            </NavLink>
+          )),
+        )}
       </div>
+
+      {hasNextPage && (
+        <div className="flex justify-center">
+          <Button variant="outline" onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
+            {isFetchingNextPage ? "Chargement..." : "Charger plus"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

@@ -35,7 +35,7 @@ function CalendarDay({ date, active, disabled, onClick }: CalendarDayProps) {
   return (
     <button
       className={clsx(
-        "flex-center h-8 w-full   rounded-full transition-colors hover:bg-neutral-2",
+        "flex-center h-8 w-full rounded-full transition-colors hover:bg-neutral-2",
         active && !disabled && "bg-primary text-primary-foreground hover:bg-primary",
       )}
       onClick={onClick}
