@@ -44,7 +44,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <div className="relative flex items-center gap-4">
               <Link to="/" className="absolute inset-0" aria-label="Retour à la page d'accueil" />
               <Logo className="h-10 fill-primary-8 dark:fill-neutral-12" />
-              <div className="flex flex-col items-start">
+              <div className="hidden flex-col items-start md:flex">
                 <Brand className="h-5 fill-primary-8 dark:fill-neutral-12" />
                 <div className="mt-1 rounded-full rounded-tl-none bg-primary-6 px-1.5 text-xs text-trim-both font-black text-background uppercase dark:bg-primary-8">
                   Lyon

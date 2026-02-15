@@ -1,6 +1,5 @@
-import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { add } from "date-fns";
-import { useState } from "react";
 import { NavLink } from "react-router";
 
 import Calendar from "~/components/calendar";
