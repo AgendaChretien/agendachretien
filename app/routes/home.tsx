@@ -1,4 +1,5 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { add } from "date-fns";
 import { useState } from "react";
 import { NavLink } from "react-router";
 
@@ -9,16 +10,30 @@ import { uploadUrl } from "~/lib/utils";
 
 import type { Route } from "./+types/home";
 
-const PAGE_SIZE = 12;
+import Event from "./event";
 
 type Event = Route.ComponentProps["loaderData"]["events"][number];
 
-async function fetchEvents(page: number) {
+type Period = [Date, Date];
+
+const PAGE_SIZE = 12;
+
+const DEFAULT_PERIOD: Period = [new Date(), add(new Date(), { months: 1 })];
+
+async function fetchEvents({ page, period }: { page: number; period: Period }) {
   const { data } = await client.GET("/events", {
     params: {
       query: {
         populate: "*",
         sort: "startDate",
+        filters: {
+          startDate: {
+            $lte: period[1].toISOString(),
+          },
+          endDate: {
+            $gte: period[0].toISOString(),
+          },
+        },
         pagination: {
           page,
           pageSize: PAGE_SIZE,
@@ -68,7 +83,7 @@ export function meta() {
 }
 
 export async function loader() {
-  const events = await fetchEvents(1);
+  const events = await fetchEvents({ page: 1, period: DEFAULT_PERIOD });
   return { events };
 }
 
@@ -99,25 +114,31 @@ function displayDate(event: Event) {
   return `${new Date(startDate).toLocaleDateString("fr-FR")} - ${new Date(endDate).toLocaleDateString("fr-FR")}`;
 }
 
-export default function Home({ loaderData }: Route.ComponentProps) {
-  const [currentDate, setCurrentDate] = useState(new Date());
-
+function Events({
+  period,
+  initialData,
+}: {
+  period: Period;
+  initialData: Route.ComponentProps["loaderData"]["events"];
+}) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: ["events"],
-    queryFn: ({ pageParam }) => fetchEvents(pageParam as number),
+    queryKey: ["events", period],
+    queryFn: ({ pageParam }) => fetchEvents({ page: pageParam, period }),
     initialPageParam: 1,
-    initialData: {
-      pages: [loaderData.events],
-      pageParams: [1],
-    },
+    initialData:
+      period === DEFAULT_PERIOD
+        ? {
+            pages: [initialData],
+            pageParams: [1],
+          }
+        : undefined,
+    placeholderData: keepPreviousData,
     getNextPageParam: (lastPage, _allPages, lastPageParam) =>
-      lastPage.length === PAGE_SIZE ? (lastPageParam as number) + 1 : undefined,
+      lastPage.length === PAGE_SIZE ? lastPageParam + 1 : undefined,
   });
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 px-4">
-      <Calendar current={currentDate} onChange={setCurrentDate} />
-
+    <>
       <div className="grid grid-cols-1 gap-8 xs:grid-cols-2 md:grid-cols-3">
         {data.pages.map((page) =>
           page.map((event) => (
@@ -153,6 +174,30 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           </Button>
         </div>
       )}
+    </>
+  );
+}
+
+import { create } from "zustand";
+
+interface State {
+  period: Period;
+  setPeriod: (period: Period) => void;
+}
+
+const useStore = create<State>()((set) => ({
+  period: DEFAULT_PERIOD,
+  setPeriod: (period) => set({ period }),
+}));
+
+export default function Home({ loaderData }: Route.ComponentProps) {
+  const period = useStore((state) => state.period);
+  const setPeriod = useStore((state) => state.setPeriod);
+
+  return (
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 px-4">
+      <Calendar period={period} onChange={setPeriod} />
+      <Events period={period} initialData={loaderData.events} />
     </div>
   );
 }
