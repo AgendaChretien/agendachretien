@@ -17,16 +17,18 @@ import { useEffect, useState, type ComponentProps } from "react";
 
 import { Button } from "./ui/button";
 
+type Period = [Date, Date];
+
 interface CalendarDayProps extends ComponentProps<"button"> {
   date: Date;
-  startDate: Date;
-  endDate: Date;
+  startDate?: Date;
+  endDate?: Date;
 }
 
 function CalendarDay({ date, startDate, endDate, ...props }: CalendarDayProps) {
-  const start = isSameDay(date, startDate);
-  const end = isSameDay(date, endDate);
-  const between = isAfter(date, startDate) && isBefore(date, endDate);
+  const start = startDate && isSameDay(date, startDate);
+  const end = endDate && isSameDay(date, endDate);
+  const between = startDate && endDate && isAfter(date, startDate) && isBefore(date, endDate);
   const within = between || start || end;
   const firstDayOfMonth = date.getDate() === 1;
   const lastDayOfMonth = isLastDayOfMonth(date);
@@ -39,7 +41,6 @@ function CalendarDay({ date, startDate, endDate, ...props }: CalendarDayProps) {
         start && "rounded-l-sm",
         end && "rounded-r-sm",
         between && "nth-[7n+1]:rounded-l-sm nth-[7n+7]:rounded-r-sm",
-
         within &&
           firstDayOfMonth &&
           !start &&
@@ -71,8 +72,8 @@ interface CalendarMonthProps {
   className?: string;
   year: number;
   month: number;
-  startDate: Date;
-  endDate: Date;
+  startDate?: Date;
+  endDate?: Date;
   onHover?: (date: Date) => void;
   onSelect: (date: Date) => void;
 }
@@ -118,21 +119,21 @@ function CalendarMonth({
 }
 
 interface CalendarProps {
-  period: [Date, Date];
-  onChange: (period: [Date, Date]) => void;
+  period?: Period;
+  onChange: (period: Period) => void;
 }
 
 export default function Calendar({ period, onChange }: CalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [startDate, setStartDate] = useState(period[0]);
-  const [endDate, setEndDate] = useState(period[1]);
+  const [startDate, setStartDate] = useState(period?.[0]);
+  const [endDate, setEndDate] = useState(period?.[1]);
   const [selecting, setSelecting] = useState(false);
   const [hoveredDate, setHoveredDate] = useState<Date | null>(null);
   const nextMonth = add(currentMonth, { months: 1 });
 
   useEffect(() => {
-    setStartDate(period[0]);
-    setEndDate(period[1]);
+    setStartDate(period?.[0]);
+    setEndDate(period?.[1]);
   }, [period]);
 
   const handleHover = (date: Date) => {
@@ -142,7 +143,7 @@ export default function Calendar({ period, onChange }: CalendarProps) {
   };
 
   const handleSelect = (date: Date) => {
-    if (!selecting) {
+    if (!selecting || !startDate) {
       setSelecting(true);
       setStartDate(date);
       setEndDate(date);
@@ -152,14 +153,23 @@ export default function Calendar({ period, onChange }: CalendarProps) {
 
     setSelecting(false);
 
-    const newPeriod: [Date, Date] = isBefore(date, startDate)
-      ? [date, startDate]
-      : [startDate, date];
+    const newPeriod: Period = isBefore(date, startDate) ? [date, startDate] : [startDate, date];
 
     setStartDate(newPeriod[0]);
     setEndDate(newPeriod[1]);
     onChange(newPeriod);
   };
+
+  let currentStartDate = startDate;
+  let currentEndDate = endDate;
+
+  if (hoveredDate) {
+    if (startDate && isBefore(hoveredDate, startDate)) {
+      currentStartDate = hoveredDate;
+    } else if (endDate && isAfter(hoveredDate, endDate)) {
+      currentEndDate = hoveredDate;
+    }
+  }
 
   return (
     <div className="grid grid-cols-[auto_1fr_auto] gap-y-4">
@@ -197,8 +207,8 @@ export default function Calendar({ period, onChange }: CalendarProps) {
           key={month.toISOString()}
           year={month.getFullYear()}
           month={month.getMonth()}
-          startDate={hoveredDate && isBefore(hoveredDate, startDate) ? hoveredDate : startDate}
-          endDate={hoveredDate && isAfter(hoveredDate, endDate) ? hoveredDate : endDate}
+          startDate={currentStartDate}
+          endDate={currentEndDate}
           onSelect={handleSelect}
           onHover={handleHover}
         />
