@@ -54,6 +54,8 @@ export async function loader({ params }: Route.LoaderArgs) {
 export default function Event({ loaderData: { event } }: Route.ComponentProps) {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col items-start justify-start gap-12 px-4">
+      <title>{event.title}</title>
+
       <img
         src={uploadUrl(event.picture.url)}
         className="h-56 w-full rounded-lg object-cover object-center"

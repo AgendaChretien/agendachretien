@@ -47,7 +47,6 @@ async function fetchEvents({ page, period }: { page: number; period?: Period }) 
 
 export function meta() {
   return [
-    { title: "Agenda Chrétien" },
     {
       name: "description",
       content: "Les rendez-vous chrétiens à ne pas manquer dans votre ville.",
@@ -196,6 +195,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 px-4">
+      <title>Agenda Chrétien</title>
       {/* <Calendar period={period} onChange={setPeriod} /> */}
       <Events period={period} initialData={loaderData.events} />
     </div>
