@@ -68,16 +68,13 @@ export default function Event({ loaderData: { event } }: Route.ComponentProps) {
         className="h-56 w-full rounded-lg object-cover object-center"
         style={{ viewTransitionName: "event-picture" }}
       />
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-[2fr_1fr]">
-        <div className="prose prose-neutral">
+      <div className="grid w-full grid-cols-1 grid-rows-[auto_1fr] gap-8 md:grid-cols-[1fr_300px]">
+        <div className="prose prose-neutral max-sm:prose-sm">
           <h1 style={{ viewTransitionName: "event-title" }}>{event.title}</h1>
         </div>
 
-        <div className="prose opacity-100 transition-[opacity,translate] delay-500 prose-neutral md:col-start-1 md:row-start-2 starting:translate-y-2 starting:opacity-0">
-          <BlocksRenderer content={event.description as any} />
-        </div>
-        <div className="row-start-2 md:col-start-2 md:row-start-2">
-          <div className="grid gap-y-6 rounded-sm bg-muted p-4 sm:grid-cols-2 md:grid-cols-1 md:rounded-xl md:p-6">
+        <div className="@container row-span-2">
+          <div className="grid gap-6 rounded-lg bg-muted p-4 md:sticky md:top-[calc(var(--header-height)+1rem)] @md:grid-cols-2 @md:p-6">
             <div className="space-y-2">
               <div className="text-muted-foreground">Date</div>
               <div>{displayDate(event)}</div>
@@ -145,6 +142,10 @@ export default function Event({ loaderData: { event } }: Route.ComponentProps) {
               </div>
             )}
           </div>
+        </div>
+
+        <div className="prose opacity-100 transition-[opacity,translate] delay-500 prose-neutral starting:translate-y-2 starting:opacity-0">
+          <BlocksRenderer content={event.description as any} />
         </div>
       </div>
     </div>

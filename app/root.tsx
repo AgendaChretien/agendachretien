@@ -40,7 +40,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="dark">
         <div className="flex flex-col gap-8 pb-12">
-          <header className="sticky top-0 z-10 mx-auto my-2 flex h-16 w-full max-w-5xl items-center justify-between px-4 backdrop-blur-sm">
+          <header className="sticky top-0 z-10 mx-auto my-2 flex h-(--header-height) w-full max-w-5xl items-center justify-between px-4 backdrop-blur-sm">
             <div className="relative flex items-center gap-4">
               <Link to="/" className="absolute inset-0" aria-label="Retour à la page d'accueil" />
               <Logo className="h-10 fill-primary-8 dark:fill-neutral-12" />

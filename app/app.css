@@ -8,6 +8,8 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  --header-height: 4rem;
+
   --neutral-1: oklch(0.95 0.004 277.942);
   --neutral-2: oklch(0.883 0.01 277.942);
   --neutral-3: oklch(0.817 0.015 277.942);
