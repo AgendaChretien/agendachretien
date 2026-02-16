@@ -34,10 +34,10 @@ function CalendarDay({ date, startDate, endDate, ...props }: CalendarDayProps) {
   return (
     <div
       className={clsx(
-        "relative h-8 w-full",
+        "relative h-8 w-full px-1",
         within && "bg-neutral-2",
-        start && "rounded-l-full",
-        end && "rounded-r-full",
+        start && "rounded-l-sm",
+        end && "rounded-r-sm",
         between && "nth-[7n+1]:rounded-l-sm nth-[7n+7]:rounded-r-sm",
 
         within &&

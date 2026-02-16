@@ -17,22 +17,24 @@ type Period = [Date, Date];
 
 const PAGE_SIZE = 12;
 
-const DEFAULT_PERIOD: Period = [new Date(), add(new Date(), { months: 1 })];
+async function fetchEvents({ page, period }: { page: number; period?: Period }) {
+  const filters: Record<string, any> = {};
 
-async function fetchEvents({ page, period }: { page: number; period: Period }) {
+  if (period) {
+    filters["startDate"] = {
+      $lte: period[1].toISOString(),
+    };
+    filters["endDate"] = {
+      $gte: period[0].toISOString(),
+    };
+  }
+
   const { data } = await client.GET("/events", {
     params: {
       query: {
         populate: "*",
         sort: "startDate",
-        filters: {
-          startDate: {
-            $lte: period[1].toISOString(),
-          },
-          endDate: {
-            $gte: period[0].toISOString(),
-          },
-        },
+        filters,
         pagination: {
           page,
           pageSize: PAGE_SIZE,
@@ -82,7 +84,7 @@ export function meta() {
 }
 
 export async function loader() {
-  const events = await fetchEvents({ page: 1, period: DEFAULT_PERIOD });
+  const events = await fetchEvents({ page: 1 });
   return { events };
 }
 
@@ -117,20 +119,19 @@ function Events({
   period,
   initialData,
 }: {
-  period: Period;
+  period: Period | undefined;
   initialData: Route.ComponentProps["loaderData"]["events"];
 }) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ["events", period],
     queryFn: ({ pageParam }) => fetchEvents({ page: pageParam, period }),
     initialPageParam: 1,
-    initialData:
-      period === DEFAULT_PERIOD
-        ? {
-            pages: [initialData],
-            pageParams: [1],
-          }
-        : undefined,
+    initialData: period
+      ? undefined
+      : {
+          pages: [initialData],
+          pageParams: [1],
+        },
     placeholderData: keepPreviousData,
     getNextPageParam: (lastPage, _allPages, lastPageParam) =>
       lastPage.length === PAGE_SIZE ? lastPageParam + 1 : undefined,
@@ -155,7 +156,7 @@ function Events({
                   data-event-picture
                 />
               )}
-              <div className="flex flex-1 flex-col gap-1">
+              <div className="flex flex-col gap-1">
                 <div className="flex-1" data-event-title>
                   {event.title}
                 </div>
@@ -180,22 +181,22 @@ function Events({
 import { create } from "zustand";
 
 interface State {
-  period: Period;
+  period: Period | undefined;
   setPeriod: (period: Period) => void;
 }
 
 const useStore = create<State>()((set) => ({
-  period: DEFAULT_PERIOD,
+  period: undefined,
   setPeriod: (period) => set({ period }),
 }));
 
 export default function Home({ loaderData }: Route.ComponentProps) {
   const period = useStore((state) => state.period);
-  const setPeriod = useStore((state) => state.setPeriod);
+  // const setPeriod = useStore((state) => state.setPeriod);
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 px-4">
-      <Calendar period={period} onChange={setPeriod} />
+      {/* <Calendar period={period} onChange={setPeriod} /> */}
       <Events period={period} initialData={loaderData.events} />
     </div>
   );
