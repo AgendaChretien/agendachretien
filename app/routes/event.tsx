@@ -55,6 +55,13 @@ export default function Event({ loaderData: { event } }: Route.ComponentProps) {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col items-start justify-start gap-12 px-4">
       <title>{event.title}</title>
+      <meta property="og:title" content={event.title} />
+      <meta
+        property="og:description"
+        content={event.description.map((block) => block.content).join(" ")}
+      />
+      <meta property="og:image" content={uploadUrl(event.picture.url)} />
+      <meta property="og:type" content="event" />
 
       <img
         src={uploadUrl(event.picture.url)}
