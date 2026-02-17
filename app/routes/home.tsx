@@ -138,7 +138,7 @@ function Events({
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-8 xs:grid-cols-2 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-8 gap-y-12 xs:grid-cols-2 md:grid-cols-3">
         {data.pages.map((page) =>
           page.map((event) => (
             <NavLink
