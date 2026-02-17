@@ -93,7 +93,9 @@ function CalendarMonth({
   const days = eachDayOfInterval({ start, end });
 
   return (
-    <div className={clsx("grid w-100 grid-cols-7 gap-y-1", className)}>
+    <div className={clsx("grid w-full grid-cols-7 gap-y-1", className)}>
+      <div className="col-span-7 mb-4 flex-center h-9 text-sm">{format(day1, "MMMM yyyy")}</div>
+
       {["L", "M", "M", "J", "V", "S", "D"].map((day, index) => (
         <div key={index} className="mb-2 flex-center text-xs font-black text-foreground/20">
           {day}
@@ -172,13 +174,9 @@ export default function Calendar({ period, onChange }: CalendarProps) {
   }
 
   return (
-    <div className="grid grid-cols-[auto_1fr_auto] gap-y-4">
-      <div className="relative col-span-3 grid h-9 grid-cols-subgrid">
-        <div className="flex-center text-sm">{format(currentMonth, "MMMM yyyy")}</div>
-        <div />
-        <div className="flex-center text-sm">{format(nextMonth, "MMMM yyyy")}</div>
-
-        <div className="absolute left-0 flex-center h-full">
+    <div className="@container w-full">
+      <div className="relative mx-auto flex gap-8 @max-[620px]:max-w-100">
+        <div className="absolute top-0 left-0">
           <Button
             size="icon"
             variant="secondary"
@@ -189,7 +187,7 @@ export default function Calendar({ period, onChange }: CalendarProps) {
             <ChevronLeft />
           </Button>
         </div>
-        <div className="absolute right-0 flex-center h-full">
+        <div className="absolute top-0 right-0">
           <Button
             size="icon"
             variant="secondary"
@@ -200,21 +198,32 @@ export default function Calendar({ period, onChange }: CalendarProps) {
             <ChevronRight />
           </Button>
         </div>
-      </div>
 
-      {[currentMonth, nextMonth].map((month) => (
         <CalendarMonth
-          key={month.toISOString()}
-          year={month.getFullYear()}
-          month={month.getMonth()}
+          className="flex-1"
+          key={currentMonth.toISOString()}
+          year={currentMonth.getFullYear()}
+          month={currentMonth.getMonth()}
           startDate={currentStartDate}
           endDate={currentEndDate}
           onSelect={handleSelect}
           onHover={handleHover}
         />
-      ))}
-      <div className="col-start-2 row-start-2 flex-center">
-        <div className="h-34 w-px bg-foreground/20" />
+
+        <div className="flex-center @max-[620px]:hidden">
+          <div className="h-34 w-px bg-foreground/20" />
+        </div>
+
+        <CalendarMonth
+          className="flex-1 @max-[620px]:hidden"
+          key={nextMonth.toISOString()}
+          year={nextMonth.getFullYear()}
+          month={nextMonth.getMonth()}
+          startDate={currentStartDate}
+          endDate={currentEndDate}
+          onSelect={handleSelect}
+          onHover={handleHover}
+        />
       </div>
     </div>
   );
