@@ -25,6 +25,9 @@ interface CalendarDayProps extends ComponentProps<"button"> {
   endDate?: Date;
 }
 
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
 function CalendarDay({ date, startDate, endDate, ...props }: CalendarDayProps) {
   const start = startDate && isSameDay(date, startDate);
   const end = endDate && isSameDay(date, endDate);
@@ -53,9 +56,11 @@ function CalendarDay({ date, startDate, endDate, ...props }: CalendarDayProps) {
     >
       <button
         {...props}
+        disabled={isBefore(date, today)}
         className={clsx(
           "flex-center size-full rounded-full transition-colors",
           "focus-visible:ring focus-visible:outline-none focus-visible:ring-inset",
+          "disabled:pointer-events-none disabled:opacity-30",
           start || end
             ? "dark bg-primary-6 text-primary-12 hover:bg-primary-7"
             : "hover:bg-neutral-3",
@@ -126,7 +131,7 @@ interface CalendarProps {
 }
 
 export default function Calendar({ period, onChange }: CalendarProps) {
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState(today);
   const [startDate, setStartDate] = useState(period?.[0]);
   const [endDate, setEndDate] = useState(period?.[1]);
   const [selecting, setSelecting] = useState(false);
@@ -180,6 +185,7 @@ export default function Calendar({ period, onChange }: CalendarProps) {
           <Button
             size="icon"
             variant="secondary"
+            disabled={isSameMonth(currentMonth, today)}
             onClick={() => {
               setCurrentMonth(sub(currentMonth, { months: 1 }));
             }}
