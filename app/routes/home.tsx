@@ -191,12 +191,12 @@ const useStore = create<State>()((set) => ({
 
 export default function Home({ loaderData }: Route.ComponentProps) {
   const period = useStore((state) => state.period);
-  // const setPeriod = useStore((state) => state.setPeriod);
+  const setPeriod = useStore((state) => state.setPeriod);
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 px-4">
       <title>Agenda Chrétien</title>
-      {/* <Calendar period={period} onChange={setPeriod} /> */}
+      <Calendar period={period} onChange={setPeriod} />
       <Events period={period} initialData={loaderData.events} />
     </div>
   );
