@@ -41,17 +41,17 @@ function CalendarDay({ date, startDate, endDate, ...props }: CalendarDayProps) {
       className={clsx(
         "relative h-8 w-full px-1",
         within && "bg-neutral-2",
-        start && "rounded-l-sm",
-        end && "rounded-r-sm",
-        between && "nth-[7n+1]:rounded-l-sm nth-[7n+7]:rounded-r-sm",
-        within &&
-          firstDayOfMonth &&
-          !start &&
-          "before:absolute before:top-0 before:right-full before:h-full before:w-4 before:bg-linear-90 before:from-neutral-2/0 before:to-neutral-2 before:content-['']",
-        within &&
-          lastDayOfMonth &&
-          !end &&
-          "after:absolute after:top-0 after:left-full after:h-full after:w-4 after:bg-linear-90 after:from-neutral-2 after:to-neutral-2/0 after:content-['']",
+        between && "nth-[7n+2]:rounded-l-sm nth-[7n+8]:rounded-r-sm",
+        start
+          ? "rounded-l-sm"
+          : within &&
+              firstDayOfMonth &&
+              "rounded-none! before:absolute before:top-0 before:right-full before:h-full before:w-4 before:bg-linear-90 before:from-neutral-2/0 before:to-neutral-2 before:content-['']",
+        end
+          ? "rounded-r-sm"
+          : within &&
+              lastDayOfMonth &&
+              "rounded-none! after:absolute after:top-0 after:left-full after:h-full after:w-4 after:bg-linear-90 after:from-neutral-2 after:to-neutral-2/0 after:content-['']",
       )}
     >
       <button
