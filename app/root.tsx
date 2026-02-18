@@ -15,6 +15,7 @@ import "./app.css";
 import { Brand } from "./components/brand";
 import { Logo } from "./components/logo";
 import { Button } from "./components/ui/button";
+import { Separator } from "./components/ui/separator";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -39,8 +40,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="dark">
-        <div className="flex flex-col gap-8 pb-12">
-          <header className="sticky top-0 z-10 mx-auto my-2 flex h-(--header-height) w-full max-w-5xl items-center justify-between px-4 backdrop-blur-sm">
+        <div className="flex flex-col gap-8">
+          <header className="sticky top-0 z-10 mx-auto my-2 flex h-(--header-height) w-full max-w-5xl items-center justify-between bg-background/80 px-4 backdrop-blur-sm">
             <div className="relative flex items-center gap-4">
               <Link to="/" className="absolute inset-0" aria-label="Retour à la page d'accueil" />
               <Logo className="h-10 fill-primary-8 dark:fill-neutral-12" />
@@ -57,6 +58,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </Button>
           </header>
           {children}
+
+          <Separator className="mt-12" />
+          <footer className="mx-auto flex w-full max-w-4xl items-center justify-between px-4">
+            <div className="flex items-center gap-4">
+              <Logo className="h-7 fill-primary-8 dark:fill-neutral-12" />
+              <Brand className="h-5 fill-primary-8 dark:fill-neutral-12" />
+            </div>
+            <div className="text-right text-sm text-muted-foreground">
+              Copyright © {new Date().getFullYear()} Agenda chrétien. Tous droits réservés.
+            </div>
+          </footer>
+          <div className="h-16 rounded-t-md bg-primary-4"></div>
         </div>
         <ScrollRestoration />
         <Scripts />

@@ -201,7 +201,7 @@ function Events({
       </div>
 
       {hasNextPage && (
-        <div className="flex justify-center">
+        <div className="flex justify-center py-8">
           <Button variant="outline" onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
             {isFetchingNextPage ? "Chargement..." : "Charger plus"}
           </Button>
