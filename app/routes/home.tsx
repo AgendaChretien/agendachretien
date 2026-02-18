@@ -213,21 +213,17 @@ function Events({
 
 function LastAddedEvents({ events }: { events: Event[] }) {
   return (
-    <div className="space-y-8">
-      <h2 className="text-lg">Ajoutés récemment</h2>
-
-      <Carousel>
-        <CarouselContent>
-          {events.map((event) => (
-            <CarouselItem key={event.id} className="basis-1/1 min-[480px]:basis-1/2 md:basis-1/3">
-              <EventCard event={event} />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious className="max-lg:hidden" />
-        <CarouselNext className="max-lg:hidden" />
-      </Carousel>
-    </div>
+    <Carousel>
+      <CarouselContent>
+        {events.map((event) => (
+          <CarouselItem key={event.id} className="basis-1/1 min-[480px]:basis-1/2 md:basis-1/3">
+            <EventCard event={event} />
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselPrevious className="max-lg:hidden" />
+      <CarouselNext className="max-lg:hidden" />
+    </Carousel>
   );
 }
 
@@ -260,14 +256,23 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-14 px-4">
       <title>Agenda Chrétien</title>
-      <LastAddedEvents events={lastAddedEvents} />
+
+      <div className="space-y-8">
+        <h2 className="text-lg">Ajoutés récemment</h2>
+        <LastAddedEvents events={lastAddedEvents} />
+      </div>
+
       <Separator />
-      <Calendar period={period} onChange={setPeriod} />
-      <Events
-        period={period}
-        initialData={loaderData.events}
-        onPeriodReset={() => setPeriod(undefined)}
-      />
+
+      <div className="space-y-8">
+        <h2 className="text-lg">Évènements</h2>
+        <Calendar period={period} onChange={setPeriod} />
+        <Events
+          period={period}
+          initialData={loaderData.events}
+          onPeriodReset={() => setPeriod(undefined)}
+        />
+      </div>
     </div>
   );
 }
