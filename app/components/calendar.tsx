@@ -2,6 +2,7 @@ import { clsx } from "clsx";
 import {
   add,
   eachDayOfInterval,
+  endOfDay,
   endOfMonth,
   format,
   isAfter,
@@ -11,6 +12,7 @@ import {
   isSameDay,
   isSameMonth,
   previousMonday,
+  startOfDay,
   sub,
 } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -45,12 +47,12 @@ function CalendarDay({ date, startDate, endDate, ...props }: CalendarDayProps) {
         within && "bg-neutral-2",
         between && "nth-[7n+2]:rounded-l-sm nth-[7n+8]:rounded-r-sm",
         start
-          ? "rounded-l-sm"
+          ? "rounded-l-sm!"
           : within &&
               firstDayOfMonth &&
               "rounded-none! before:absolute before:top-0 before:right-full before:h-full before:w-4 before:bg-linear-90 before:from-neutral-2/0 before:to-neutral-2 before:content-['']",
         end
-          ? "rounded-r-sm"
+          ? "rounded-r-sm!"
           : within &&
               lastDayOfMonth &&
               "rounded-none! after:absolute after:top-0 after:left-full after:h-full after:w-4 after:bg-linear-90 after:from-neutral-2 after:to-neutral-2/0 after:content-['']",
@@ -101,7 +103,7 @@ function CalendarMonth({
   const days = eachDayOfInterval({ start, end });
 
   return (
-    <div className={clsx("grid w-full grid-cols-7 gap-y-1", className)}>
+    <div className={clsx("grid h-auto w-full grid-cols-7 gap-y-1", className)}>
       <div className="col-span-7 mb-4 flex-center h-9 text-sm">{format(day1, "MMMM yyyy")}</div>
 
       {["L", "M", "M", "J", "V", "S", "D"].map((day, index) => (
@@ -142,8 +144,8 @@ export default function Calendar({ period, onChange }: CalendarProps) {
   const nextMonth = add(currentMonth, { months: 1 });
 
   useEffect(() => {
-    setStartDate(period?.[0]);
-    setEndDate(period?.[1]);
+    setStartDate(period ? startOfDay(period[0]) : undefined);
+    setEndDate(period ? endOfDay(period[1]) : undefined);
   }, [period]);
 
   const handleHover = (date: Date) => {
