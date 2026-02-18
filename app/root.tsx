@@ -53,7 +53,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </div>
 
             <Button size="sm" variant="outline">
-              Proposer un événement
+              Proposer un évènement
             </Button>
           </header>
           {children}
