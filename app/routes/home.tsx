@@ -16,6 +16,23 @@ type Period = [Date, Date];
 
 const PAGE_SIZE = 12;
 
+async function fetchLastAddedEvents() {
+  const { data } = await client.GET("/events", {
+    params: {
+      query: {
+        populate: "*",
+        sort: { createdAt: "desc" },
+        pagination: {
+          page: 1,
+          pageSize: 6,
+        },
+      },
+    },
+  });
+
+  return data?.data ?? [];
+}
+
 async function fetchEvents({ page, period }: { page: number; period?: Period }) {
   const filters: Record<string, any> = {};
 
@@ -32,7 +49,7 @@ async function fetchEvents({ page, period }: { page: number; period?: Period }) 
     params: {
       query: {
         populate: "*",
-        sort: "startDate",
+        sort: { startDate: "asc" },
         filters,
         pagination: {
           page,
@@ -84,7 +101,8 @@ export function meta() {
 
 export async function loader() {
   const events = await fetchEvents({ page: 1 });
-  return { events };
+  const lastAddedEvents = await fetchLastAddedEvents();
+  return { events, lastAddedEvents };
 }
 
 function formatTime(time: string) {
@@ -112,6 +130,32 @@ function displayDate(event: Event) {
   }
 
   return `${new Date(startDate).toLocaleDateString("fr-FR")} - ${new Date(endDate).toLocaleDateString("fr-FR")}`;
+}
+
+function EventCard({ event }: { event: Event }) {
+  return (
+    <NavLink
+      to={`/events/${event.documentId}`}
+      key={event.id}
+      className="relative flex flex-col gap-4"
+      viewTransition
+    >
+      {event.picture && (
+        <img
+          src={uploadUrl(event.picture.url)}
+          alt={event.title}
+          className="h-34 w-full rounded-lg object-cover"
+          data-event-picture
+        />
+      )}
+      <div className="flex flex-col gap-1">
+        <div className="flex-1" data-event-title>
+          {event.title}
+        </div>
+        <div className="text-sm text-muted-foreground">{displayDate(event)}</div>
+      </div>
+    </NavLink>
+  );
 }
 
 function Events({
@@ -144,7 +188,7 @@ function Events({
         <span>Aucun événement pour cette période.</span>
 
         <Button variant="default" onClick={onPeriodReset}>
-          Supprimer la période
+          Effacer la période
         </Button>
       </div>
     );
@@ -153,31 +197,7 @@ function Events({
   return (
     <>
       <div className="grid grid-cols-1 gap-8 xs:grid-cols-2 md:grid-cols-3 md:gap-y-12">
-        {data.pages.map((page) =>
-          page.map((event) => (
-            <NavLink
-              to={`/events/${event.documentId}`}
-              key={event.id}
-              className="relative flex flex-col gap-4"
-              viewTransition
-            >
-              {event.picture && (
-                <img
-                  src={uploadUrl(event.picture.url)}
-                  alt={event.title}
-                  className="h-34 w-full rounded-lg object-cover"
-                  data-event-picture
-                />
-              )}
-              <div className="flex flex-col gap-1">
-                <div className="flex-1" data-event-title>
-                  {event.title}
-                </div>
-                <div className="text-sm text-muted-foreground">{displayDate(event)}</div>
-              </div>
-            </NavLink>
-          )),
-        )}
+        {data.pages.map((page) => page.map((event) => <EventCard key={event.id} event={event} />))}
       </div>
 
       {hasNextPage && (
@@ -191,7 +211,36 @@ function Events({
   );
 }
 
+function LastAddedEvents({ events }: { events: Event[] }) {
+  return (
+    <div className="space-y-8">
+      <h2 className="text-lg">Ajoutés récemment</h2>
+
+      <Carousel>
+        <CarouselContent>
+          {events.map((event) => (
+            <CarouselItem key={event.id} className="basis-1/1 min-[480px]:basis-1/2 md:basis-1/3">
+              <EventCard event={event} />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious className="max-lg:hidden" />
+        <CarouselNext className="max-lg:hidden" />
+      </Carousel>
+    </div>
+  );
+}
+
 import { create } from "zustand";
+
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "~/components/ui/carousel";
+import { Separator } from "~/components/ui/separator";
 
 interface State {
   period: Period | undefined;
@@ -206,10 +255,13 @@ const useStore = create<State>()((set) => ({
 export default function Home({ loaderData }: Route.ComponentProps) {
   const period = useStore((state) => state.period);
   const setPeriod = useStore((state) => state.setPeriod);
+  const { lastAddedEvents } = loaderData;
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-14 px-4">
       <title>Agenda Chrétien</title>
+      <LastAddedEvents events={lastAddedEvents} />
+      <Separator />
       <Calendar period={period} onChange={setPeriod} />
       <Events
         period={period}
