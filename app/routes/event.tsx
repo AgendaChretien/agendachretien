@@ -65,7 +65,7 @@ export default function Event({ loaderData: { event } }: Route.ComponentProps) {
 
       <img
         src={uploadUrl(event.picture.url)}
-        className="h-56 w-full rounded-lg object-cover object-center"
+        className="aspect-16/7 w-full rounded-lg object-cover object-center"
         style={{ viewTransitionName: "event-picture" }}
       />
       <div className="grid w-full grid-cols-1 grid-rows-[auto_1fr] gap-8 md:grid-cols-[1fr_300px]">
