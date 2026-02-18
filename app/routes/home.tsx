@@ -184,7 +184,7 @@ function Events({
 
   if (data?.pages[0]?.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-4 text-center">
+      <div className="flex flex-col items-center gap-4 py-12 text-center">
         <span>Aucun événement pour cette période.</span>
 
         <Button variant="default" onClick={onPeriodReset}>
