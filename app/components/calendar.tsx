@@ -4,6 +4,7 @@ import {
   eachDayOfInterval,
   endOfDay,
   endOfMonth,
+  endOfWeek,
   format,
   isAfter,
   isBefore,
@@ -11,15 +12,18 @@ import {
   isMonday,
   isSameDay,
   isSameMonth,
+  max,
   previousMonday,
   startOfDay,
+  startOfMonth,
+  startOfWeek,
   sub,
 } from "date-fns";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, XIcon } from "lucide-react";
 import { useEffect, useState, type ComponentProps } from "react";
 
 import { Button } from "./ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { ScrollArea } from "./ui/scroll-area";
 
 type Period = [Date, Date];
 
@@ -132,7 +136,7 @@ function CalendarMonth({
 
 interface CalendarProps {
   period?: Period;
-  onChange: (period: Period) => void;
+  onChange: (period: Period | undefined) => void;
 }
 
 export default function Calendar({ period, onChange }: CalendarProps) {
@@ -146,6 +150,8 @@ export default function Calendar({ period, onChange }: CalendarProps) {
   useEffect(() => {
     setStartDate(period ? startOfDay(period[0]) : undefined);
     setEndDate(period ? endOfDay(period[1]) : undefined);
+    setSelecting(false);
+    setHoveredDate(null);
   }, [period]);
 
   const handleHover = (date: Date) => {
@@ -184,82 +190,147 @@ export default function Calendar({ period, onChange }: CalendarProps) {
   }
 
   return (
-    <div
-      className={clsx(
-        "@container relative z-10 w-full transition-colors",
-        selecting && "rounded-md outline outline-offset-8 outline-primary",
-      )}
-    >
-      <div className="relative mx-auto flex items-start gap-8 @max-[620px]:max-w-100">
-        <div className="absolute top-0 left-0">
-          <Button
-            size="icon"
-            variant="secondary"
-            disabled={isSameMonth(currentMonth, today)}
-            onClick={() => {
-              setCurrentMonth(sub(currentMonth, { months: 1 }));
-            }}
-          >
-            <ChevronLeft />
-          </Button>
-        </div>
-        <div className="absolute top-0 right-0">
-          <Button
-            size="icon"
-            variant="secondary"
-            onClick={() => {
-              setCurrentMonth(add(currentMonth, { months: 1 }));
-            }}
-          >
-            <ChevronRight />
-          </Button>
+    <div className="space-y-6">
+      <div
+        className={clsx(
+          "@container relative transition-colors",
+          selecting && "rounded-md outline outline-offset-8 outline-primary",
+        )}
+      >
+        <div className="relative mx-auto flex items-start gap-8 @max-[620px]:max-w-100">
+          <div className="absolute top-0 left-0">
+            <Button
+              size="icon"
+              variant="secondary"
+              disabled={isSameMonth(currentMonth, today)}
+              onClick={() => {
+                setCurrentMonth(sub(currentMonth, { months: 1 }));
+              }}
+            >
+              <ChevronLeft />
+            </Button>
+          </div>
+          <div className="absolute top-0 right-0">
+            <Button
+              size="icon"
+              variant="secondary"
+              onClick={() => {
+                setCurrentMonth(add(currentMonth, { months: 1 }));
+              }}
+            >
+              <ChevronRight />
+            </Button>
+          </div>
+
+          <CalendarMonth
+            className="flex-1"
+            key={currentMonth.toISOString()}
+            year={currentMonth.getFullYear()}
+            month={currentMonth.getMonth()}
+            startDate={currentStartDate}
+            endDate={currentEndDate}
+            onSelect={handleSelect}
+            onHover={handleHover}
+          />
+
+          <div className="flex-center self-center @max-[620px]:hidden">
+            <div className="h-34 w-px bg-foreground/20" />
+          </div>
+
+          <CalendarMonth
+            className="flex-1 @max-[620px]:hidden"
+            key={nextMonth.toISOString()}
+            year={nextMonth.getFullYear()}
+            month={nextMonth.getMonth()}
+            startDate={currentStartDate}
+            endDate={currentEndDate}
+            onSelect={handleSelect}
+            onHover={handleHover}
+          />
         </div>
 
-        <CalendarMonth
-          className="flex-1"
-          key={currentMonth.toISOString()}
-          year={currentMonth.getFullYear()}
-          month={currentMonth.getMonth()}
-          startDate={currentStartDate}
-          endDate={currentEndDate}
-          onSelect={handleSelect}
-          onHover={handleHover}
-        />
-
-        <div className="flex-center self-center @max-[620px]:hidden">
-          <div className="h-34 w-px bg-foreground/20" />
-        </div>
-
-        <CalendarMonth
-          className="flex-1 @max-[620px]:hidden"
-          key={nextMonth.toISOString()}
-          year={nextMonth.getFullYear()}
-          month={nextMonth.getMonth()}
-          startDate={currentStartDate}
-          endDate={currentEndDate}
-          onSelect={handleSelect}
-          onHover={handleHover}
-        />
+        {selecting && (
+          <div className="absolute top-full mt-4 flex-center w-full gap-1">
+            <Button size="xs" className="pointer-events-none">
+              Choisissez un date de fin
+            </Button>
+            <Button
+              size="xs"
+              variant="outline"
+              onClick={() => {
+                setSelecting(false);
+                setStartDate(period?.[0]);
+                setEndDate(period?.[1]);
+              }}
+            >
+              Annuler
+            </Button>
+          </div>
+        )}
       </div>
 
-      {selecting && (
-        <div className="absolute top-full mt-4 flex-center w-full   gap-1">
-          <Button size="xs" className="pointer-events-none">
-            Choisissez un date de fin
-          </Button>
+      <ScrollArea className={clsx("max-w-full", selecting && "invisible")}>
+        <div className="flex gap-2">
+          {period && (
+            <Button
+              size="sm"
+              variant="default"
+              onClick={() => {
+                onChange(undefined);
+              }}
+            >
+              <XIcon className="mr-2" />
+              Effacer
+            </Button>
+          )}
+
           <Button
-            size="xs"
+            size="sm"
             variant="outline"
             onClick={() => {
-              setSelecting(false);
-              setStartDate(undefined);
-              setEndDate(undefined);
+              const sunday = endOfWeek(today, { weekStartsOn: 1 });
+              const saturday = sub(sunday, { days: 1 });
+              onChange([saturday, sunday]);
             }}
           >
-            Annuler
+            Ce week-end
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              onChange([
+                max([today, startOfWeek(today, { weekStartsOn: 1 })]),
+                endOfWeek(today, { weekStartsOn: 1 }),
+              ]);
+            }}
+          >
+            Cette semaine
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              const nextWeek = add(today, { weeks: 1 });
+              onChange([
+                startOfWeek(nextWeek, { weekStartsOn: 1 }),
+                endOfWeek(nextWeek, { weekStartsOn: 1 }),
+              ]);
+            }}
+          >
+            Semaine prochaine
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              onChange([max([today, startOfMonth(today)]), endOfMonth(today)]);
+            }}
+          >
+            Ce mois
           </Button>
         </div>
-      )}
+      </ScrollArea>
     </div>
   );
 }
