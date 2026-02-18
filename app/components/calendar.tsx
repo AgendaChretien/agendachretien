@@ -152,6 +152,7 @@ export default function Calendar({ period, onChange }: CalendarProps) {
     setEndDate(period ? endOfDay(period[1]) : undefined);
     setSelecting(false);
     setHoveredDate(null);
+    setCurrentMonth(period ? period[0] : today);
   }, [period]);
 
   const handleHover = (date: Date) => {
