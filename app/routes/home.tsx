@@ -153,7 +153,7 @@ function Events({
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-8 gap-y-8 xs:grid-cols-2 md:grid-cols-3 md:gap-y-12">
+      <div className="grid grid-cols-1 gap-8 xs:grid-cols-2 md:grid-cols-3 md:gap-y-12">
         {data.pages.map((page) =>
           page.map((event) => (
             <NavLink
@@ -209,7 +209,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   const setPeriod = useStore((state) => state.setPeriod);
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-4 md:gap-12">
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-14 px-4">
       <title>Agenda Chrétien</title>
       <Calendar period={period} onChange={setPeriod} />
       <Events
