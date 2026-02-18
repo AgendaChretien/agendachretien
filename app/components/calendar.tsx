@@ -2,6 +2,7 @@ import { clsx } from "clsx";
 import {
   add,
   eachDayOfInterval,
+  endOfMonth,
   format,
   isAfter,
   isBefore,
@@ -16,6 +17,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState, type ComponentProps } from "react";
 
 import { Button } from "./ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 type Period = [Date, Date];
 
@@ -94,7 +96,8 @@ function CalendarMonth({
 }: CalendarMonthProps) {
   const day1 = new Date(year, month, 1);
   const start = isMonday(day1) ? day1 : previousMonday(day1);
-  const end = add(start, { days: 41 });
+  // const end = add(start, { days: 41 });
+  const end = endOfMonth(day1);
   const days = eachDayOfInterval({ start, end });
 
   return (
@@ -179,58 +182,72 @@ export default function Calendar({ period, onChange }: CalendarProps) {
   }
 
   return (
-    <div className="@container w-full">
-      <div className="relative mx-auto flex gap-8 @max-[620px]:max-w-100">
-        <div className="absolute top-0 left-0">
-          <Button
-            size="icon"
-            variant="secondary"
-            disabled={isSameMonth(currentMonth, today)}
-            onClick={() => {
-              setCurrentMonth(sub(currentMonth, { months: 1 }));
-            }}
+    <Tooltip open={selecting}>
+      <TooltipTrigger
+        render={
+          <div
+            className={clsx(
+              "@container w-full transition-colors",
+              selecting && "rounded-lg outline outline-offset-8 outline-primary",
+            )}
           >
-            <ChevronLeft />
-          </Button>
-        </div>
-        <div className="absolute top-0 right-0">
-          <Button
-            size="icon"
-            variant="secondary"
-            onClick={() => {
-              setCurrentMonth(add(currentMonth, { months: 1 }));
-            }}
-          >
-            <ChevronRight />
-          </Button>
-        </div>
+            <div className="relative mx-auto flex items-start gap-8 @max-[620px]:max-w-100">
+              <div className="absolute top-0 left-0">
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  disabled={isSameMonth(currentMonth, today)}
+                  onClick={() => {
+                    setCurrentMonth(sub(currentMonth, { months: 1 }));
+                  }}
+                >
+                  <ChevronLeft />
+                </Button>
+              </div>
+              <div className="absolute top-0 right-0">
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  onClick={() => {
+                    setCurrentMonth(add(currentMonth, { months: 1 }));
+                  }}
+                >
+                  <ChevronRight />
+                </Button>
+              </div>
 
-        <CalendarMonth
-          className="flex-1"
-          key={currentMonth.toISOString()}
-          year={currentMonth.getFullYear()}
-          month={currentMonth.getMonth()}
-          startDate={currentStartDate}
-          endDate={currentEndDate}
-          onSelect={handleSelect}
-          onHover={handleHover}
-        />
+              <CalendarMonth
+                className="flex-1"
+                key={currentMonth.toISOString()}
+                year={currentMonth.getFullYear()}
+                month={currentMonth.getMonth()}
+                startDate={currentStartDate}
+                endDate={currentEndDate}
+                onSelect={handleSelect}
+                onHover={handleHover}
+              />
 
-        <div className="flex-center @max-[620px]:hidden">
-          <div className="h-34 w-px bg-foreground/20" />
-        </div>
+              <div className="flex-center @max-[620px]:hidden">
+                <div className="h-34 w-px bg-foreground/20" />
+              </div>
 
-        <CalendarMonth
-          className="flex-1 @max-[620px]:hidden"
-          key={nextMonth.toISOString()}
-          year={nextMonth.getFullYear()}
-          month={nextMonth.getMonth()}
-          startDate={currentStartDate}
-          endDate={currentEndDate}
-          onSelect={handleSelect}
-          onHover={handleHover}
-        />
-      </div>
-    </div>
+              <CalendarMonth
+                className="flex-1 @max-[620px]:hidden"
+                key={nextMonth.toISOString()}
+                year={nextMonth.getFullYear()}
+                month={nextMonth.getMonth()}
+                startDate={currentStartDate}
+                endDate={currentEndDate}
+                onSelect={handleSelect}
+                onHover={handleHover}
+              />
+            </div>
+          </div>
+        }
+      ></TooltipTrigger>
+      <TooltipContent side="bottom" sideOffset={16} className="bg-primary text-primary-foreground">
+        Sélectionnez une date de fin
+      </TooltipContent>
+    </Tooltip>
   );
 }
