@@ -60,13 +60,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
           {children}
 
           <Separator className="mt-12" />
-          <footer className="mx-auto flex w-full max-w-4xl items-center justify-between px-4">
+          <footer className="mx-auto flex w-full max-w-4xl flex-col items-center justify-between gap-4 px-4 xs:flex-row">
             <div className="flex items-center gap-4">
               <Logo className="h-7 fill-primary-8 dark:fill-neutral-12" />
               <Brand className="h-5 fill-primary-8 dark:fill-neutral-12" />
             </div>
             <div className="text-right text-sm text-muted-foreground">
-              Copyright © {new Date().getFullYear()} Agenda chrétien. Tous droits réservés.
+              © {new Date().getFullYear()} Agenda chrétien
             </div>
           </footer>
           <div className="h-16 rounded-t-md bg-primary-4"></div>
