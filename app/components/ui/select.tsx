@@ -118,9 +118,7 @@ function SelectItem({ className, children, ...props }: SelectPrimitive.Item.Prop
         {children}
       </SelectPrimitive.ItemText>
       <SelectPrimitive.ItemIndicator
-        render={
-          <span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center" />
-        }
+        render={<span className="pointer-events-none absolute right-2 flex-center size-4" />}
       >
         <CheckIcon className="pointer-events-none" />
       </SelectPrimitive.ItemIndicator>
@@ -146,7 +144,7 @@ function SelectScrollUpButton({
     <SelectPrimitive.ScrollUpArrow
       data-slot="select-scroll-up-button"
       className={cn(
-        "bg-popover z-10 flex cursor-default items-center justify-center py-1 [&_svg:not([class*='size-'])]:size-4 top-0 w-full",
+        "bg-popover z-10 flex-center cursor-default py-1 [&_svg:not([class*='size-'])]:size-4 top-0 w-full",
         className,
       )}
       {...props}
@@ -164,7 +162,7 @@ function SelectScrollDownButton({
     <SelectPrimitive.ScrollDownArrow
       data-slot="select-scroll-down-button"
       className={cn(
-        "bg-popover z-10 flex cursor-default items-center justify-center py-1 [&_svg:not([class*='size-'])]:size-4 bottom-0 w-full",
+        "bg-popover z-10 flex-center cursor-default py-1 [&_svg:not([class*='size-'])]:size-4 bottom-0 w-full",
         className,
       )}
       {...props}

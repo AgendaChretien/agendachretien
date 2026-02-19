@@ -7,7 +7,6 @@ import client from "~/lib/client";
 import { uploadUrl } from "~/lib/utils";
 
 import type { Route } from "./+types/home";
-
 import Event from "./event";
 
 type Event = Route.ComponentProps["loaderData"]["events"][number];
