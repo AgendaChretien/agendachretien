@@ -24,6 +24,7 @@ import { useEffect, useState, type ComponentProps } from "react";
 
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
+import { Separator } from "./ui/separator";
 
 type Period = [Date, Date];
 
@@ -234,9 +235,7 @@ export default function Calendar({ period, onChange }: CalendarProps) {
             onHover={handleHover}
           />
 
-          <div className="flex-center self-center @max-[620px]:hidden">
-            <div className="h-34 w-px bg-foreground/20" />
-          </div>
+          <Separator orientation="vertical" className="@max-[620px]:hidden" />
 
           <CalendarMonth
             className="flex-1 @max-[620px]:hidden"
