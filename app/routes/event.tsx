@@ -2,6 +2,7 @@ import { BlocksRenderer } from "@strapi/blocks-react-renderer";
 import { ExternalLink } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
+import { Separator } from "~/components/ui/separator";
 import client from "~/lib/client";
 import { uploadUrl } from "~/lib/utils";
 
@@ -68,13 +69,16 @@ export default function Event({ loaderData: { event } }: Route.ComponentProps) {
         className="aspect-16/7 w-full rounded-lg object-cover object-center"
         style={{ viewTransitionName: "event-picture" }}
       />
-      <div className="grid w-full grid-cols-1 grid-rows-[auto_1fr] gap-8 md:grid-cols-[1fr_300px]">
+      <div className="grid w-full grid-cols-1 grid-rows-[auto_1fr] gap-8 md:grid-cols-[1fr_1px_300px]">
         <div className="prose prose-neutral max-sm:prose-sm">
           <h1 style={{ viewTransitionName: "event-title" }}>{event.title}</h1>
         </div>
 
+        <Separator orientation="vertical" className="row-span-2 hidden md:block" />
+        <Separator className="block md:hidden" />
+
         <div className="@container row-span-2">
-          <div className="grid gap-6 rounded-lg bg-muted p-4 md:sticky md:top-[calc(var(--header-height)+1rem)] @md:grid-cols-2 @md:p-6">
+          <div className="grid gap-6 md:sticky md:top-[calc(var(--header-height)+1rem)] @md:grid-cols-2">
             <div className="space-y-2">
               <div className="text-muted-foreground">Date</div>
               <div>{displayDate(event)}</div>
@@ -143,6 +147,8 @@ export default function Event({ loaderData: { event } }: Route.ComponentProps) {
             )}
           </div>
         </div>
+
+        <Separator className="block md:hidden" />
 
         <div className="prose opacity-100 transition-[opacity,translate] delay-500 prose-neutral starting:translate-y-2 starting:opacity-0">
           <BlocksRenderer content={event.description as any} />
