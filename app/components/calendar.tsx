@@ -252,7 +252,7 @@ export default function Calendar({ period, onChange }: CalendarProps) {
         {selecting && (
           <div className="absolute top-full mt-4 flex-center w-full gap-1">
             <Button size="xs" className="pointer-events-none">
-              Choisissez un date de fin
+              Choisissez une date de fin
             </Button>
             <Button
               size="xs"
