@@ -18,7 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { Field, FieldContent, FieldGroup, FieldLabel } from "./ui/field";
+import { Field, FieldContent, FieldError, FieldGroup, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
@@ -55,6 +55,8 @@ interface StepProps {
 function Step1({ form, disabled, className, onFocus }: StepProps) {
   const [multiDays, setMultiDays] = useState(false);
 
+  console.log(formisch.getAllErrors(form));
+
   return (
     <FieldGroup className={className}>
       <formisch.Field of={form} path={["title"]}>
@@ -71,39 +73,22 @@ function Step1({ form, disabled, className, onFocus }: StepProps) {
               disabled={disabled}
               onFocus={onFocus}
             />
+            {field.errors && <FieldError>{field.errors[0]}</FieldError>}
           </Field>
         )}
       </formisch.Field>
 
-      <div className="flex flex-col gap-4 xs:flex-row">
-        <formisch.Field of={form} path={["startDate"]}>
-          {(field) => (
-            <Field>
-              <Label htmlFor="startDate">
-                {multiDays ? "Date de début" : "Date"} <RequiredBadge />
-              </Label>
-              <Input
-                {...field.props}
-                id="startDate"
-                type="date"
-                value={field.input}
-                aria-invalid={!field.isValid}
-                disabled={disabled}
-                className="dark:scheme-dark"
-                onFocus={onFocus}
-              />
-            </Field>
-          )}
-        </formisch.Field>
-
-        {multiDays && (
-          <formisch.Field of={form} path={["endDate"]}>
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-4 xs:flex-row">
+          <formisch.Field of={form} path={["startDate"]}>
             {(field) => (
               <Field>
-                <Label htmlFor="endDate">Date de fin</Label>
+                <Label htmlFor="startDate">
+                  {multiDays ? "Date de début" : "Date"} <RequiredBadge />
+                </Label>
                 <Input
                   {...field.props}
-                  id="endDate"
+                  id="startDate"
                   type="date"
                   value={field.input}
                   aria-invalid={!field.isValid}
@@ -114,44 +99,84 @@ function Step1({ form, disabled, className, onFocus }: StepProps) {
               </Field>
             )}
           </formisch.Field>
-        )}
+
+          {multiDays && (
+            <formisch.Field of={form} path={["endDate"]}>
+              {(field) => (
+                <Field>
+                  <Label htmlFor="endDate">Date de fin</Label>
+                  <Input
+                    {...field.props}
+                    id="endDate"
+                    type="date"
+                    value={field.input}
+                    aria-invalid={!field.isValid}
+                    disabled={disabled}
+                    className="dark:scheme-dark"
+                    onFocus={onFocus}
+                  />
+                </Field>
+              )}
+            </formisch.Field>
+          )}
+        </div>
+
+        <div>
+          <formisch.Field of={form} path={["startDate"]}>
+            {(field) => (field.errors ? <FieldError>{field.errors[0]}</FieldError> : <></>)}
+          </formisch.Field>
+          <formisch.Field of={form} path={["endDate"]}>
+            {(field) => (field.errors ? <FieldError>{field.errors[0]}</FieldError> : <></>)}
+          </formisch.Field>
+        </div>
       </div>
 
-      <div className="flex gap-4">
-        <formisch.Field of={form} path={["startTime"]}>
-          {(field) => (
-            <Field>
-              <Label htmlFor="startTime">Heure de début</Label>
-              <Input
-                {...field.props}
-                id="startTime"
-                type="time"
-                value={field.input}
-                aria-invalid={!field.isValid}
-                disabled={disabled}
-                className="dark:scheme-dark"
-                onFocus={onFocus}
-              />
-            </Field>
-          )}
-        </formisch.Field>
-        <formisch.Field of={form} path={["endTime"]}>
-          {(field) => (
-            <Field>
-              <Label htmlFor="endTime">Heure de fin</Label>
-              <Input
-                {...field.props}
-                id="endTime"
-                type="time"
-                value={field.input}
-                aria-invalid={!field.isValid}
-                disabled={disabled}
-                className="dark:scheme-dark"
-                onFocus={onFocus}
-              />
-            </Field>
-          )}
-        </formisch.Field>
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-4">
+          <formisch.Field of={form} path={["startTime"]}>
+            {(field) => (
+              <Field>
+                <Label htmlFor="startTime">Heure de début</Label>
+                <Input
+                  {...field.props}
+                  id="startTime"
+                  type="time"
+                  value={field.input}
+                  aria-invalid={!field.isValid}
+                  disabled={disabled}
+                  className="dark:scheme-dark"
+                  onFocus={onFocus}
+                />
+              </Field>
+            )}
+          </formisch.Field>
+          <formisch.Field of={form} path={["endTime"]}>
+            {(field) => (
+              <Field>
+                <Label htmlFor="endTime">Heure de fin</Label>
+                <Input
+                  {...field.props}
+                  id="endTime"
+                  type="time"
+                  value={field.input}
+                  aria-invalid={!field.isValid}
+                  disabled={disabled}
+                  className="dark:scheme-dark"
+                  onFocus={onFocus}
+                />
+              </Field>
+            )}
+          </formisch.Field>
+        </div>
+
+        <div>
+          <formisch.Field of={form} path={["startTime"]}>
+            {(field) => (field.errors ? <FieldError>{field.errors[0]}</FieldError> : <></>)}
+          </formisch.Field>
+          <formisch.Field of={form} path={["endTime"]}>
+            {(field) => (field.errors ? <FieldError>{field.errors[0]}</FieldError> : <></>)}
+          </formisch.Field>
+        </div>
       </div>
 
       <Field orientation="horizontal">
@@ -183,6 +208,7 @@ function Step2({ form, disabled, className, onFocus }: StepProps) {
               disabled={disabled}
               onFocus={onFocus}
             />
+            {field.errors && <FieldError>{field.errors[0]}</FieldError>}
           </Field>
         )}
       </formisch.Field>
@@ -205,6 +231,7 @@ function Step3({ form, disabled, className, onFocus }: StepProps) {
               disabled={disabled}
               onFocus={onFocus}
             />
+            {field.errors && <FieldError>{field.errors[0]}</FieldError>}
           </Field>
         )}
       </formisch.Field>
@@ -221,6 +248,7 @@ function Step3({ form, disabled, className, onFocus }: StepProps) {
               disabled={disabled}
               onFocus={onFocus}
             />
+            {field.errors && <FieldError>{field.errors[0]}</FieldError>}
           </Field>
         )}
       </formisch.Field>
@@ -236,6 +264,7 @@ function Step3({ form, disabled, className, onFocus }: StepProps) {
               disabled={disabled}
               onFocus={onFocus}
             />
+            {field.errors && <FieldError>{field.errors[0]}</FieldError>}
           </Field>
         )}
       </formisch.Field>
@@ -251,6 +280,7 @@ function Step3({ form, disabled, className, onFocus }: StepProps) {
               disabled={disabled}
               onFocus={onFocus}
             />
+            {field.errors && <FieldError>{field.errors[0]}</FieldError>}
           </Field>
         )}
       </formisch.Field>
@@ -276,6 +306,7 @@ function Step4({ form, disabled, className, onFocus }: StepProps) {
               disabled={disabled}
               onFocus={onFocus}
             />
+            {field.errors && <FieldError>{field.errors[0]}</FieldError>}
           </Field>
         )}
       </formisch.Field>
@@ -291,6 +322,7 @@ function Step4({ form, disabled, className, onFocus }: StepProps) {
               disabled={disabled}
               onFocus={onFocus}
             />
+            {field.errors && <FieldError>{field.errors[0]}</FieldError>}
           </Field>
         )}
       </formisch.Field>
