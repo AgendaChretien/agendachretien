@@ -14,7 +14,7 @@ import "./app.css";
 import type { Route } from "./+types/root";
 import { Brand } from "./components/brand";
 import { Logo } from "./components/logo";
-import { SuggestEvent } from "./components/suggest-event";
+// import { SuggestEvent } from "./components/suggest-event";
 import { Separator } from "./components/ui/separator";
 import { Toaster } from "./components/ui/sonner";
 import { eventFormSchema } from "./lib/post-event";
@@ -86,7 +86,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </div>
             </div>
 
-            <SuggestEvent />
+            {/* <SuggestEvent /> */}
           </header>
 
           {children}
