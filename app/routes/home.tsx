@@ -1,8 +1,20 @@
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
+import { motion, useScroll, useTransform } from "motion/react";
+import { useRef } from "react";
 import { NavLink } from "react-router";
+import { create } from "zustand";
 
+import halo from "~/assets/halo.png";
 import Calendar from "~/components/calendar";
 import { Button } from "~/components/ui/button";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "~/components/ui/carousel";
+import { Separator } from "~/components/ui/separator";
 import client from "~/lib/client";
 import { uploadUrl } from "~/lib/utils";
 
@@ -224,17 +236,6 @@ function LastAddedEvents({ events }: { events: Event[] }) {
   );
 }
 
-import { create } from "zustand";
-
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "~/components/ui/carousel";
-import { Separator } from "~/components/ui/separator";
-
 interface State {
   period: Period | undefined;
   setPeriod: (period: Period | undefined) => void;
@@ -249,27 +250,59 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   const period = useStore((state) => state.period);
   const setPeriod = useStore((state) => state.setPeriod);
   const { lastAddedEvents } = loaderData;
+  const eventsAnchorRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll();
+
+  const haloY = useTransform(scrollYProgress, [0, 1], ["-40%", "-70%"], { clamp: true });
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-14 px-4">
+    <>
       <title>Agenda Chrétien</title>
 
-      <div className="space-y-8">
-        <h2 className="text-lg">Ajoutés récemment</h2>
-        <LastAddedEvents events={lastAddedEvents} />
+      <div className="mx-auto flex w-full max-w-4xl flex-col items-start gap-8 px-4 py-12 md:py-20">
+        <div className="text-3xl/snug font-extralight sm:text-5xl/snug">
+          L'agenda des
+          <br />
+          événements chrétiens
+          <br />
+          de la région de Lyon.
+        </div>
+        <Button
+          size="xl"
+          variant="outline"
+          onClick={() => eventsAnchorRef.current?.scrollIntoView({ behavior: "smooth" })}
+        >
+          Explorer maintenant
+        </Button>
       </div>
 
-      <Separator />
+      <div className="mx-auto flex w-full max-w-4xl flex-col gap-14 px-4">
+        <div className="space-y-8">
+          <h2 className="text-lg">Ajoutés récemment</h2>
+          <LastAddedEvents events={lastAddedEvents} />
+          <div ref={eventsAnchorRef} />
+        </div>
 
-      <div className="space-y-8">
-        <h2 className="text-lg">Évènements</h2>
-        <Calendar period={period} onChange={setPeriod} />
-        <Events
-          period={period}
-          initialData={loaderData.events}
-          onPeriodReset={() => setPeriod(undefined)}
-        />
+        <Separator />
+
+        <div className="space-y-8">
+          <h2 className="text-lg">Évènements</h2>
+          <Calendar period={period} onChange={setPeriod} />
+          <Events
+            period={period}
+            initialData={loaderData.events}
+            onPeriodReset={() => setPeriod(undefined)}
+          />
+        </div>
       </div>
-    </div>
+
+      <motion.img
+        src={halo}
+        alt="Halo"
+        className="pointer-events-none fixed top-0 left-1/2 -z-10 w-[min(200vw,2000px)] max-w-none -translate-x-1/2"
+        style={{ y: haloY }}
+      />
+    </>
   );
 }
