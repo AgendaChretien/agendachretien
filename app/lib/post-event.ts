@@ -1,8 +1,5 @@
-import { differenceInDays, isAfter } from "date-fns";
+import { differenceInDays } from "date-fns";
 import * as v from "valibot";
-
-import client from "./client";
-import type { paths } from "./openapi";
 
 export const eventFormSchema = v.pipe(
   v.object({
@@ -57,48 +54,3 @@ export const eventFormSchema = v.pipe(
     ["endTime"],
   ),
 );
-
-function sanitizeTime(time: string) {
-  return `${time}:00.000`;
-}
-
-type PostData = Exclude<
-  paths["/events"]["post"]["requestBody"],
-  undefined
->["content"]["application/json"]["data"];
-
-export function postEvent({
-  // oxlint-disable-next-line no-unused-vars
-  submitter_email,
-  // oxlint-disable-next-line no-unused-vars
-  submitter_comment,
-  description,
-  ...data
-}: v.InferOutput<typeof eventFormSchema>) {
-  const postData: PostData = {
-    ...data,
-  };
-
-  if (data.startTime) {
-    postData.startTime = sanitizeTime(data.startTime);
-  }
-  if (data.endTime) {
-    postData.endTime = sanitizeTime(data.endTime);
-  }
-  if (description) {
-    postData.description = description.split("\n\n").map((paragraph) => ({
-      type: "paragraph",
-      children: [{ type: "text", text: paragraph }],
-    }));
-  }
-
-  return client.POST("/events", {
-    headers: {
-      Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
-    },
-    params: {
-      query: { status: "draft" },
-    },
-    body: { data: postData },
-  });
-}

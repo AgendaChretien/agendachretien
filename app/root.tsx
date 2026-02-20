@@ -10,15 +10,15 @@ import {
 } from "react-router";
 import * as v from "valibot";
 
-import type { Route } from "./+types/root";
-
 import "./app.css";
+import type { Route } from "./+types/root";
 import { Brand } from "./components/brand";
 import { Logo } from "./components/logo";
 import { SuggestEvent } from "./components/suggest-event";
 import { Separator } from "./components/ui/separator";
 import { Toaster } from "./components/ui/sonner";
-import { postEvent, eventFormSchema } from "./lib/post-event";
+import { eventFormSchema } from "./lib/post-event";
+import { postEvent, sendEmail } from "./lib/post-event.server";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -38,21 +38,28 @@ export async function action({ request }: { request: Request }) {
   const params = new URLSearchParams(new URL(request.url).search);
 
   if (params.get("_action") === "suggest-event") {
-    const data = Object.fromEntries(formData);
-    const { issues, output, success } = v.safeParse(eventFormSchema, data);
+    const entry = Object.fromEntries(formData);
+    const { issues, output, success } = v.safeParse(eventFormSchema, entry);
 
     if (!success) {
-      console.error(issues);
+      console.error("Failed to validate event form:", issues);
       return { ok: false };
     }
 
-    const { response, error } = await postEvent(output);
+    const { error, data } = await postEvent(output);
 
-    if (error) {
-      console.error(error);
+    if (!data || error) {
+      console.error("Failed to post event:", error);
+      return { ok: false };
     }
 
-    return { ok: response.ok };
+    try {
+      await sendEmail(data.data.documentId, output);
+    } catch (error) {
+      console.error("Failed to send email notification:", error);
+    }
+
+    return { ok: true };
   }
 }
 
