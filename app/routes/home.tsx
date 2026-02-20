@@ -217,7 +217,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
   const { scrollYProgress } = useScroll();
 
-  const haloY = useTransform(scrollYProgress, [0, 1], ["-40%", "-70%"], { clamp: true });
+  const haloY = useTransform(scrollYProgress, [0, 0.3], ["-40%", "-70%"], { clamp: true });
 
   return (
     <>
