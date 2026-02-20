@@ -53,6 +53,19 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+export function meta() {
+  return [
+    {
+      name: "description",
+      content: "Les rendez-vous chrétiens à ne pas manquer dans votre ville.",
+    },
+    {
+      name: "viewport",
+      content: "width=device-width, initial-scale=1",
+    },
+  ];
+}
+
 export async function action({ request }: { request: Request }) {
   const formData = await request.formData();
   const params = new URLSearchParams(new URL(request.url).search);

@@ -73,43 +73,6 @@ async function fetchEvents({ page, period }: { page: number; period?: Period }) 
   return data?.data ?? [];
 }
 
-export function meta() {
-  return [
-    {
-      name: "description",
-      content: "Les rendez-vous chrétiens à ne pas manquer dans votre ville.",
-    },
-    {
-      name: "viewport",
-      content: "width=device-width, initial-scale=1",
-    },
-    {
-      rel: "icon",
-      href: "favicon-light-16x16.png",
-      sizes: "16x16",
-      media: "(prefers-color-scheme: light)",
-    },
-    {
-      rel: "icon",
-      href: "favicon-light-32x32.png",
-      sizes: "32x32",
-      media: "(prefers-color-scheme: light)",
-    },
-    {
-      rel: "icon",
-      href: "favicon-dark-16x16.png",
-      sizes: "16x16",
-      media: "(prefers-color-scheme: dark)",
-    },
-    {
-      rel: "icon",
-      href: "favicon-dark-32x32.png",
-      sizes: "32x32",
-      media: "(prefers-color-scheme: dark)",
-    },
-  ];
-}
-
 export async function loader() {
   const events = await fetchEvents({ page: 1 });
   const lastAddedEvents = await fetchLastAddedEvents();
