@@ -227,9 +227,8 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         <div className="text-3xl/snug font-extralight sm:text-5xl/snug">
           L'agenda des
           <br />
-          événements chrétiens
-          <br />
-          de la région de Lyon.
+          rendez-vous chrétiens
+          <br />à Lyon et sa région.
         </div>
         <Button
           size="xl"
