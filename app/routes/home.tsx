@@ -9,7 +9,7 @@ import { uploadUrl } from "~/lib/utils";
 import type { Route } from "./+types/home";
 import Event from "./event";
 
-type Event = Route.ComponentProps["loaderData"]["events"][number];
+type Event = Awaited<ReturnType<typeof fetchEvents>>[number];
 
 type Period = [Date, Date];
 
@@ -47,7 +47,7 @@ async function fetchEvents({ page, period }: { page: number; period?: Period }) 
   const { data } = await client.GET("/events", {
     params: {
       query: {
-        populate: "*",
+        populate: "picture",
         sort: { startDate: "asc" },
         filters,
         pagination: {
@@ -139,14 +139,12 @@ function EventCard({ event }: { event: Event }) {
       className="relative flex flex-col gap-4"
       viewTransition
     >
-      {event.picture && (
-        <img
-          src={uploadUrl(event.picture.url)}
-          alt={event.title}
-          className="h-34 w-full rounded-lg object-cover"
-          data-event-picture
-        />
-      )}
+      <img
+        src={uploadUrl(event.picture?.url)}
+        alt={event.title}
+        className="aspect-video w-full rounded-lg object-cover"
+        data-event-picture
+      />
       <div className="flex flex-col gap-1">
         <div className="flex-1" data-event-title>
           {event.title}

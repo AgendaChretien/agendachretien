@@ -10,10 +10,10 @@ const client = createClient<paths>({
   querySerializer: qs.stringify,
 });
 
-client.use({
-  onRequest({ request }) {
-    console.log("Request:", request.method, request.url);
-  },
-});
+// client.use({
+//   onRequest({ request }) {
+//     console.log("Request:", request.method, request.url);
+//   },
+// });
 
 export default client;

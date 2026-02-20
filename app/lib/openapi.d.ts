@@ -1172,7 +1172,7 @@ export interface operations {
               /** @description A string field */
               title: string;
               /** @description A blocks field */
-              description: unknown[];
+              description?: any[];
               /** @description A date field */
               startDate: string;
               /** @description A date field */
@@ -1204,7 +1204,7 @@ export interface operations {
               /** @description A relational field */
               city?: components["schemas"]["ApiCityCityDocument"];
               /** @description A media field */
-              picture: components["schemas"]["PluginUploadFileDocument"];
+              picture?: components["schemas"]["PluginUploadFileDocument"];
               /** @description A media field */
               extraPictures?: components["schemas"]["PluginUploadFileDocument"][];
             }[];
@@ -1251,6 +1251,7 @@ export interface operations {
   "event/post/events": {
     parameters: {
       query?: {
+        status?: "draft" | "published";
         fields?: (
           | "title"
           | "description"
@@ -1282,7 +1283,7 @@ export interface operations {
             /** @description A string field */
             title: string;
             /** @description A blocks field */
-            description: unknown[];
+            description?: any[];
             /** @description A date field */
             startDate: string;
             /** @description A date field */
@@ -1306,14 +1307,14 @@ export interface operations {
              * @description A datetime field
              * @default 2026-02-05T17:07:15.012Z
              */
-            publishedAt: string;
+            publishedAt?: string;
             /**
              * Format: uuid
              * @description A relational field
              */
             city?: string;
             /** @description A media field */
-            picture: unknown;
+            picture?: unknown;
             /** @description A media field */
             extraPictures?: unknown[];
           };
@@ -1338,7 +1339,7 @@ export interface operations {
               /** @description A string field */
               title: string;
               /** @description A blocks field */
-              description: unknown[];
+              description?: any[];
               /** @description A date field */
               startDate: string;
               /** @description A date field */
@@ -1370,7 +1371,7 @@ export interface operations {
               /** @description A relational field */
               city?: components["schemas"]["ApiCityCityDocument"];
               /** @description A media field */
-              picture: components["schemas"]["PluginUploadFileDocument"];
+              picture?: components["schemas"]["PluginUploadFileDocument"];
               /** @description A media field */
               extraPictures?: components["schemas"]["PluginUploadFileDocument"][];
             };
@@ -1502,7 +1503,7 @@ export interface operations {
               /** @description A string field */
               title: string;
               /** @description A blocks field */
-              description: unknown[];
+              description?: any[];
               /** @description A date field */
               startDate: string;
               /** @description A date field */
@@ -1534,7 +1535,7 @@ export interface operations {
               /** @description A relational field */
               city?: components["schemas"]["ApiCityCityDocument"];
               /** @description A media field */
-              picture: components["schemas"]["PluginUploadFileDocument"];
+              picture?: components["schemas"]["PluginUploadFileDocument"];
               /** @description A media field */
               extraPictures?: components["schemas"]["PluginUploadFileDocument"][];
             };
@@ -1670,7 +1671,7 @@ export interface operations {
               /** @description A string field */
               title: string;
               /** @description A blocks field */
-              description: unknown[];
+              description?: any[];
               /** @description A date field */
               startDate: string;
               /** @description A date field */
@@ -1702,7 +1703,7 @@ export interface operations {
               /** @description A relational field */
               city?: components["schemas"]["ApiCityCityDocument"];
               /** @description A media field */
-              picture: components["schemas"]["PluginUploadFileDocument"];
+              picture?: components["schemas"]["PluginUploadFileDocument"];
               /** @description A media field */
               extraPictures?: components["schemas"]["PluginUploadFileDocument"][];
             };
@@ -1797,7 +1798,7 @@ export interface operations {
               /** @description A string field */
               title: string;
               /** @description A blocks field */
-              description: unknown[];
+              description?: any[];
               /** @description A date field */
               startDate: string;
               /** @description A date field */
@@ -1829,7 +1830,7 @@ export interface operations {
               /** @description A relational field */
               city?: components["schemas"]["ApiCityCityDocument"];
               /** @description A media field */
-              picture: components["schemas"]["PluginUploadFileDocument"];
+              picture?: components["schemas"]["PluginUploadFileDocument"];
               /** @description A media field */
               extraPictures?: components["schemas"]["PluginUploadFileDocument"][];
             };
