@@ -1,6 +1,6 @@
 import * as formisch from "@formisch/react";
 import { clsx } from "clsx";
-import { Check, ChevronRight, Send } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Send } from "lucide-react";
 import { useEffect, useId, useState } from "react";
 import { useFetcher } from "react-router";
 import { toast } from "sonner";
@@ -391,7 +391,7 @@ function Content() {
           ))}
         </div>
       </formisch.Form>
-      <DialogFooter>
+      <DialogFooter className="sm:justify-between">
         <Button
           type="button"
           variant="ghost"
@@ -400,6 +400,7 @@ function Content() {
             setStep(step - 1);
           }}
         >
+          <ChevronLeft />
           Retour
         </Button>
         <Button
