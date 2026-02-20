@@ -8,14 +8,17 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import * as v from "valibot";
 
 import type { Route } from "./+types/root";
 
 import "./app.css";
 import { Brand } from "./components/brand";
 import { Logo } from "./components/logo";
-import { Button } from "./components/ui/button";
+import { SuggestEvent } from "./components/suggest-event";
 import { Separator } from "./components/ui/separator";
+import { Toaster } from "./components/ui/sonner";
+import { postEvent, eventFormSchema } from "./lib/post-event";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -29,6 +32,29 @@ export const links: Route.LinksFunction = () => [
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
 ];
+
+export async function action({ request }: { request: Request }) {
+  const formData = await request.formData();
+  const params = new URLSearchParams(new URL(request.url).search);
+
+  if (params.get("_action") === "suggest-event") {
+    const data = Object.fromEntries(formData);
+    const { issues, output, success } = v.safeParse(eventFormSchema, data);
+
+    if (!success) {
+      console.error(issues);
+      return { ok: false };
+    }
+
+    const { response, error } = await postEvent(output);
+
+    if (error) {
+      console.error(error);
+    }
+
+    return { ok: response.ok };
+  }
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -53,9 +79,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </div>
             </div>
 
-            <Button size="sm" variant="outline">
-              Proposer un évènement
-            </Button>
+            <SuggestEvent />
           </header>
 
           {children}
@@ -73,6 +97,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </footer>
           <div className="h-16 rounded-t-md bg-primary-4"></div>
         </div>
+        <Toaster position="top-center" />
         <ScrollRestoration />
         <Scripts />
       </body>
