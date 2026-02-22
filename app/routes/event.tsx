@@ -1,5 +1,6 @@
 import { BlocksRenderer } from "@strapi/blocks-react-renderer";
 import { ExternalLink, File } from "lucide-react";
+import Zoom from "react-medium-image-zoom";
 
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
@@ -7,6 +8,8 @@ import client from "~/lib/client";
 import { uploadUrl } from "~/lib/utils";
 
 import type { Route } from "./+types/event";
+
+import "react-medium-image-zoom/dist/styles.css";
 
 type Event = Route.ComponentProps["loaderData"]["event"];
 type Media = NonNullable<Event["extraPictures"]>[number];
@@ -61,17 +64,20 @@ function Pictures({ pictures }: { pictures: Media[] }) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="@container space-y-6">
       <h2 className="text-lg">Images</h2>
-      <div className="grid grid-cols-3 items-center justify-center gap-4">
+      <div className="grid grid-cols-2 items-center justify-center gap-4 @md:grid-cols-3">
         {pictures.map((picture) => (
-          <div key={picture.id}>
+          <Zoom
+            key={picture.id}
+            classDialog="[&>div[data-rmiz-modal-overlay='visible']]:bg-background! [& [data-rmiz-btn-unzoom]]:border-border!"
+          >
             <img
               src={uploadUrl(picture.url)}
               alt={picture.alternativeText || ""}
               className="mx-auto max-h-36 rounded-lg object-contain object-center"
             />
-          </div>
+          </Zoom>
         ))}
       </div>
     </div>
