@@ -1,4 +1,5 @@
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { NavLink } from "react-router";
@@ -31,7 +32,7 @@ async function fetchLastAddedEvents() {
   const { data } = await client.GET("/events", {
     params: {
       query: {
-        populate: "*",
+        populate: "picture",
         sort: { createdAt: "desc" },
         pagination: {
           page: 1,
@@ -48,12 +49,25 @@ async function fetchEvents({ page, period }: { page: number; period?: Period }) 
   const filters: Record<string, any> = {};
 
   if (period) {
-    filters["startDate"] = {
-      $lte: period[1].toISOString(),
-    };
-    filters["endDate"] = {
-      $gte: period[0].toISOString(),
-    };
+    filters["$or"] = [
+      {
+        startDate: {
+          $lte: format(period[1], "yyyy-MM-dd"),
+        },
+        endDate: {
+          $gte: format(period[0], "yyyy-MM-dd"),
+        },
+      },
+      {
+        startDate: {
+          $gte: format(period[0], "yyyy-MM-dd"),
+          $lte: format(period[1], "yyyy-MM-dd"),
+        },
+        endDate: {
+          $null: true,
+        },
+      },
+    ];
   }
 
   const { data } = await client.GET("/events", {
