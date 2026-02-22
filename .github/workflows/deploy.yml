@@ -1,0 +1,36 @@
+on:
+  push:
+    branches:
+      - test
+
+env:
+  # APP_PATH: ${{ github.ref == 'refs/heads/main' && '/home/mpctxkqx/agendachretien' || '/home/mpctxkqx/agendachretien-dev' }}
+  APP_PATH: "/home/mpctxkqx/agendachretien"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+      - run: npm install --frozen-lockfile
+      - run: npm run build
+      - run: echo "{\"type\":\"module\"}" > build/package.json
+      - uses: jossef/action-set-json-field@v2.2
+        with:
+          file: package.json
+          field: type
+          value: commonjs
+      - uses: easingthemes/ssh-deploy@main
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_USER }}
+          REMOTE_PORT: 5022
+          ARGS: "-rlgoDzv -i --delete"
+          SOURCE: "build public server app.js package.json package-lock.json"
+          TARGET: $APP_PATH
+          SCRIPT_AFTER: |
+            /usr/sbin/cloudlinux-selector stop --json --interpreter=nodejs --app-root=${{env.APP_PATH}}
+            npm_config_ignore_scripts=true /usr/sbin/cloudlinux-selector install-modules --json --interpreter=nodejs --app-root=${{env.APP_PATH}}
+            /usr/sbin/cloudlinux-selector start --json --interpreter=nodejs --app-root=${{env.APP_PATH}}
