@@ -20,7 +20,7 @@ import {
   sub,
 } from "date-fns";
 import { ChevronLeft, ChevronRight, XIcon } from "lucide-react";
-import { useEffect, useState, type ComponentProps } from "react";
+import { useEffect, useRef, useState, type ComponentProps } from "react";
 
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
@@ -29,15 +29,13 @@ import { Separator } from "./ui/separator";
 type Period = [Date, Date];
 
 interface CalendarDayProps extends ComponentProps<"button"> {
+  today: Date;
   date: Date;
   startDate?: Date;
   endDate?: Date;
 }
 
-const today = new Date();
-today.setHours(0, 0, 0, 0);
-
-function CalendarDay({ date, startDate, endDate, ...props }: CalendarDayProps) {
+function CalendarDay({ today, date, startDate, endDate, ...props }: CalendarDayProps) {
   const start = startDate && isSameDay(date, startDate);
   const end = endDate && isSameDay(date, endDate);
   const between = startDate && endDate && isAfter(date, startDate) && isBefore(date, endDate);
@@ -84,6 +82,7 @@ function CalendarDay({ date, startDate, endDate, ...props }: CalendarDayProps) {
 
 interface CalendarMonthProps {
   className?: string;
+  today: Date;
   year: number;
   month: number;
   startDate?: Date;
@@ -94,6 +93,7 @@ interface CalendarMonthProps {
 
 function CalendarMonth({
   className,
+  today,
   year,
   month,
   startDate,
@@ -121,6 +121,7 @@ function CalendarMonth({
         isSameMonth(day, day1) ? (
           <CalendarDay
             key={day.toISOString()}
+            today={today}
             date={day}
             startDate={startDate}
             endDate={endDate}
@@ -141,7 +142,15 @@ interface CalendarProps {
 }
 
 export default function Calendar({ period, onChange }: CalendarProps) {
-  const [currentMonth, setCurrentMonth] = useState(today);
+  const today = useRef(
+    (() => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return today;
+    })(),
+  );
+
+  const [currentMonth, setCurrentMonth] = useState(today.current);
   const [startDate, setStartDate] = useState(period?.[0]);
   const [endDate, setEndDate] = useState(period?.[1]);
   const [selecting, setSelecting] = useState(false);
@@ -153,7 +162,7 @@ export default function Calendar({ period, onChange }: CalendarProps) {
     setEndDate(period ? endOfDay(period[1]) : undefined);
     setSelecting(false);
     setHoveredDate(null);
-    setCurrentMonth(period ? period[0] : today);
+    setCurrentMonth(period ? period[0] : today.current);
   }, [period]);
 
   const handleHover = (date: Date) => {
@@ -204,7 +213,7 @@ export default function Calendar({ period, onChange }: CalendarProps) {
             <Button
               size="icon"
               variant="secondary"
-              disabled={isSameMonth(currentMonth, today)}
+              disabled={isSameMonth(currentMonth, today.current)}
               onClick={() => {
                 setCurrentMonth(sub(currentMonth, { months: 1 }));
               }}
@@ -227,6 +236,7 @@ export default function Calendar({ period, onChange }: CalendarProps) {
           <CalendarMonth
             className="flex-1"
             key={currentMonth.toISOString()}
+            today={today.current}
             year={currentMonth.getFullYear()}
             month={currentMonth.getMonth()}
             startDate={currentStartDate}
@@ -240,6 +250,7 @@ export default function Calendar({ period, onChange }: CalendarProps) {
           <CalendarMonth
             className="flex-1 @max-[620px]:hidden"
             key={nextMonth.toISOString()}
+            today={today.current}
             year={nextMonth.getFullYear()}
             month={nextMonth.getMonth()}
             startDate={currentStartDate}
@@ -289,7 +300,7 @@ export default function Calendar({ period, onChange }: CalendarProps) {
               size="sm"
               variant="outline"
               onClick={() => {
-                const sunday = endOfWeek(today, { weekStartsOn: 1 });
+                const sunday = endOfWeek(today.current, { weekStartsOn: 1 });
                 const saturday = sub(sunday, { days: 1 });
                 onChange([saturday, sunday]);
               }}
@@ -301,8 +312,8 @@ export default function Calendar({ period, onChange }: CalendarProps) {
               variant="outline"
               onClick={() => {
                 onChange([
-                  max([today, startOfWeek(today, { weekStartsOn: 1 })]),
-                  endOfWeek(today, { weekStartsOn: 1 }),
+                  max([today.current, startOfWeek(today.current, { weekStartsOn: 1 })]),
+                  endOfWeek(today.current, { weekStartsOn: 1 }),
                 ]);
               }}
             >
@@ -312,7 +323,7 @@ export default function Calendar({ period, onChange }: CalendarProps) {
               size="sm"
               variant="outline"
               onClick={() => {
-                const nextWeek = add(today, { weeks: 1 });
+                const nextWeek = add(today.current, { weeks: 1 });
                 onChange([
                   startOfWeek(nextWeek, { weekStartsOn: 1 }),
                   endOfWeek(nextWeek, { weekStartsOn: 1 }),
@@ -325,7 +336,10 @@ export default function Calendar({ period, onChange }: CalendarProps) {
               size="sm"
               variant="outline"
               onClick={() => {
-                onChange([max([today, startOfMonth(today)]), endOfMonth(today)]);
+                onChange([
+                  max([today.current, startOfMonth(today.current)]),
+                  endOfMonth(today.current),
+                ]);
               }}
             >
               Ce mois
