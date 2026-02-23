@@ -269,68 +269,70 @@ export default function Calendar({ period, onChange }: CalendarProps) {
         )}
       </div>
 
-      <ScrollArea className={clsx("max-w-full", selecting && "invisible")}>
-        <div className="flex gap-2">
-          {period && (
+      <div className="flex gap-2">
+        {period && (
+          <Button
+            size="sm"
+            variant="default"
+            onClick={() => {
+              onChange(undefined);
+            }}
+          >
+            <XIcon />
+            Effacer
+          </Button>
+        )}
+
+        <ScrollArea className={clsx("max-w-full", selecting && "invisible")}>
+          <div className="flex gap-2">
             <Button
               size="sm"
-              variant="default"
+              variant="outline"
               onClick={() => {
-                onChange(undefined);
+                const sunday = endOfWeek(today, { weekStartsOn: 1 });
+                const saturday = sub(sunday, { days: 1 });
+                onChange([saturday, sunday]);
               }}
             >
-              <XIcon className="mr-2" />
-              Effacer
+              Ce week-end
             </Button>
-          )}
-
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => {
-              const sunday = endOfWeek(today, { weekStartsOn: 1 });
-              const saturday = sub(sunday, { days: 1 });
-              onChange([saturday, sunday]);
-            }}
-          >
-            Ce week-end
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => {
-              onChange([
-                max([today, startOfWeek(today, { weekStartsOn: 1 })]),
-                endOfWeek(today, { weekStartsOn: 1 }),
-              ]);
-            }}
-          >
-            Cette semaine
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => {
-              const nextWeek = add(today, { weeks: 1 });
-              onChange([
-                startOfWeek(nextWeek, { weekStartsOn: 1 }),
-                endOfWeek(nextWeek, { weekStartsOn: 1 }),
-              ]);
-            }}
-          >
-            Semaine prochaine
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => {
-              onChange([max([today, startOfMonth(today)]), endOfMonth(today)]);
-            }}
-          >
-            Ce mois
-          </Button>
-        </div>
-      </ScrollArea>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                onChange([
+                  max([today, startOfWeek(today, { weekStartsOn: 1 })]),
+                  endOfWeek(today, { weekStartsOn: 1 }),
+                ]);
+              }}
+            >
+              Cette semaine
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                const nextWeek = add(today, { weeks: 1 });
+                onChange([
+                  startOfWeek(nextWeek, { weekStartsOn: 1 }),
+                  endOfWeek(nextWeek, { weekStartsOn: 1 }),
+                ]);
+              }}
+            >
+              Semaine prochaine
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                onChange([max([today, startOfMonth(today)]), endOfMonth(today)]);
+              }}
+            >
+              Ce mois
+            </Button>
+          </div>
+        </ScrollArea>
+      </div>
     </div>
   );
 }
