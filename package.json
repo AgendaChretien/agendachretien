@@ -67,7 +67,10 @@
     "pre-commit": "pnpm lint-staged"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,mjs,cjs}": "oxlint --type-aware --fix",
+    "*.{js,jsx,ts,tsx,mjs,cjs}": [
+      "oxlint --type-aware --fix",
+      "oxfmt --no-error-on-unmatched-pattern"
+    ],
     "*": "oxfmt --no-error-on-unmatched-pattern"
   }
 }

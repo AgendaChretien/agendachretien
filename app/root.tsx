@@ -8,12 +8,14 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
-import * as v from "valibot";
 
 import "./app.css";
+import * as v from "valibot";
+
 import type { Route } from "./+types/root";
 import { Brand } from "./components/brand";
 import { Logo } from "./components/logo";
+import { ThemeProvider, ThemeSwitcher } from "./components/theme";
 // import { SuggestEvent } from "./components/suggest-event";
 import { Separator } from "./components/ui/separator";
 import { Toaster } from "./components/ui/sonner";
@@ -102,40 +104,59 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <Meta />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function () {
+                try {
+                  var stored = localStorage.getItem('theme') || 'system';
+                  var media = window.matchMedia('(prefers-color-scheme: dark)');
+                  var isDark = stored === 'dark' || (stored === 'system' && media.matches);
+
+                  document.documentElement.dataset.theme = stored;
+                  if (isDark) document.documentElement.classList.add('dark');
+                } catch (_) {}
+              })();
+            `,
+          }}
+        />
         <Links />
       </head>
-      <body className="dark">
-        <div className="flex min-h-screen flex-col gap-8">
-          <header className="sticky top-0 z-10 mx-auto my-2 flex h-(--header-height) w-full max-w-5xl items-center justify-between px-4 backdrop-blur-sm md:my-4">
-            <div className="relative flex items-center gap-4">
-              <Link to="/" className="absolute inset-0" aria-label="Retour à la page d'accueil" />
-              <Logo className="h-10 fill-primary-8 dark:fill-neutral-12" />
-              <div className="flex flex-col items-start">
-                <Brand className="h-5 fill-primary-8 dark:fill-neutral-12" />
-                <div className="mt-1 rounded-full rounded-tl-none bg-primary-6 px-1.5 text-xs text-trim-both font-black text-background uppercase dark:bg-primary-8">
-                  Lyon
+      <body>
+        <ThemeProvider>
+          <div className="isolate flex min-h-screen flex-col gap-8">
+            <header className="sticky top-0 z-10 mx-auto my-2 flex h-(--header-height) w-full max-w-5xl items-center justify-between px-4 backdrop-blur-sm md:my-4">
+              <div className="relative flex items-center gap-4">
+                <Link to="/" className="absolute inset-0" aria-label="Retour à la page d'accueil" />
+                <Logo className="h-10 fill-primary-8 dark:fill-neutral-12" />
+                <div className="flex flex-col items-start">
+                  <Brand className="h-5 fill-primary-8 dark:fill-neutral-12" />
+                  <div className="mt-1 rounded-full rounded-tl-none bg-primary-6 px-1.5 text-xs text-trim-both font-black text-background uppercase dark:bg-primary-8">
+                    Lyon
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* <SuggestEvent /> */}
-          </header>
+              <ThemeSwitcher />
+              {/* <SuggestEvent /> */}
+            </header>
 
-          {children}
+            {children}
 
-          <div className="mt-auto" />
-          <Separator className="mt-12" />
-          <footer className="mx-auto flex w-full max-w-4xl flex-col items-center justify-between gap-4 px-4 xs:flex-row">
-            <div className="flex items-center gap-4">
-              <Logo className="h-6 fill-primary-8 dark:fill-neutral-12" />
-              <Brand className="h-4 fill-primary-8 dark:fill-neutral-12" />
-            </div>
-            <div className="text-right text-sm text-muted-foreground">
-              © {new Date().getFullYear()} Agenda chrétien
-            </div>
-          </footer>
-          <div className="h-16 rounded-t-md bg-primary-4"></div>
-        </div>
+            <div className="mt-auto" />
+            <Separator className="mt-12" />
+            <footer className="mx-auto flex w-full max-w-4xl flex-col items-center justify-between gap-4 px-4 xs:flex-row">
+              <div className="flex items-center gap-3">
+                <Logo className="h-6 fill-primary-8 dark:fill-neutral-12" />
+                <Brand className="h-4 fill-primary-8 dark:fill-neutral-12" />
+              </div>
+              <div className="text-right text-sm text-muted-foreground">
+                © {new Date().getFullYear()} Agenda chrétien
+              </div>
+            </footer>
+            <div className="h-16 rounded-t-md bg-primary-8 dark:bg-primary-4"></div>
+          </div>
+        </ThemeProvider>
         <Toaster position="top-center" />
         <ScrollRestoration />
         <Scripts />

@@ -1,12 +1,11 @@
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { NavLink } from "react-router";
 import { create } from "zustand";
 
-import halo from "~/assets/halo.png";
 import Calendar from "~/components/calendar";
+import { Halo } from "~/components/halo";
 import { Button } from "~/components/ui/button";
 import {
   Carousel,
@@ -229,10 +228,6 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   const { lastAddedEvents } = loaderData;
   const eventsAnchorRef = useRef<HTMLDivElement>(null);
 
-  const { scrollYProgress } = useScroll();
-
-  const haloY = useTransform(scrollYProgress, [0, 0.3], ["-40%", "-70%"], { clamp: true });
-
   return (
     <>
       <title>Agenda Chrétien</title>
@@ -272,13 +267,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           />
         </div>
       </div>
-
-      <motion.img
-        src={halo}
-        alt="Halo"
-        className="pointer-events-none fixed top-0 left-1/2 -z-10 w-[min(200vw,2000px)] max-w-none -translate-x-1/2"
-        style={{ y: haloY }}
-      />
+      <Halo />
     </>
   );
 }
