@@ -28,6 +28,53 @@ import { Separator } from "./ui/separator";
 
 type Period = [Date, Date];
 
+interface Preset {
+  key: string;
+  label: string;
+  getPeriod: (today: Date) => Period;
+}
+
+const presets: Preset[] = [
+  {
+    key: "this-weekend",
+    label: "Ce week-end",
+    getPeriod: (today) => {
+      const sunday = endOfWeek(today, { weekStartsOn: 1 });
+      const saturday = sub(sunday, { days: 1 });
+      return [saturday, sunday];
+    },
+  },
+  {
+    key: "this-week",
+    label: "Cette semaine",
+    getPeriod: (today) => [
+      max([today, startOfWeek(today, { weekStartsOn: 1 })]),
+      endOfWeek(today, { weekStartsOn: 1 }),
+    ],
+  },
+  {
+    key: "next-week",
+    label: "Semaine prochaine",
+    getPeriod: (today) => {
+      const nextWeek = add(today, { weeks: 1 });
+      return [startOfWeek(nextWeek, { weekStartsOn: 1 }), endOfWeek(nextWeek, { weekStartsOn: 1 })];
+    },
+  },
+  {
+    key: "this-month",
+    label: "Ce mois",
+    getPeriod: (today) => [max([today, startOfMonth(today)]), endOfMonth(today)],
+  },
+  {
+    key: "next-month",
+    label: "Mois prochain",
+    getPeriod: (today) => {
+      const nextMonth = add(today, { months: 1 });
+      return [startOfMonth(nextMonth), endOfMonth(nextMonth)];
+    },
+  },
+];
+
 interface CalendarDayProps extends ComponentProps<"button"> {
   today: Date;
   date: Date;
@@ -155,6 +202,7 @@ export default function Calendar({ period, onChange }: CalendarProps) {
   const [endDate, setEndDate] = useState(period?.[1]);
   const [selecting, setSelecting] = useState(false);
   const [hoveredDate, setHoveredDate] = useState<Date | null>(null);
+  const [currentPreset, setCurrentPreset] = useState<string | null>(null);
   const nextMonth = add(currentMonth, { months: 1 });
 
   useEffect(() => {
@@ -172,6 +220,8 @@ export default function Calendar({ period, onChange }: CalendarProps) {
   };
 
   const handleSelect = (date: Date) => {
+    setCurrentPreset(null);
+
     if (!selecting || !startDate) {
       setSelecting(true);
       setStartDate(date);
@@ -287,6 +337,7 @@ export default function Calendar({ period, onChange }: CalendarProps) {
             variant="default"
             onClick={() => {
               onChange(undefined);
+              setCurrentPreset(null);
             }}
           >
             <XIcon />
@@ -296,54 +347,20 @@ export default function Calendar({ period, onChange }: CalendarProps) {
 
         <ScrollArea className={clsx("max-w-full", selecting && "invisible")}>
           <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => {
-                const sunday = endOfWeek(today.current, { weekStartsOn: 1 });
-                const saturday = sub(sunday, { days: 1 });
-                onChange([saturday, sunday]);
-              }}
-            >
-              Ce week-end
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => {
-                onChange([
-                  max([today.current, startOfWeek(today.current, { weekStartsOn: 1 })]),
-                  endOfWeek(today.current, { weekStartsOn: 1 }),
-                ]);
-              }}
-            >
-              Cette semaine
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => {
-                const nextWeek = add(today.current, { weeks: 1 });
-                onChange([
-                  startOfWeek(nextWeek, { weekStartsOn: 1 }),
-                  endOfWeek(nextWeek, { weekStartsOn: 1 }),
-                ]);
-              }}
-            >
-              Semaine prochaine
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => {
-                onChange([
-                  max([today.current, startOfMonth(today.current)]),
-                  endOfMonth(today.current),
-                ]);
-              }}
-            >
-              Ce mois
-            </Button>
+            {presets.map((preset) => (
+              <Button
+                key={preset.key}
+                size="sm"
+                variant="outline"
+                className={clsx(currentPreset === preset.key && "border-primary!")}
+                onClick={() => {
+                  onChange(preset.getPeriod(today.current));
+                  setCurrentPreset(preset.key);
+                }}
+              >
+                {preset.label}
+              </Button>
+            ))}
           </div>
         </ScrollArea>
       </div>
