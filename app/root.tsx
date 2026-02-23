@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import "./app.css";
@@ -160,8 +161,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </ThemeProvider>
         <Toaster position="top-center" />
         <ScrollRestoration />
-        <Scripts />
         <SpeedInsights />
+        <Analytics />
+        <Scripts />
       </body>
     </html>
   );
