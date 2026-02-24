@@ -133,7 +133,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <ThemeProvider>
           {isNavigating && <GlobalSpinner />}
 
-          <div className="isolate flex min-h-screen flex-col gap-8">
+          <div className="isolate flex min-h-lvh flex-col gap-8">
             <header className="sticky top-0 z-10 mx-auto my-2 flex h-(--header-height) w-full max-w-5xl items-center justify-between px-4 backdrop-blur-sm md:my-4">
               <div className="relative flex items-center gap-4">
                 <Link to="/" className="absolute inset-0" aria-label="Retour à la page d'accueil" />
