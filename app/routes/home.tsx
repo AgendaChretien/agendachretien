@@ -132,6 +132,7 @@ function EventCard({ event }: { event: Event }) {
         alt={event.title}
         className="aspect-video w-full rounded-lg object-cover"
         data-event-picture
+        loading="lazy"
       />
       <div className="flex flex-col gap-1">
         <div className="flex-1" data-event-title>
