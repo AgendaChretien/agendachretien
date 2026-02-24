@@ -134,7 +134,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           {isNavigating && <GlobalSpinner />}
 
           <div className="isolate flex min-h-lvh flex-col gap-8">
-            <header className="sticky top-0 z-10 mx-auto my-2 flex h-(--header-height) w-full max-w-5xl items-center justify-between px-4 backdrop-blur-sm md:my-4">
+            <header className="sticky top-0 z-10 mx-auto my-2 flex h-(--header-height) w-full max-w-5xl items-center justify-between px-6 backdrop-blur-sm md:my-4">
               <div className="relative flex items-center gap-4">
                 <Link to="/" className="absolute inset-0" aria-label="Retour à la page d'accueil" />
                 <Logo className="h-10 fill-primary-8 dark:fill-neutral-12" />
@@ -156,8 +156,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <Separator className="mt-12" />
             <footer className="mx-auto flex w-full max-w-4xl flex-col items-center justify-between gap-4 px-4 xs:flex-row">
               <div className="flex items-center gap-3">
-                <Logo className="h-6 fill-primary-8 dark:fill-neutral-12" />
-                <Brand className="h-4 fill-primary-8 dark:fill-neutral-12" />
+                <Logo className="h-6 fill-muted-foreground" />
+                <Brand className="h-4 fill-muted-foreground" />
               </div>
               <div className="text-right text-sm text-muted-foreground">
                 © {new Date().getFullYear()} Agenda chrétien
