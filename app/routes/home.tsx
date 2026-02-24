@@ -5,7 +5,7 @@ import { NavLink } from "react-router";
 import { create } from "zustand";
 
 import Calendar from "~/components/calendar";
-import { Halo } from "~/components/halo";
+// import { Halo } from "~/components/halo";
 import { Button } from "~/components/ui/button";
 import {
   Carousel,
@@ -268,7 +268,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           />
         </div>
       </div>
-      <Halo />
+      {/* <Halo /> */}
     </>
   );
 }
