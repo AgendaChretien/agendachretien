@@ -212,6 +212,17 @@
   --text-trim-end: trim-end;
 
   --breakpoint-xs: 30rem;
+
+  @keyframes global-spinner {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  --animate-global-spinner: global-spinner 1s linear infinite;
 }
 
 @layer base {

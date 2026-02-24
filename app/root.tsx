@@ -11,11 +11,13 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useNavigation,
 } from "react-router";
 import * as v from "valibot";
 
 import type { Route } from "./+types/root";
 import { Brand } from "./components/brand";
+import { GlobalSpinner } from "./components/GlobalSpinner";
 import { Logo } from "./components/logo";
 import { ThemeProvider, ThemeSwitcher } from "./components/theme";
 // import { SuggestEvent } from "./components/suggest-event";
@@ -101,6 +103,9 @@ export async function action({ request }: { request: Request }) {
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const navigation = useNavigation();
+  const isNavigating = Boolean(navigation.location);
+
   return (
     <html lang="en">
       <head>
@@ -126,6 +131,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <ThemeProvider>
+          {isNavigating && <GlobalSpinner />}
+
           <div className="isolate flex min-h-screen flex-col gap-8">
             <header className="sticky top-0 z-10 mx-auto my-2 flex h-(--header-height) w-full max-w-5xl items-center justify-between px-4 backdrop-blur-sm md:my-4">
               <div className="relative flex items-center gap-4">
