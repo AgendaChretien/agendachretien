@@ -250,8 +250,8 @@ export default function Home({ loaderData }: Route.ComponentProps) {
       </div>
 
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-14 px-4">
-        <div className="space-y-8">
-          <h2 className="text-lg">Ajoutés récemment</h2>
+        <div>
+          <h2 className="mb-8 text-lg">Ajoutés récemment</h2>
           <LastAddedEvents events={lastAddedEvents} />
           <div ref={eventsAnchorRef} />
         </div>
