@@ -1,18 +1,43 @@
 import { BlocksRenderer } from "@strapi/blocks-react-renderer";
-import { ExternalLink, File } from "lucide-react";
+import { google, outlook, yahoo, type CalendarEvent } from "calendar-link";
+import { Calendar, Calendar1, ExternalLink, File } from "lucide-react";
 import Zoom from "react-medium-image-zoom";
 
+import Apple from "~/components/icons/apple";
+import Google from "~/components/icons/google";
+import Windows from "~/components/icons/windows";
+import Yahoo from "~/components/icons/yahoo";
+
+import "react-medium-image-zoom/dist/styles.css";
 import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
 import { Separator } from "~/components/ui/separator";
 import client from "~/lib/client";
+import { formatToText } from "~/lib/rich-text";
 import { uploadUrl } from "~/lib/utils";
 
 import type { Route } from "./+types/event";
 
-import "react-medium-image-zoom/dist/styles.css";
-
 type Event = Route.ComponentProps["loaderData"]["event"];
 type Media = NonNullable<Event["extraPictures"]>[number];
+
+const calendarLinks = [
+  { key: "apple", name: "Apple Calendar", icon: <Apple />, blank: false },
+  { key: "google", name: "Google Calendar", icon: <Google />, blank: true },
+  { key: "outlook", name: "Microsoft Outlook", icon: <Windows />, blank: true },
+  { key: "yahoo", name: "Yahoo Calendar", icon: <Yahoo />, blank: true },
+  { key: "other", name: "Autre", icon: <Calendar1 />, blank: false },
+] as const;
+
+type CalendarLink = (typeof calendarLinks)[number]["key"];
+
+type CalendarUrls = Record<CalendarLink, string>;
 
 function formatTime(time: string) {
   const [hours, minutes] = time.split(":");
@@ -55,7 +80,29 @@ export async function loader({ params }: Route.LoaderArgs) {
     throw new Response("Not found", { status: 404 });
   }
 
-  return { event: data.data };
+  const event = data.data;
+
+  const calendarEvent: CalendarEvent = {
+    title: event.title,
+    description: formatToText(event.description),
+    start: event.startDate + (event.startTime ? `T${event.startTime}` : ""),
+    end: event.endDate
+      ? event.endDate + (event.endTime ? `T${event.endTime}` : "")
+      : event.startDate + (event.startTime ? `T${event.startTime}` : ""),
+    location: event.address,
+  };
+
+  const icsLink = `/events/${event.documentId}.ics`;
+
+  const calendarUrls: CalendarUrls = {
+    apple: icsLink,
+    google: google(calendarEvent),
+    outlook: outlook(calendarEvent),
+    yahoo: yahoo(calendarEvent),
+    other: icsLink,
+  };
+
+  return { event: data.data, calendarUrls };
 }
 
 function Pictures({ pictures }: { pictures: Media[] }) {
@@ -139,16 +186,54 @@ function Media({ event }: { event: Event }) {
   );
 }
 
-export default function Event({ loaderData: { event } }: Route.ComponentProps) {
+function AddToCalendar({ urls }: { urls: CalendarUrls }) {
+  return (
+    <Dialog>
+      <DialogTrigger
+        render={
+          <Button className="mt-auto">
+            <Calendar />
+            Ajouter à mon agenda
+          </Button>
+        }
+      />
+
+      <DialogContent className="max-w-sm!">
+        <DialogHeader>
+          <DialogTitle>Ajouter à mon agenda</DialogTitle>
+        </DialogHeader>
+
+        <div className="flex flex-col gap-4">
+          {calendarLinks.map((calendar) => (
+            <Button
+              key={calendar.key}
+              variant="outline"
+              size="lg"
+              className="w-full"
+              render={
+                <a
+                  href={urls[calendar.key]}
+                  {...(calendar.blank ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                />
+              }
+            >
+              {calendar.icon}
+              {calendar.name}
+            </Button>
+          ))}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export default function Event({ loaderData: { event, calendarUrls } }: Route.ComponentProps) {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col items-start justify-start gap-12 px-4">
       <title>{event.title}</title>
       <meta property="og:title" content={event.title} />
       {event.description && (
-        <meta
-          property="og:description"
-          content={event.description.map((block) => block.content).join(" ")}
-        />
+        <meta property="og:description" content={formatToText(event.description)} />
       )}
       {event.picture && <meta property="og:image" content={uploadUrl(event.picture.url)} />}
       <meta property="og:type" content="event" />
@@ -167,10 +252,13 @@ export default function Event({ loaderData: { event } }: Route.ComponentProps) {
         <Separator className="block md:hidden" />
 
         <div className="@container row-span-2">
-          <div className="grid gap-6 md:sticky md:top-[calc(var(--header-height)+1rem)] @md:grid-cols-2">
+          <div className="grid gap-8 md:sticky md:top-[calc(var(--header-height)+1rem)] @md:grid-cols-2">
             <div className="space-y-2">
               <div className="text-muted-foreground">Date</div>
-              <div>{displayDate(event)}</div>
+              <div className="mb-4">{displayDate(event)}</div>
+              <div>
+                <AddToCalendar urls={calendarUrls} />
+              </div>
             </div>
 
             {event.address && (
@@ -187,7 +275,7 @@ export default function Event({ loaderData: { event } }: Route.ComponentProps) {
                     />
                   }
                 >
-                  Google Maps <ExternalLink className="h-4" />
+                  Voir sur Google Maps <ExternalLink className="h-4" />
                 </Button>
               </div>
             )}

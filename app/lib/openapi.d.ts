@@ -3,6 +3,8 @@
  * Do not make direct changes to the file.
  */
 
+import type { BlocksContent } from "@strapi/blocks-react-renderer";
+
 export interface paths {
   "/cities": {
     parameters: {
@@ -1172,7 +1174,7 @@ export interface operations {
               /** @description A string field */
               title: string;
               /** @description A blocks field */
-              description?: any[];
+              description?: BlocksContent[];
               /** @description A date field */
               startDate: string;
               /** @description A date field */
@@ -1283,7 +1285,7 @@ export interface operations {
             /** @description A string field */
             title: string;
             /** @description A blocks field */
-            description?: any[];
+            description?: BlocksContent[];
             /** @description A date field */
             startDate: string;
             /** @description A date field */
@@ -1339,7 +1341,7 @@ export interface operations {
               /** @description A string field */
               title: string;
               /** @description A blocks field */
-              description?: any[];
+              description?: BlocksContent[];
               /** @description A date field */
               startDate: string;
               /** @description A date field */
@@ -1503,7 +1505,7 @@ export interface operations {
               /** @description A string field */
               title: string;
               /** @description A blocks field */
-              description?: any[];
+              description?: BlocksContent[];
               /** @description A date field */
               startDate: string;
               /** @description A date field */
@@ -1671,7 +1673,7 @@ export interface operations {
               /** @description A string field */
               title: string;
               /** @description A blocks field */
-              description?: any[];
+              description?: BlocksContent[];
               /** @description A date field */
               startDate: string;
               /** @description A date field */
@@ -1798,7 +1800,7 @@ export interface operations {
               /** @description A string field */
               title: string;
               /** @description A blocks field */
-              description?: any[];
+              description?: BlocksContent[];
               /** @description A date field */
               startDate: string;
               /** @description A date field */
