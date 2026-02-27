@@ -67,8 +67,8 @@ export function sendEmail(id: string, event: v.InferOutput<typeof eventFormSchem
   html += "</div>";
 
   return transporter.sendMail({
-    from: '"No Reply - Agenda Chrétien" <noreply@agendachretien.fr>',
-    to: "admin@agendachretien.fr",
+    from: '"No Reply - Agenda Chrétien" <no-reply@agendachretien.fr>',
+    to: process.env.NOTIFICATION_EMAIL,
     subject: `Nouvel événement suggéré: ${event.title}`,
     html: html.trim(),
   });
