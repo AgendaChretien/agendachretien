@@ -1,5 +1,4 @@
 import type { BlocksContent } from "@strapi/blocks-react-renderer";
-import { form } from "motion/react-client";
 
 type TextNode = {
   type: "text";

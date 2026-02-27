@@ -39,7 +39,7 @@ export function ThemeSwitcher() {
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon-lg">
             {theme === "light" && <Sun className="size-5" />}
             {theme === "dark" && <Moon className="size-5" />}
             {theme === "system" && (

@@ -1,5 +1,5 @@
 import type { BlocksContent } from "@strapi/blocks-react-renderer";
-import { describe, expect, it, test } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { formatToText } from "./rich-text";
 

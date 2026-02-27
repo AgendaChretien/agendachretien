@@ -3102,6 +3102,8 @@ export interface operations {
               documentId: string;
               username: string;
               email: string;
+              firstName: string;
+              lastName: string;
               provider: string;
               confirmed: boolean;
               blocked: boolean;
@@ -3191,6 +3193,8 @@ export interface operations {
                   id: number;
                   documentId: string;
                   username: string;
+                  firstName: string;
+                  lastName: string;
                   email: string;
                   provider: string;
                   confirmed: boolean;
@@ -3215,6 +3219,8 @@ export interface operations {
                   id: number;
                   documentId: string;
                   username: string;
+                  firstName: string;
+                  lastName: string;
                   email: string;
                   provider: string;
                   confirmed: boolean;
@@ -3297,6 +3303,8 @@ export interface operations {
               id: number;
               documentId: string;
               username: string;
+              firstName: string;
+              lastName: string;
               email: string;
               provider: string;
               confirmed: boolean;
@@ -3449,6 +3457,8 @@ export interface operations {
               id: number;
               documentId: string;
               username: string;
+              firstName: string;
+              lastName: string;
               email: string;
               provider: string;
               confirmed: boolean;
@@ -3648,6 +3658,8 @@ export interface operations {
               id: number;
               documentId: string;
               username: string;
+              firstName: string;
+              lastName: string;
               email: string;
               provider: string;
               confirmed: boolean;
@@ -3914,6 +3926,8 @@ export interface operations {
             id: number;
             documentId: string;
             username: string;
+            firstName: string;
+            lastName: string;
             email: string;
             provider: string;
             confirmed: boolean;
@@ -4000,6 +4014,8 @@ export interface operations {
             id: number;
             documentId: string;
             username: string;
+            firstName: string;
+            lastName: string;
             email: string;
             provider: string;
             confirmed: boolean;
@@ -4085,6 +4101,8 @@ export interface operations {
             id: number;
             documentId: string;
             username: string;
+            firstName: string;
+            lastName: string;
             email: string;
             provider: string;
             confirmed: boolean;
@@ -4172,6 +4190,8 @@ export interface operations {
             id: number;
             documentId: string;
             username: string;
+            firstName: string;
+            lastName: string;
             email: string;
             provider: string;
             confirmed: boolean;
@@ -4260,6 +4280,8 @@ export interface operations {
             id: number;
             documentId: string;
             username: string;
+            firstName: string;
+            lastName: string;
             email: string;
             provider: string;
             confirmed: boolean;
@@ -4338,6 +4360,8 @@ export interface operations {
             id: number;
             documentId: string;
             username: string;
+            firstName: string;
+            lastName: string;
             email: string;
             provider: string;
             confirmed: boolean;
