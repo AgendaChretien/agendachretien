@@ -16,9 +16,13 @@ import {
 import * as v from "valibot";
 
 import type { Route } from "./+types/root";
+import { AuthButton } from "./components/auth-button";
 import { Brand } from "./components/brand";
+import { ClientAuthProvider } from "./components/client-auth-provider";
 import { GlobalSpinner } from "./components/GlobalSpinner";
+import { LoginDialog } from "./components/login-dialog";
 import { Logo } from "./components/logo";
+import { RegisterDialog } from "./components/register-dialog";
 import { ThemeProvider, ThemeSwitcher } from "./components/theme";
 // import { SuggestEvent } from "./components/suggest-event";
 import { Separator } from "./components/ui/separator";
@@ -102,6 +106,15 @@ export async function action({ request }: { request: Request }) {
   }
 }
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 30, // 30 minutes (garbage collection)
+    },
+  },
+});
+
 export function Layout({ children }: { children: React.ReactNode }) {
   const navigation = useNavigation();
   const isNavigating = Boolean(navigation.location);
@@ -143,40 +156,53 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <ThemeProvider>
-          {isNavigating && <GlobalSpinner />}
+          <QueryClientProvider client={queryClient}>
+            <ClientAuthProvider>
+              {isNavigating && <GlobalSpinner />}
 
-          <div className="isolate flex min-h-lvh flex-col gap-8">
-            <header className="sticky top-0 z-10 mx-auto my-2 flex h-(--header-height) w-full max-w-5xl items-center justify-between bg-background/50 px-6 backdrop-blur-sm md:my-4">
-              <div className="relative flex items-center gap-4">
-                <Link to="/" className="absolute inset-0" aria-label="Retour à la page d'accueil" />
-                <Logo className="h-10 fill-primary-8 dark:fill-neutral-12" />
-                <div className="flex flex-col items-start">
-                  <Brand className="h-5 fill-primary-8 dark:fill-neutral-12" />
-                  <div className="mt-1 rounded-full rounded-tl-none bg-primary-6 px-1.5 text-xs text-trim-both font-black text-background uppercase dark:bg-primary-8">
-                    Lyon
+              <div className="isolate flex min-h-lvh flex-col gap-8">
+                <header className="@container sticky top-0 z-10 mx-auto my-2 flex h-(--header-height) w-full max-w-5xl items-center justify-between bg-background/50 px-6 backdrop-blur-sm md:my-4">
+                  <div className="relative flex items-center gap-4">
+                    <Link
+                      to="/"
+                      className="absolute inset-0"
+                      aria-label="Retour à la page d'accueil"
+                    />
+                    <Logo className="hidden h-8 fill-primary-8 min-[400px]:block md:h-10 dark:fill-neutral-12" />
+                    <div className="flex flex-col items-start">
+                      <Brand className="h-4 fill-primary-8 sm:h-5 dark:fill-neutral-12" />
+                      <div className="mt-1 rounded-full rounded-tl-none bg-primary-6 px-1.5 text-xs text-trim-both font-black text-background uppercase dark:bg-primary-8">
+                        Lyon
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
 
-              <ThemeSwitcher />
-              {/* <SuggestEvent /> */}
-            </header>
+                  <div className="flex items-center gap-2">
+                    <ThemeSwitcher />
+                    <AuthButton />
+                    <LoginDialog />
+                    <RegisterDialog />
+                  </div>
+                  {/* <SuggestEvent /> */}
+                </header>
 
-            {children}
+                {children}
 
-            <div className="mt-auto" />
-            <Separator className="mt-12" />
-            <footer className="mx-auto flex w-full max-w-4xl flex-col items-center justify-between gap-4 px-4 xs:flex-row">
-              <div className="flex items-center gap-3">
-                <Logo className="h-6 fill-muted-foreground" />
-                <Brand className="h-4 fill-muted-foreground" />
+                <div className="mt-auto" />
+                <Separator className="mt-12" />
+                <footer className="mx-auto flex w-full max-w-4xl flex-col items-center justify-between gap-4 px-4 xs:flex-row">
+                  <div className="flex items-center gap-3">
+                    <Logo className="h-6 fill-muted-foreground" />
+                    <Brand className="h-4 fill-muted-foreground" />
+                  </div>
+                  <div className="text-right text-sm text-muted-foreground">
+                    © {new Date().getFullYear()} Agenda chrétien
+                  </div>
+                </footer>
+                <div className="h-16 rounded-t-md bg-primary-8 dark:bg-primary-4"></div>
               </div>
-              <div className="text-right text-sm text-muted-foreground">
-                © {new Date().getFullYear()} Agenda chrétien
-              </div>
-            </footer>
-            <div className="h-16 rounded-t-md bg-primary-8 dark:bg-primary-4"></div>
-          </div>
+            </ClientAuthProvider>
+          </QueryClientProvider>
         </ThemeProvider>
         <Toaster position="top-center" />
         <ScrollRestoration />
@@ -187,21 +213,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 30, // 30 minutes (garbage collection)
-    },
-  },
-});
-
 export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Outlet />
-    </QueryClientProvider>
-  );
+  return <Outlet />;
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

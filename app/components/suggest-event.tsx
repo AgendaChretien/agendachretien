@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { eventFormSchema } from "~/lib/post-event";
 
+import { RequiredBadge } from "./required-badge";
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 import {
@@ -37,14 +38,6 @@ function purge(values: Record<string, any>) {
   return result;
 }
 
-function RequiredBadge() {
-  return (
-    <span className="h-4 rounded-full bg-primary px-1.5 text-xs text-primary-foreground/80">
-      Requis
-    </span>
-  );
-}
-
 interface StepProps {
   form: formisch.FormStore<typeof eventFormSchema>;
   disabled: boolean;
@@ -54,8 +47,6 @@ interface StepProps {
 
 function Step1({ form, disabled, className, onFocus }: StepProps) {
   const [multiDays, setMultiDays] = useState(false);
-
-  console.log(formisch.getAllErrors(form));
 
   return (
     <FieldGroup className={className}>
