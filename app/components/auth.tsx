@@ -46,6 +46,7 @@ export const registerFormSchema = v.pipe(
     lastName: v.pipe(v.string("Le nom est requis"), v.nonEmpty("Le nom est requis")),
     church: v.optional(v.string()),
     association: v.optional(v.string()),
+    comment: v.optional(v.string()),
     email: v.pipe(
       v.string("L'email est requis"),
       v.nonEmpty("L'email est requis"),

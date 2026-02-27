@@ -18,16 +18,27 @@ function sendEmail(id: string, values: v.InferOutput<typeof registerFormSchema>)
         <strong>Nom :</strong> {values.lastName}
       </p>
       <p>
-        <strong>Église fréquentée :</strong> {values.church ?? "Non renseignée"}
+        <strong>Église fréquentée :</strong> {values.church || "Non renseignée"}
       </p>
       <p>
-        <strong>Association :</strong> {values.association ?? "Non renseignée"}
+        <strong>Association :</strong> {values.association || "Non renseignée"}
       </p>
       <p>
         <strong>Email :</strong> {values.email}
       </p>
       <p>
         <strong>Lien d'édition :</strong> <a href={editUrl}>{editUrl}</a>
+      </p>
+      <p>
+        <strong>Commentaire :</strong>{" "}
+        {values.comment
+          ? values.comment.split("\n").map((line, index) => (
+              <span key={index}>
+                {line}
+                <br />
+              </span>
+            ))
+          : "Aucun commentaire"}
       </p>
     </div>,
   );
@@ -51,7 +62,7 @@ export async function action({ request }: { request: Request }) {
     return { ok: false };
   }
 
-  const { confirmPassword: _, ...values } = output;
+  const { confirmPassword: _, comment: __, ...values } = output;
 
   const { data, error } = await client.POST("/auth/local/register", {
     body: { ...values, username: values.email },

@@ -5,6 +5,7 @@ import { useEffect, useId, useState } from "react";
 import { useFetcher } from "react-router";
 import { toast } from "sonner";
 
+import { filterEmpty } from "~/lib/form";
 import { eventFormSchema } from "~/lib/post-event";
 
 import { RequiredBadge } from "./required-badge";
@@ -25,18 +26,6 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 
 const steps = 4;
-
-function purge(values: Record<string, any>) {
-  const result: Record<string, any> = {};
-
-  for (const key in values) {
-    if (values[key] !== "" && values[key] !== undefined) {
-      result[key] = values[key];
-    }
-  }
-
-  return result;
-}
 
 interface StepProps {
   form: formisch.FormStore<typeof eventFormSchema>;
@@ -330,7 +319,7 @@ function Content() {
   const disabled = fetcher.state !== "idle";
 
   const submitForm: formisch.SubmitHandler<typeof eventFormSchema> = async (values) => {
-    await fetcher.submit(purge(values), {
+    await fetcher.submit(filterEmpty(values), {
       action: "/?_action=suggest-event",
       method: "post",
     });

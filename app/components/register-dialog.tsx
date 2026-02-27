@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 import { toast } from "sonner";
 
+import { filterEmpty } from "~/lib/form";
 import type { ActionData } from "~/routes/auth.register";
 
 import { registerFormSchema, useAuth } from "./auth";
@@ -24,6 +25,7 @@ import {
 } from "./ui/field";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { Textarea } from "./ui/textarea";
 
 export const registerDialogHandle = DialogPrimitive.createHandle();
 
@@ -51,7 +53,7 @@ function Content() {
   }, [user]);
 
   const submitForm: formisch.SubmitHandler<typeof registerFormSchema> = (values) => {
-    fetcher.submit(values, { method: "post", action: "/auth/register" });
+    fetcher.submit(filterEmpty(values), { method: "post", action: "/auth/register" });
   };
 
   const isSubmitting = fetcher.state === "submitting";
@@ -153,7 +155,6 @@ function Content() {
               </Field>
             )}
           </formisch.Field>
-
           <FieldSeparator />
           <FieldSet>
             <FieldLegend>Pour mieux vous connaître</FieldLegend>
@@ -224,7 +225,6 @@ function Content() {
                 </Field>
               )}
             </formisch.Field>
-
             <formisch.Field of={form} path={["association"]}>
               {(field) => (
                 <Field>
@@ -240,6 +240,30 @@ function Content() {
                     spellCheck="false"
                     required
                   />
+                  {field.errors && <FieldError>{field.errors[0]}</FieldError>}
+                </Field>
+              )}
+            </formisch.Field>
+            <FieldSeparator />
+            <formisch.Field of={form} path={["comment"]}>
+              {(field) => (
+                <Field>
+                  <Label htmlFor={field.props.name}>Commentaire</Label>
+                  <Textarea
+                    {...field.props}
+                    id={field.props.name}
+                    value={field.input ?? ""}
+                    aria-invalid={!field.isValid}
+                    disabled={isSubmitting}
+                    className="field-sizing-content"
+                    inputMode="text"
+                    spellCheck="false"
+                    required
+                  />
+                  <FieldDescription>
+                    Si vous avez des besoins spécifiques ou des remarques, n'hésitez pas à les
+                    indiquer ici.
+                  </FieldDescription>
                   {field.errors && <FieldError>{field.errors[0]}</FieldError>}
                 </Field>
               )}
