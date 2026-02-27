@@ -20,9 +20,6 @@ interface AuthContextType {
   login: (
     values: v.InferOutput<typeof loginFormSchema>,
   ) => Promise<{ success: boolean; error?: string }>;
-  register: (
-    values: v.InferOutput<typeof registerFormSchema>,
-  ) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
 }
 
@@ -150,43 +147,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [saveAuth],
   );
 
-  const register = useCallback(
-    async ({ confirmPassword: _, ...values }: v.InferOutput<typeof registerFormSchema>) => {
-      try {
-        const { data, error } = await client.POST("/auth/local/register", {
-          body: { ...values, username: values.email },
-        });
-
-        if (error || !data) {
-          return {
-            success: false,
-            error: "Impossible de créer le compte. L'email est peut-être déjà utilisé.",
-          };
-        }
-
-        // Check if jwt is present (some Strapi configs require email confirmation)
-        if ("jwt" in data && data.jwt) {
-          saveAuth(data.jwt, {
-            id: data.user.id,
-            documentId: data.user.documentId,
-            firstName: data.user.firstName,
-            lastName: data.user.lastName,
-            email: data.user.email,
-            confirmed: data.user.confirmed,
-          });
-        }
-
-        return { success: true };
-      } catch {
-        return {
-          success: false,
-          error: "Une erreur est survenue. Veuillez réessayer.",
-        };
-      }
-    },
-    [saveAuth],
-  );
-
   const logout = useCallback(() => {
     if (typeof window === "undefined") return;
 
@@ -198,7 +158,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, jwt, isLoading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, jwt, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

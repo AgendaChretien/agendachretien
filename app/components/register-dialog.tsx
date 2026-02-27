@@ -2,8 +2,11 @@
 
 import { Dialog as DialogPrimitive } from "@base-ui/react";
 import * as formisch from "@formisch/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useFetcher } from "react-router";
 import { toast } from "sonner";
+
+import type { ActionData } from "~/routes/auth.register";
 
 import { registerFormSchema, useAuth } from "./auth";
 import { loginDialogHandle } from "./login-dialog";
@@ -25,20 +28,33 @@ import { Label } from "./ui/label";
 export const registerDialogHandle = DialogPrimitive.createHandle();
 
 function Content() {
-  const { register } = useAuth();
+  const { user } = useAuth();
   const [success, setSuccess] = useState(false);
+  const fetcher = useFetcher<ActionData>();
 
   const form = formisch.useForm({ schema: registerFormSchema });
 
-  const submitForm: formisch.SubmitHandler<typeof registerFormSchema> = async (values) => {
-    const result = await register(values);
+  useEffect(() => {
+    if (!fetcher.data) return;
 
-    if (result.success) {
+    if (fetcher.data.ok) {
       setSuccess(true);
     } else {
       toast.error("Échec de l'inscription. Veuillez vérifier vos informations et réessayer.");
     }
+  }, [fetcher.data]);
+
+  useEffect(() => {
+    if (user) {
+      registerDialogHandle.close();
+    }
+  }, [user]);
+
+  const submitForm: formisch.SubmitHandler<typeof registerFormSchema> = (values) => {
+    fetcher.submit(values, { method: "post", action: "/auth/register" });
   };
+
+  const isSubmitting = fetcher.state === "submitting";
 
   if (success) {
     return (
@@ -85,7 +101,7 @@ function Content() {
                   id={field.props.name}
                   value={field.input ?? ""}
                   aria-invalid={!field.isValid}
-                  disabled={form.isSubmitting}
+                  disabled={isSubmitting}
                   autoComplete="username"
                   type="email"
                   inputMode="email"
@@ -108,7 +124,7 @@ function Content() {
                   id={field.props.name}
                   value={field.input ?? ""}
                   aria-invalid={!field.isValid}
-                  disabled={form.isSubmitting}
+                  disabled={isSubmitting}
                   autoComplete="current-password"
                   type="password"
                   required
@@ -128,7 +144,7 @@ function Content() {
                   id={field.props.name}
                   value={field.input ?? ""}
                   aria-invalid={!field.isValid}
-                  disabled={form.isSubmitting}
+                  disabled={isSubmitting}
                   autoComplete="current-password"
                   type="password"
                   required
@@ -154,7 +170,7 @@ function Content() {
                     id={field.props.name}
                     value={field.input ?? ""}
                     aria-invalid={!field.isValid}
-                    disabled={form.isSubmitting}
+                    disabled={isSubmitting}
                     autoComplete="given-name"
                     type="text"
                     inputMode="text"
@@ -177,7 +193,7 @@ function Content() {
                     id={field.props.name}
                     value={field.input ?? ""}
                     aria-invalid={!field.isValid}
-                    disabled={form.isSubmitting}
+                    disabled={isSubmitting}
                     autoComplete="family-name"
                     type="text"
                     inputMode="text"
@@ -198,7 +214,7 @@ function Content() {
                     id={field.props.name}
                     value={field.input ?? ""}
                     aria-invalid={!field.isValid}
-                    disabled={form.isSubmitting}
+                    disabled={isSubmitting}
                     type="text"
                     inputMode="text"
                     spellCheck="false"
@@ -218,7 +234,7 @@ function Content() {
                     id={field.props.name}
                     value={field.input ?? ""}
                     aria-invalid={!field.isValid}
-                    disabled={form.isSubmitting}
+                    disabled={isSubmitting}
                     type="text"
                     inputMode="text"
                     spellCheck="false"
@@ -230,8 +246,8 @@ function Content() {
             </formisch.Field>
           </FieldSet>
 
-          <Button type="submit" disabled={form.isSubmitting} className="w-full">
-            {form.isSubmitting ? "Inscription..." : "S'inscrire"}
+          <Button type="submit" disabled={isSubmitting} className="w-full">
+            {isSubmitting ? "Inscription..." : "S'inscrire"}
           </Button>
         </FieldGroup>
       </formisch.Form>
