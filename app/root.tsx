@@ -127,6 +127,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
             `,
           }}
         />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-9JLCGND4YT"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+
+              gtag('config', 'G-9JLCGND4YT');
+            `,
+          }}
+        ></script>
         <Links />
       </head>
       <body>
@@ -169,7 +181,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Toaster position="top-center" />
         <ScrollRestoration />
         <SpeedInsights />
-        <Analytics />
         <Scripts />
       </body>
     </html>
