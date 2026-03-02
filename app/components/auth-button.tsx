@@ -44,7 +44,7 @@ export function AuthButton() {
             <DialogTrigger
               handle={suggestEventDialogHandle}
               tabIndex={-1}
-              render={<DropdownMenuItem>Proposer un évènement</DropdownMenuItem>}
+              render={<DropdownMenuItem>Proposer un événement</DropdownMenuItem>}
             />
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
