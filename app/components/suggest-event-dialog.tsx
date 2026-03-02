@@ -218,7 +218,7 @@ function Part3({ form, disabled, className }: PartProps) {
       <formisch.Field of={form} path={["address"]}>
         {(field) => (
           <Field>
-            <Label htmlFor="address">Adresse</Label>
+            <Label htmlFor="address">Adresse de l'événement</Label>
             <Textarea
               {...field.props}
               id="address"
@@ -233,7 +233,7 @@ function Part3({ form, disabled, className }: PartProps) {
       <formisch.Field of={form} path={["email"]}>
         {(field) => (
           <Field>
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">Email de contact</Label>
             <Input
               {...field.props}
               id="email"
@@ -249,7 +249,7 @@ function Part3({ form, disabled, className }: PartProps) {
       <formisch.Field of={form} path={["phone"]}>
         {(field) => (
           <Field>
-            <Label htmlFor="phone">Téléphone</Label>
+            <Label htmlFor="phone">Téléphone de contact</Label>
             <Input
               {...field.props}
               id="phone"
@@ -467,9 +467,6 @@ export function SuggestEventDialog() {
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const form = formisch.useForm({
     schema: eventFormSchema,
-    initialInput: {
-      startDate: "2024-01-01",
-    },
   });
 
   if (!user) {
