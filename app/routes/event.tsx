@@ -2,13 +2,14 @@ import { BlocksRenderer } from "@strapi/blocks-react-renderer";
 import { google, outlook, yahoo, type CalendarEvent } from "calendar-link";
 import { Calendar, Calendar1, ExternalLink, File } from "lucide-react";
 import Zoom from "react-medium-image-zoom";
+import ReactPlayer from "react-player";
+import { canPlay } from "react-player/patterns";
+import * as v from "valibot";
 
 import Apple from "~/components/icons/apple";
 import Google from "~/components/icons/google";
 import Windows from "~/components/icons/windows";
 import Yahoo from "~/components/icons/yahoo";
-
-import "react-medium-image-zoom/dist/styles.css";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -23,6 +24,8 @@ import { formatToText } from "~/lib/rich-text";
 import { uploadUrl } from "~/lib/utils";
 
 import type { Route } from "./+types/event";
+
+import "react-medium-image-zoom/dist/styles.css";
 
 type Event = Route.ComponentProps["loaderData"]["event"];
 type Media = NonNullable<Event["extraPictures"]>[number];
@@ -186,6 +189,65 @@ function Media({ event }: { event: Event }) {
   );
 }
 
+const videoContentSchema = v.pipe(
+  v.object({
+    type: v.literal("paragraph"),
+    children: v.tuple([
+      v.object({ type: v.literal("text"), text: v.literal("") }),
+      v.object({
+        type: v.literal("link"),
+        url: v.pipe(
+          v.string(),
+          v.url(),
+          v.check((url) => Object.values(canPlay).some((fn) => fn(url))),
+        ),
+      }),
+      v.object({ type: v.literal("text"), text: v.literal("") }),
+    ]),
+  }),
+  v.transform((block) => block.children[1].url),
+);
+
+function Description({ event }: { event: Event }) {
+  if (!event.description) {
+    return null;
+  }
+
+  return (
+    <div className="prose prose-neutral">
+      <BlocksRenderer
+        content={event.description.map((block) => {
+          if (block.type !== "paragraph") {
+            return block;
+          }
+
+          const { output, success } = v.safeParse(videoContentSchema, block);
+
+          if (success) {
+            return {
+              type: "video",
+              url: output,
+              children: [],
+            };
+          }
+
+          return block;
+        })}
+        blocks={
+          {
+            video: ({ url }: { url: string }) => (
+              <ReactPlayer
+                src={url}
+                style={{ width: "100%", height: "auto", aspectRatio: "16/9" }}
+              />
+            ),
+          } as any
+        }
+      />
+    </div>
+  );
+}
+
 function AddToCalendar({ urls }: { urls: CalendarUrls }) {
   return (
     <Dialog>
@@ -328,9 +390,7 @@ export default function Event({ loaderData: { event, calendarUrls } }: Route.Com
         <Separator className="block md:hidden" />
 
         <div className="space-y-12 space-x-6 opacity-100 transition-[opacity,translate] delay-500 starting:translate-y-2 starting:opacity-0">
-          <div className="prose prose-neutral">
-            <BlocksRenderer content={event.description as any} />
-          </div>
+          <Description event={event} />
           <Media event={event} />
         </div>
       </div>
