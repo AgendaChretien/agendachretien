@@ -51,19 +51,35 @@ async function fetchEvents({ page, period }: { page: number; period?: Period }) 
     filters["$or"] = [
       {
         startDate: {
+          $gte: format(period[0], "yyyy-MM-dd"),
+          $lte: format(period[1], "yyyy-MM-dd"),
+        },
+        endDate: {
+          $null: true,
+        },
+      },
+      {
+        startDate: {
           $lte: format(period[1], "yyyy-MM-dd"),
         },
         endDate: {
           $gte: format(period[0], "yyyy-MM-dd"),
         },
       },
+    ];
+  } else {
+    filters["$or"] = [
       {
         startDate: {
-          $gte: format(period[0], "yyyy-MM-dd"),
-          $lte: format(period[1], "yyyy-MM-dd"),
+          $gte: format(new Date(), "yyyy-MM-dd"),
         },
         endDate: {
           $null: true,
+        },
+      },
+      {
+        endDate: {
+          $gte: format(new Date(), "yyyy-MM-dd"),
         },
       },
     ];
