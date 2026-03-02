@@ -10,6 +10,8 @@ import { filterEmpty } from "~/lib/form";
 import { documentTypes, eventFormSchema, extensions } from "~/lib/post-event";
 
 import { useAuth } from "./auth";
+import { loginDialogHandle } from "./login-dialog";
+import { registerDialogHandle } from "./register-dialog";
 import { RequiredBadge } from "./required-badge";
 import {
   AlertDialog,
@@ -30,6 +32,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "./ui/dialog";
 import {
   Field,
@@ -461,17 +464,49 @@ function Content({ form }: ContentProps) {
   );
 }
 
+function UnavailableContent() {
+  return (
+    <div className="flex flex-col gap-6 text-center">
+      <div className="text-balance">Vous devez être connecté pour proposer un événement</div>
+      <div className="flex flex-col gap-2">
+        <DialogTrigger
+          handle={loginDialogHandle}
+          render={
+            <Button
+              onClick={() => {
+                suggestEventDialogHandle.close();
+              }}
+            >
+              Se connecter
+            </Button>
+          }
+        />
+        <DialogTrigger
+          handle={registerDialogHandle}
+          render={
+            <Button
+              variant="ghost"
+              onClick={() => {
+                suggestEventDialogHandle.close();
+              }}
+            >
+              Créer un compte
+            </Button>
+          }
+        />
+      </div>
+    </div>
+  );
+}
+
 export function SuggestEventDialog() {
   const { user } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
+
   const form = formisch.useForm({
     schema: eventFormSchema,
   });
-
-  if (!user) {
-    return null;
-  }
 
   return (
     <Dialog
@@ -486,11 +521,11 @@ export function SuggestEventDialog() {
         }
       }}
     >
-      <DialogContent keepMounted={false} className="max-w-xl!">
+      <DialogContent keepMounted={false} className={clsx(user ? "max-w-xl!" : "max-w-xs!")}>
         <DialogHeader>
           <DialogTitle>Proposer un événement</DialogTitle>
         </DialogHeader>
-        <Content form={form} />
+        {user ? <Content form={form} /> : <UnavailableContent />}
       </DialogContent>
 
       <AlertDialog open={confirmationOpen} onOpenChange={setConfirmationOpen}>
