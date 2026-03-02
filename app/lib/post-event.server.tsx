@@ -117,7 +117,7 @@ export function sendEmail(id: string, values: v.InferOutput<typeof eventFormSche
   return transporter.sendMail({
     from: '"No Reply - Agenda Chrétien" <no-reply@agendachretien.fr>',
     to: process.env.NOTIFICATION_EMAIL,
-    subject: `Nouvelle inscription`,
+    subject: `Nouvelle suggestion d'événement`,
     html: html,
   });
 }
