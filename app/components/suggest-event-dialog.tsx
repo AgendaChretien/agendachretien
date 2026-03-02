@@ -183,7 +183,7 @@ function Part1({ form, disabled, className }: PartProps) {
           onCheckedChange={(checked) => setMultiDays(checked)}
         />
         <FieldContent>
-          <FieldLabel htmlFor="multiDays">Évènement sur plusieurs jours</FieldLabel>
+          <FieldLabel htmlFor="multiDays">événement sur plusieurs jours</FieldLabel>
         </FieldContent>
       </Field>
     </FieldGroup>
@@ -488,7 +488,7 @@ export function SuggestEventDialog() {
     >
       <DialogContent keepMounted={false} className="max-w-xl!">
         <DialogHeader>
-          <DialogTitle>Proposer un évènement</DialogTitle>
+          <DialogTitle>Proposer un événement</DialogTitle>
         </DialogHeader>
         <Content form={form} />
       </DialogContent>
