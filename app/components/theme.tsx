@@ -7,6 +7,10 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 
@@ -32,14 +36,18 @@ const themes: { key: Theme; name: string; icon: typeof Sun }[] = [
   },
 ];
 
-export function ThemeSwitcher() {
+interface ThemeSwitcherProps {
+  className?: string;
+}
+
+export function ThemeSwitcher({ className }: ThemeSwitcherProps) {
   const { theme, setTheme } = useTheme();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button variant="ghost" size="icon-lg">
+          <Button variant="ghost" size="icon" className={className}>
             {theme === "light" && <Sun className="size-5" />}
             {theme === "dark" && <Moon className="size-5" />}
             {theme === "system" && (
@@ -67,6 +75,30 @@ export function ThemeSwitcher() {
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+}
+
+export function ThemeSwitcherSubMenu() {
+  const { theme, setTheme } = useTheme();
+
+  return (
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger>Thème</DropdownMenuSubTrigger>
+      <DropdownMenuPortal>
+        <DropdownMenuSubContent side="left">
+          {themes.map(({ key, name, icon: Icon }) => (
+            <DropdownMenuCheckboxItem
+              key={key}
+              checked={key === theme}
+              onCheckedChange={() => setTheme(key)}
+            >
+              <Icon className="size-4" />
+              {name}
+            </DropdownMenuCheckboxItem>
+          ))}
+        </DropdownMenuSubContent>
+      </DropdownMenuPortal>
+    </DropdownMenuSub>
   );
 }
 

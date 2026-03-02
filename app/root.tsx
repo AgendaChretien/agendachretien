@@ -3,6 +3,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import "./app.css";
+import { MenuIcon } from "lucide-react";
 import {
   isRouteErrorResponse,
   Link,
@@ -22,8 +23,17 @@ import { GlobalSpinner } from "./components/GlobalSpinner";
 import { LoginDialog } from "./components/login-dialog";
 import { Logo } from "./components/logo";
 import { RegisterDialog } from "./components/register-dialog";
-import { SuggestEventDialog } from "./components/suggest-event-dialog";
-import { ThemeProvider, ThemeSwitcher } from "./components/theme";
+import { SuggestEventDialog, suggestEventDialogHandle } from "./components/suggest-event-dialog";
+import { ThemeProvider, ThemeSwitcher, ThemeSwitcherSubMenu } from "./components/theme";
+import { Button } from "./components/ui/button";
+import { DialogTrigger } from "./components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./components/ui/dropdown-menu";
 import { Separator } from "./components/ui/separator";
 import { Toaster } from "./components/ui/sonner";
 
@@ -135,7 +145,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                       className="absolute inset-0"
                       aria-label="Retour à la page d'accueil"
                     />
-                    <Logo className="hidden h-8 fill-primary-8 min-[400px]:block md:h-10 dark:fill-neutral-12" />
+                    <Logo className="h-8 fill-primary-8 md:h-10 dark:fill-neutral-12" />
                     <div className="flex flex-col items-start">
                       <Brand className="h-4 fill-primary-8 sm:h-5 dark:fill-neutral-12" />
                       <div className="mt-1 rounded-full rounded-tl-none bg-primary-6 px-1.5 text-xs text-trim-both font-black text-background uppercase dark:bg-primary-8">
@@ -145,8 +155,33 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <ThemeSwitcher />
+                    <ThemeSwitcher className="max-sm:hidden" />
+                    <DialogTrigger
+                      handle={suggestEventDialogHandle}
+                      tabIndex={-1}
+                      render={<Button className="max-sm:hidden">Proposer un évènement</Button>}
+                    />
                     <AuthButton />
+
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        render={
+                          <Button variant="ghost" size="icon" className="sm:hidden">
+                            <MenuIcon />
+                          </Button>
+                        }
+                      />
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuGroup>
+                          <DialogTrigger
+                            handle={suggestEventDialogHandle}
+                            tabIndex={-1}
+                            render={<DropdownMenuItem>Proposer un évènement</DropdownMenuItem>}
+                          />
+                          <ThemeSwitcherSubMenu />
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </header>
 
