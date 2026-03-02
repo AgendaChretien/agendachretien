@@ -28,7 +28,7 @@ import type { Route } from "./+types/event";
 import "react-medium-image-zoom/dist/styles.css";
 
 type Event = Route.ComponentProps["loaderData"]["event"];
-type Media = NonNullable<Event["extraPictures"]>[number];
+type Media = NonNullable<Event["attachments"]>[number];
 
 const calendarLinks = [
   { key: "apple", name: "Apple Calendar", icon: <Apple />, blank: false },
@@ -74,7 +74,7 @@ export async function loader({ params }: Route.LoaderArgs) {
     params: {
       path: { id: params.eventId },
       query: {
-        populate: ["picture", "extraPictures"],
+        populate: ["picture", "attachments"],
       },
     },
   });
@@ -163,12 +163,12 @@ function Documents({ documents }: { documents: Media[] }) {
 }
 
 function Media({ event }: { event: Event }) {
-  if (!event.extraPictures || event.extraPictures.length === 0) {
+  if (!event.attachments || event.attachments.length === 0) {
     return null;
   }
 
-  const [pictures, documents] = event.extraPictures.reduce<
-    [typeof event.extraPictures, typeof event.extraPictures]
+  const [pictures, documents] = event.attachments.reduce<
+    [typeof event.attachments, typeof event.attachments]
   >(
     (acc, picture) => {
       if (picture.mime.startsWith("image/")) {

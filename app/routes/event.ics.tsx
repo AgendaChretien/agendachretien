@@ -19,7 +19,7 @@ export async function loader({ params }: Route.LoaderArgs) {
     params: {
       path: { id: params.eventId },
       query: {
-        populate: ["picture", "extraPictures"],
+        populate: ["picture", "attachments"],
       },
     },
   });
