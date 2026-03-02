@@ -37,17 +37,15 @@ export function AuthButton() {
         />
         <DropdownMenuContent align="end">
           <DropdownMenuGroup>
-            <DropdownMenuLabel>
-              {user.firstName} {user.lastName}
+            <DropdownMenuLabel className="space-y-1">
+              <div className="text-foreground">
+                {user.firstName} {user.lastName}
+              </div>
+              <div>{user.email}</div>
             </DropdownMenuLabel>
-            <DropdownMenuItem disabled>Mes infos</DropdownMenuItem>
-            <DialogTrigger
-              handle={suggestEventDialogHandle}
-              tabIndex={-1}
-              render={<DropdownMenuItem>Proposer un événement</DropdownMenuItem>}
-            />
+            {/* <DropdownMenuItem disabled>Mes infos</DropdownMenuItem> */}
           </DropdownMenuGroup>
-          <DropdownMenuSeparator />
+          {/* <DropdownMenuSeparator /> */}
           <DropdownMenuItem onClick={logout}>Se déconnecter</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
