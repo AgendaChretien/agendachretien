@@ -5,7 +5,6 @@ import { UserIcon } from "lucide-react";
 import { useAuth } from "./auth";
 import { loginDialogHandle } from "./login-dialog";
 import { registerDialogHandle } from "./register-dialog";
-import { suggestEventDialogHandle } from "./suggest-event-dialog";
 import { Button } from "./ui/button";
 import { DialogTrigger } from "./ui/dialog";
 import {
@@ -14,7 +13,6 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
@@ -29,7 +27,7 @@ export function AuthButton() {
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <Button size="icon-lg" className="uppercase">
+            <Button size="icon" className="uppercase" variant="outline-primary">
               {user.firstName.charAt(0)}
               {user.lastName.charAt(0)}
             </Button>
@@ -56,7 +54,7 @@ export function AuthButton() {
     <Popover handle={popoverHandle}>
       <PopoverTrigger
         render={
-          <Button variant="secondary" size="icon-lg" className="uppercase" disabled={isLoading}>
+          <Button variant="secondary" size="icon" className="uppercase" disabled={isLoading}>
             <UserIcon />
           </Button>
         }
