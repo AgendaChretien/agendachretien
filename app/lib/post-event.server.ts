@@ -15,10 +15,8 @@ function sanitizeTime(time: string) {
 }
 
 export function postEvent({
-  // oxlint-disable-next-line no-unused-vars
-  submitter_email,
-  // oxlint-disable-next-line no-unused-vars
-  submitter_comment,
+  submitter_comment: _,
+  documents: __,
   description,
   ...data
 }: v.InferOutput<typeof eventFormSchema>) {

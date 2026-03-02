@@ -1,6 +1,17 @@
 import { differenceInDays } from "date-fns";
 import * as v from "valibot";
 
+export const documentTypes = [
+  "image/jpg",
+  "image/png",
+  "image/webp",
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+] as const;
+
+export const extensions = [".jpg", ".jpeg", ".png", ".webp", ".pdf", ".doc", ".docx"] as const;
+
 export const eventFormSchema = v.pipe(
   v.object({
     title: v.pipe(
@@ -20,10 +31,19 @@ export const eventFormSchema = v.pipe(
     email: v.optional(v.pipe(v.string(), v.email("Format d'email invalide"))),
     phone: v.optional(v.string()),
     url: v.optional(v.pipe(v.string(), v.url("Format d'URL invalide"))),
-
-    submitter_email: v.pipe(
-      v.string("Votre email est obligatoire"),
-      v.email("Format d'email invalide"),
+    documents: v.optional(
+      v.pipe(
+        v.array(
+          v.pipe(
+            v.pipe(
+              v.file("Fichier invalide"),
+              v.mimeType(documentTypes, "Format de fichier non supporté"),
+              v.maxSize(1024 * 1024 * 5, "Veuillez sélectionner un fichier de moins de 5 Mo."),
+            ),
+          ),
+        ),
+        v.maxLength(5),
+      ),
     ),
     submitter_comment: v.optional(v.string()),
   }),

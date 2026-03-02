@@ -6,4 +6,5 @@ export default [
   route("/events/:eventId.ics", "routes/event.ics.tsx"),
   route("/auth/register", "routes/auth.register.tsx"),
   route("/auth/confirmation", "routes/auth.confirmation.tsx"),
+  route("/suggest-event", "routes/suggest-event.tsx"),
 ] satisfies RouteConfig;

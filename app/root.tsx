@@ -13,7 +13,6 @@ import {
   ScrollRestoration,
   useNavigation,
 } from "react-router";
-import * as v from "valibot";
 
 import type { Route } from "./+types/root";
 import { AuthButton } from "./components/auth-button";
@@ -23,12 +22,10 @@ import { GlobalSpinner } from "./components/GlobalSpinner";
 import { LoginDialog } from "./components/login-dialog";
 import { Logo } from "./components/logo";
 import { RegisterDialog } from "./components/register-dialog";
+import { SuggestEventDialog } from "./components/suggest-event-dialog";
 import { ThemeProvider, ThemeSwitcher } from "./components/theme";
-// import { SuggestEvent } from "./components/suggest-event";
 import { Separator } from "./components/ui/separator";
 import { Toaster } from "./components/ui/sonner";
-import { eventFormSchema } from "./lib/post-event";
-import { postEvent, sendEmail } from "./lib/post-event.server";
 
 export const links: Route.LinksFunction = () => [
   {
@@ -74,36 +71,6 @@ export function meta() {
       content: "width=device-width, initial-scale=1",
     },
   ];
-}
-
-export async function action({ request }: { request: Request }) {
-  const formData = await request.formData();
-  const params = new URLSearchParams(new URL(request.url).search);
-
-  if (params.get("_action") === "suggest-event") {
-    const entry = Object.fromEntries(formData);
-    const { issues, output, success } = v.safeParse(eventFormSchema, entry);
-
-    if (!success) {
-      console.error("Failed to validate event form:", issues);
-      return { ok: false };
-    }
-
-    const { error, data } = await postEvent(output);
-
-    if (!data || error) {
-      console.error("Failed to post event:", error);
-      return { ok: false };
-    }
-
-    try {
-      await sendEmail(data.data.documentId, output);
-    } catch (error) {
-      console.error("Failed to send email notification:", error);
-    }
-
-    return { ok: true };
-  }
 }
 
 const queryClient = new QueryClient({
@@ -180,10 +147,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   <div className="flex items-center gap-2">
                     <ThemeSwitcher />
                     <AuthButton />
-                    <LoginDialog />
-                    <RegisterDialog />
                   </div>
-                  {/* <SuggestEvent /> */}
                 </header>
 
                 {children}
@@ -201,6 +165,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </footer>
                 <div className="h-16 rounded-t-md bg-primary-8 dark:bg-primary-4"></div>
               </div>
+
+              <LoginDialog />
+              <RegisterDialog />
+              <SuggestEventDialog />
             </ClientAuthProvider>
           </QueryClientProvider>
         </ThemeProvider>

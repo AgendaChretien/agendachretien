@@ -65,7 +65,7 @@ function DialogContent({
                 ref={popupRef}
                 initialFocus={popupRef}
                 className={cn(
-                  "relative w-[min(40rem,calc(100vw-2rem))] mx-auto my-12 bg-neutral-2 data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 ring-foreground/5 grid max-w-[calc(100%-2rem)] gap-12 rounded-4xl p-6 text-sm ring-1 duration-100 sm:max-w-md",
+                  "relative w-[min(40rem,calc(100vw-2rem))] mx-auto my-4 md:my-12 bg-neutral-2 data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 ring-foreground/5 grid max-w-[calc(100%-2rem)] gap-12 rounded-4xl p-6 text-sm ring-1 duration-100 sm:max-w-md",
                   className,
                 )}
                 {...props}

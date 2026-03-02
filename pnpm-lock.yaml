@@ -23,6 +23,9 @@ importers:
       '@react-router/serve':
         specifier: 7.13.0
         version: 7.13.0(react-router@7.13.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(typescript@5.9.3)
+      '@remix-run/form-data-parser':
+        specifier: ^0.15.0
+        version: 0.15.0
       '@strapi/blocks-react-renderer':
         specifier: ^1.0.2
         version: 1.0.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -1007,6 +1010,15 @@ packages:
   '@redocly/openapi-core@1.34.6':
     resolution: {integrity: sha512-2+O+riuIUgVSuLl3Lyh5AplWZyVMNuG2F98/o6NrutKJfW4/GTZdPpZlIphS0HGgcOHgmWcCSHj+dWFlZaGSHw==}
     engines: {node: '>=18.17.0', npm: '>=9.5.0'}
+
+  '@remix-run/form-data-parser@0.15.0':
+    resolution: {integrity: sha512-sQP4r9218TWmow6Nt252VjKE674dRi4Z8WTnWUxJJG8I/qNfnGZubZ8LgyE0dR9z1gfaEpkd19MfYMLiOTOkJQ==}
+
+  '@remix-run/headers@0.19.0':
+    resolution: {integrity: sha512-+62NbkXuXm9r/NdG6KfH9OCKofCWm8VjkrVPICiHKtRl8Gf2Vi6eFTN4mGgBlZRhd5mmEVRV4hTIn/JUSHDAOw==}
+
+  '@remix-run/multipart-parser@0.14.2':
+    resolution: {integrity: sha512-yDq9ql4Xz92bRG/Sgl4cg2dRlxxC6A40XBy/oyDhy76hJtTQvgyzx9sfPXYPxcfL1BtqljC+sYHE0PvjmQhSfw==}
 
   '@remix-run/node-fetch-server@0.13.0':
     resolution: {integrity: sha512-1EsNo0ZpgXu/90AWoRZf/oE3RVTUS80tiTUpt+hv5pjtAkw7icN4WskDwz/KdAw5ARbJLMhZBrO1NqThmy/McA==}
@@ -4286,6 +4298,16 @@ snapshots:
       yaml-ast-parser: 0.0.43
     transitivePeerDependencies:
       - supports-color
+
+  '@remix-run/form-data-parser@0.15.0':
+    dependencies:
+      '@remix-run/multipart-parser': 0.14.2
+
+  '@remix-run/headers@0.19.0': {}
+
+  '@remix-run/multipart-parser@0.14.2':
+    dependencies:
+      '@remix-run/headers': 0.19.0
 
   '@remix-run/node-fetch-server@0.13.0': {}
 
