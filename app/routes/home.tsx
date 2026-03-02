@@ -258,10 +258,10 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         </div>
         <Button
           size="xl"
-          variant="outline"
+          variant="outline-primary"
           onClick={() => eventsAnchorRef.current?.scrollIntoView({ behavior: "smooth" })}
         >
-          Explorer maintenant
+          Voir les événements
         </Button>
       </div>
 
