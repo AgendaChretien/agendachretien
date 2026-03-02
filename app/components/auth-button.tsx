@@ -5,6 +5,7 @@ import { UserIcon } from "lucide-react";
 import { useAuth } from "./auth";
 import { loginDialogHandle } from "./login-dialog";
 import { registerDialogHandle } from "./register-dialog";
+import { suggestEventDialogHandle } from "./suggest-event-dialog";
 import { Button } from "./ui/button";
 import { DialogTrigger } from "./ui/dialog";
 import {
@@ -40,7 +41,11 @@ export function AuthButton() {
               {user.firstName} {user.lastName}
             </DropdownMenuLabel>
             <DropdownMenuItem disabled>Mes infos</DropdownMenuItem>
-            <DropdownMenuItem disabled>Proposer un évènement</DropdownMenuItem>
+            <DialogTrigger
+              handle={suggestEventDialogHandle}
+              tabIndex={-1}
+              render={<DropdownMenuItem>Proposer un évènement</DropdownMenuItem>}
+            />
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={logout}>Se déconnecter</DropdownMenuItem>
