@@ -6,7 +6,7 @@ import client from "~/lib/client.server";
 import { transporter } from "~/lib/email.server";
 
 function sendEmail(id: string, values: v.InferOutput<typeof registerFormSchema>) {
-  const editUrl = `${process.env.VITE_STRAPI_URL}/content-manager/collectionType/api::user.user/${id}`;
+  const editUrl = `${process.env.VITE_STRAPI_URL}/admin/content-manager/collection-types/plugin::users-permissions.user/${id}`;
 
   const html = renderToString(
     <div>
