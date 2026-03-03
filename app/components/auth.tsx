@@ -52,6 +52,7 @@ export const registerFormSchema = v.pipe(
       v.nonEmpty("L'email est requis"),
       v.email("Format d'email invalide"),
     ),
+    phone: v.optional(v.string()),
     password: v.pipe(
       v.string("Le mot de passe est requis"),
       v.nonEmpty("Le mot de passe est requis"),
