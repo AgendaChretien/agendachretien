@@ -206,6 +206,27 @@ function Content() {
                 </Field>
               )}
             </formisch.Field>
+            <formisch.Field of={form} path={["phone"]}>
+              {(field) => (
+                <Field>
+                  <Label htmlFor={field.props.name}>Téléphone</Label>
+                  <Input
+                    {...field.props}
+                    id={field.props.name}
+                    value={field.input ?? ""}
+                    aria-invalid={!field.isValid}
+                    disabled={isSubmitting}
+                    autoComplete="tel"
+                    type="tel"
+                    inputMode="tel"
+                    autoCapitalize="none"
+                    spellCheck="false"
+                    required
+                  />
+                  {field.errors && <FieldError>{field.errors[0]}</FieldError>}
+                </Field>
+              )}
+            </formisch.Field>
             <formisch.Field of={form} path={["church"]}>
               {(field) => (
                 <Field>

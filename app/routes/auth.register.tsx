@@ -18,27 +18,32 @@ function sendEmail(id: string, values: v.InferOutput<typeof registerFormSchema>)
         <strong>Nom :</strong> {values.lastName}
       </p>
       <p>
-        <strong>Église fréquentée :</strong> {values.church || "Non renseignée"}
+        <strong>Église fréquentée :</strong> {values.church || <em>Non renseigné</em>}
       </p>
       <p>
-        <strong>Association :</strong> {values.association || "Non renseignée"}
+        <strong>Association :</strong> {values.association || <em>Non renseigné</em>}
       </p>
       <p>
         <strong>Email :</strong> {values.email}
+      </p>
+      <p>
+        <strong>Téléphone :</strong> {values.phone || <em>Non renseigné</em>}
       </p>
       <p>
         <strong>Lien d'édition :</strong> <a href={editUrl}>{editUrl}</a>
       </p>
       <p>
         <strong>Commentaire :</strong>{" "}
-        {values.comment
-          ? values.comment.split("\n").map((line, index) => (
-              <span key={index}>
-                {line}
-                <br />
-              </span>
-            ))
-          : "Aucun commentaire"}
+        {values.comment ? (
+          values.comment.split("\n").map((line, index) => (
+            <span key={index}>
+              {line}
+              <br />
+            </span>
+          ))
+        ) : (
+          <em>Non renseigné</em>
+        )}
       </p>
     </div>,
   );
