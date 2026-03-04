@@ -58,6 +58,18 @@ interface PartProps {
   className?: string;
 }
 
+function formatSize(size: number) {
+  if (size < 1024) {
+    return `${size} o`;
+  } else if (size < 1024 * 1024) {
+    return `${(size / 1024).toFixed(2)} Ko`;
+  } else if (size < 1024 * 1024 * 1024) {
+    return `${(size / (1024 * 1024)).toFixed(2)} Mo`;
+  } else {
+    return `${(size / (1024 * 1024 * 1024)).toFixed(2)} Go`;
+  }
+}
+
 function Part1({ form, disabled, className }: PartProps) {
   const [multiDays, setMultiDays] = useState(false);
 
@@ -306,7 +318,7 @@ function Part4({ form, disabled, className }: PartProps) {
                             <div>{field.input ? field.input.name : "Choisissez un fichier"}</div>
                             <div className="text-sm text-muted-foreground">
                               {field.input
-                                ? `Taille : ${(field.input.size / 1024 / 1024).toFixed(2)} Mo`
+                                ? formatSize(field.input.size)
                                 : ".jpg, .png, .pdf, .doc, .docx"}
                             </div>
                           </div>
