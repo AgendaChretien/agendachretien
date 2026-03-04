@@ -6,10 +6,10 @@ import { Fragment, useEffect, useId, useState } from "react";
 import { useFetcher } from "react-router";
 import { toast } from "sonner";
 
+import { useAuth } from "~/lib/auth";
 import { filterEmpty } from "~/lib/form";
 import { documentTypes, eventFormSchema, extensions } from "~/lib/post-event";
 
-import { useAuth } from "./auth";
 import { loginDialogHandle } from "./login-dialog";
 import { registerDialogHandle } from "./register-dialog";
 import { RequiredBadge } from "./required-badge";

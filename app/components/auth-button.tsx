@@ -1,8 +1,10 @@
 "use client";
 import { Popover as PopoverPrimitive } from "@base-ui/react";
 import { UserIcon } from "lucide-react";
+import { useFetcher } from "react-router";
 
-import { useAuth } from "./auth";
+import { useAuth } from "~/lib/auth";
+
 import { loginDialogHandle } from "./login-dialog";
 import { registerDialogHandle } from "./register-dialog";
 import { Button } from "./ui/button";
@@ -20,7 +22,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 const popoverHandle = PopoverPrimitive.createHandle();
 
 export function AuthButton() {
-  const { user, logout, isLoading } = useAuth();
+  const { user } = useAuth();
+  const fetcher = useFetcher();
 
   if (user) {
     return (
@@ -44,7 +47,13 @@ export function AuthButton() {
             {/* <DropdownMenuItem disabled>Mes infos</DropdownMenuItem> */}
           </DropdownMenuGroup>
           {/* <DropdownMenuSeparator /> */}
-          <DropdownMenuItem onClick={logout}>Se déconnecter</DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              fetcher.submit(null, { method: "post", action: "/auth/logout" });
+            }}
+          >
+            Se déconnecter
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     );
@@ -54,7 +63,7 @@ export function AuthButton() {
     <Popover handle={popoverHandle}>
       <PopoverTrigger
         render={
-          <Button variant="secondary" size="icon" className="uppercase" disabled={isLoading}>
+          <Button variant="secondary" size="icon" className="uppercase">
             <UserIcon />
           </Button>
         }

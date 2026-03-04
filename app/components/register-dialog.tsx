@@ -6,10 +6,10 @@ import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 import { toast } from "sonner";
 
+import { registerFormSchema, useAuth } from "~/lib/auth";
 import { filterEmpty } from "~/lib/form";
 import type { ActionData } from "~/routes/auth.register";
 
-import { registerFormSchema, useAuth } from "./auth";
 import { loginDialogHandle } from "./login-dialog";
 import { RequiredBadge } from "./required-badge";
 import { Button } from "./ui/button";

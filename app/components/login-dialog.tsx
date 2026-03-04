@@ -2,9 +2,12 @@
 
 import { Dialog as DialogPrimitive } from "@base-ui/react";
 import * as formisch from "@formisch/react";
+import { useEffect } from "react";
+import { useFetcher } from "react-router";
 import { toast } from "sonner";
 
-import { loginFormSchema, useAuth } from "./auth";
+import { loginFormSchema, useAuth } from "~/lib/auth";
+
 import { registerDialogHandle } from "./register-dialog";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
@@ -15,18 +18,26 @@ import { Label } from "./ui/label";
 export const loginDialogHandle = DialogPrimitive.createHandle();
 
 function Content() {
-  const { login } = useAuth();
+  const fetcher = useFetcher<{ ok: true; firstName: string }>();
+  const { user } = useAuth();
 
   const form = formisch.useForm({ schema: loginFormSchema });
 
-  const submitForm: formisch.SubmitHandler<typeof loginFormSchema> = async (values) => {
-    const result = await login(values);
+  useEffect(() => {
+    if (fetcher.state !== "idle" || !fetcher.data) {
+      return;
+    }
 
-    if (result.success) {
+    if (fetcher.data.ok) {
+      toast.success(`Bonjour ${fetcher.data.firstName}, vous êtes connecté !`);
       loginDialogHandle.close();
     } else {
       toast.error("Échec de la connexion. Veuillez vérifier vos identifiants et réessayer.");
     }
+  }, [fetcher.state, fetcher.data, user]);
+
+  const submitForm: formisch.SubmitHandler<typeof loginFormSchema> = async (values) => {
+    fetcher.submit(values, { method: "post", action: "/auth/login" });
   };
 
   return (
