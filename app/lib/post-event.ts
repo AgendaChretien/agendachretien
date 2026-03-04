@@ -3,6 +3,7 @@ import * as v from "valibot";
 
 export const documentTypes = [
   "image/jpg",
+  "image/jpeg",
   "image/png",
   "image/webp",
   "application/pdf",
