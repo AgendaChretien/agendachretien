@@ -1,7 +1,7 @@
 import { renderToString } from "react-dom/server";
 import * as v from "valibot";
 
-import { registerFormSchema } from "~/components/auth";
+import { registerFormSchema } from "~/lib/auth";
 import client from "~/lib/client.server";
 import { transporter } from "~/lib/email.server";
 

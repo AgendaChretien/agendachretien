@@ -1,10 +1,10 @@
 import { CheckIcon } from "lucide-react";
 import { Navigate } from "react-router";
 
-import { useAuth } from "~/components/auth";
 import { loginDialogHandle } from "~/components/login-dialog";
 import { Button } from "~/components/ui/button";
 import { DialogTrigger } from "~/components/ui/dialog";
+import { useAuth } from "~/lib/auth";
 
 export default function AuthConfirmation() {
   const { user } = useAuth();

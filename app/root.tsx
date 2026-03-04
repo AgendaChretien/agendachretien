@@ -1,5 +1,4 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import "./app.css";
@@ -18,8 +17,7 @@ import {
 import type { Route } from "./+types/root";
 import { AuthButton } from "./components/auth-button";
 import { Brand } from "./components/brand";
-import { ClientAuthProvider } from "./components/client-auth-provider";
-import { GlobalSpinner } from "./components/GlobalSpinner";
+import { GlobalSpinner } from "./components/global-spinner";
 import { LoginDialog } from "./components/login-dialog";
 import { Logo } from "./components/logo";
 import { RegisterDialog } from "./components/register-dialog";
@@ -36,6 +34,7 @@ import {
 } from "./components/ui/dropdown-menu";
 import { Separator } from "./components/ui/separator";
 import { Toaster } from "./components/ui/sonner";
+import { getSession } from "./lib/session.server";
 
 export const links: Route.LinksFunction = () => [
   {
@@ -92,6 +91,13 @@ const queryClient = new QueryClient({
   },
 });
 
+export async function loader({ request }: Route.LoaderArgs) {
+  const session = await getSession(request);
+  const user = session.get("user");
+
+  return { user };
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
   const navigation = useNavigation();
   const isNavigating = Boolean(navigation.location);
@@ -134,77 +140,75 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <ThemeProvider>
           <QueryClientProvider client={queryClient}>
-            <ClientAuthProvider>
-              {isNavigating && <GlobalSpinner />}
+            {isNavigating && <GlobalSpinner />}
 
-              <div className="isolate flex min-h-lvh flex-col gap-8">
-                <header className="@container sticky top-0 z-10 mx-auto my-2 flex h-(--header-height) w-full max-w-5xl items-center justify-between bg-background/50 px-6 backdrop-blur-sm md:my-4">
-                  <div className="relative flex items-center gap-4">
-                    <Link
-                      to="/"
-                      className="absolute inset-0"
-                      aria-label="Retour à la page d'accueil"
-                    />
-                    <Logo className="h-8 fill-primary-8 md:h-10 dark:fill-neutral-12" />
-                    <div className="flex flex-col items-start">
-                      <Brand className="h-4 fill-primary-8 sm:h-5 dark:fill-neutral-12" />
-                      <div className="mt-1 rounded-full rounded-tl-none bg-primary-6 px-1.5 text-xs text-trim-both font-black text-background uppercase dark:bg-primary-8">
-                        Lyon
-                      </div>
+            <div className="isolate flex min-h-lvh flex-col gap-8">
+              <header className="@container sticky top-0 z-10 mx-auto my-2 flex h-(--header-height) w-full max-w-5xl items-center justify-between bg-background/50 px-6 backdrop-blur-sm md:my-4">
+                <div className="relative flex items-center gap-4">
+                  <Link
+                    to="/"
+                    className="absolute inset-0"
+                    aria-label="Retour à la page d'accueil"
+                  />
+                  <Logo className="h-8 fill-primary-8 md:h-10 dark:fill-neutral-12" />
+                  <div className="flex flex-col items-start">
+                    <Brand className="h-4 fill-primary-8 sm:h-5 dark:fill-neutral-12" />
+                    <div className="mt-1 rounded-full rounded-tl-none bg-primary-6 px-1.5 text-xs text-trim-both font-black text-background uppercase dark:bg-primary-8">
+                      Lyon
                     </div>
                   </div>
+                </div>
 
-                  <div className="flex items-center gap-2">
-                    <ThemeSwitcher className="max-sm:hidden" />
-                    <DialogTrigger
-                      handle={suggestEventDialogHandle}
-                      tabIndex={-1}
-                      render={<Button className="max-sm:hidden">Proposer un évènement</Button>}
+                <div className="flex items-center gap-2">
+                  <ThemeSwitcher className="max-sm:hidden" />
+                  <DialogTrigger
+                    handle={suggestEventDialogHandle}
+                    tabIndex={-1}
+                    render={<Button className="max-sm:hidden">Proposer un évènement</Button>}
+                  />
+                  <AuthButton />
+
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      render={
+                        <Button variant="ghost" size="icon" className="sm:hidden">
+                          <MenuIcon />
+                        </Button>
+                      }
                     />
-                    <AuthButton />
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuGroup>
+                        <DialogTrigger
+                          handle={suggestEventDialogHandle}
+                          tabIndex={-1}
+                          render={<DropdownMenuItem>Proposer un évènement</DropdownMenuItem>}
+                        />
+                        <ThemeSwitcherSubMenu />
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </header>
 
-                    <DropdownMenu>
-                      <DropdownMenuTrigger
-                        render={
-                          <Button variant="ghost" size="icon" className="sm:hidden">
-                            <MenuIcon />
-                          </Button>
-                        }
-                      />
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuGroup>
-                          <DialogTrigger
-                            handle={suggestEventDialogHandle}
-                            tabIndex={-1}
-                            render={<DropdownMenuItem>Proposer un évènement</DropdownMenuItem>}
-                          />
-                          <ThemeSwitcherSubMenu />
-                        </DropdownMenuGroup>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </header>
+              {children}
 
-                {children}
+              <div className="mt-auto" />
+              <Separator className="mt-12" />
+              <footer className="mx-auto flex w-full max-w-4xl flex-col items-center justify-between gap-4 px-4 xs:flex-row">
+                <div className="flex items-center gap-3">
+                  <Logo className="h-6 fill-muted-foreground" />
+                  <Brand className="h-4 fill-muted-foreground" />
+                </div>
+                <div className="text-right text-sm text-muted-foreground">
+                  © {new Date().getFullYear()} Agenda chrétien
+                </div>
+              </footer>
+              <div className="h-16 rounded-t-md bg-primary-8 dark:bg-primary-4"></div>
+            </div>
 
-                <div className="mt-auto" />
-                <Separator className="mt-12" />
-                <footer className="mx-auto flex w-full max-w-4xl flex-col items-center justify-between gap-4 px-4 xs:flex-row">
-                  <div className="flex items-center gap-3">
-                    <Logo className="h-6 fill-muted-foreground" />
-                    <Brand className="h-4 fill-muted-foreground" />
-                  </div>
-                  <div className="text-right text-sm text-muted-foreground">
-                    © {new Date().getFullYear()} Agenda chrétien
-                  </div>
-                </footer>
-                <div className="h-16 rounded-t-md bg-primary-8 dark:bg-primary-4"></div>
-              </div>
-
-              <LoginDialog />
-              <RegisterDialog />
-              <SuggestEventDialog />
-            </ClientAuthProvider>
+            <LoginDialog />
+            <RegisterDialog />
+            <SuggestEventDialog />
           </QueryClientProvider>
         </ThemeProvider>
         <Toaster position="top-center" />
