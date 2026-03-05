@@ -135,7 +135,7 @@ function Content() {
               </Field>
             )}
           </formisch.Field>
-          <formisch.Field of={form} path={["confirmPassword"]}>
+          <formisch.Field of={form} path={["passwordConfirmation"]}>
             {(field) => (
               <Field>
                 <Label htmlFor={field.props.name}>

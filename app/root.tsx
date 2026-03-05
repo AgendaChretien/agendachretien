@@ -17,6 +17,7 @@ import {
 import type { Route } from "./+types/root";
 import { AuthButton } from "./components/auth-button";
 import { Brand } from "./components/brand";
+import { ForgotPasswordDialog } from "./components/forgot-password-dialog";
 import { GlobalSpinner } from "./components/global-spinner";
 import { LoginDialog } from "./components/login-dialog";
 import { Logo } from "./components/logo";
@@ -192,8 +193,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
               {children}
 
-              <div className="mt-auto" />
-              <Separator className="mt-12" />
+              <Separator className="mt-auto" />
               <footer className="mx-auto flex w-full max-w-4xl flex-col items-center justify-between gap-4 px-4 xs:flex-row">
                 <div className="flex items-center gap-3">
                   <Logo className="h-6 fill-muted-foreground" />

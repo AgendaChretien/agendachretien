@@ -49,15 +49,43 @@ export const registerFormSchema = v.pipe(
       v.nonEmpty("Le mot de passe est requis"),
       v.minLength(8, "Le mot de passe doit contenir au moins 8 caractères"),
     ),
-    confirmPassword: v.string("La confirmation du mot de passe est requise"),
+    passwordConfirmation: v.string("La confirmation du mot de passe est requise"),
   }),
   v.forward(
     v.partialCheck(
-      [["password"], ["confirmPassword"]],
-      ({ password, confirmPassword }) => password === confirmPassword,
+      [["password"], ["passwordConfirmation"]],
+      ({ password, passwordConfirmation }) => password === passwordConfirmation,
       "Les mots de passe ne correspondent pas",
     ),
-    ["confirmPassword"],
+    ["passwordConfirmation"],
+  ),
+);
+
+export const forgotPasswordFormSchema = v.object({
+  email: v.pipe(
+    v.string("L'email est requis"),
+    v.nonEmpty("L'email est requis"),
+    v.email("Format d'email invalide"),
+  ),
+});
+
+export const resetPasswordFormSchema = v.pipe(
+  v.object({
+    code: v.string("Le code de réinitialisation est requis"),
+    password: v.pipe(
+      v.string("Le mot de passe est requis"),
+      v.nonEmpty("Le mot de passe est requis"),
+      v.minLength(8, "Le mot de passe doit contenir au moins 8 caractères"),
+    ),
+    passwordConfirmation: v.string("La confirmation du mot de passe est requise"),
+  }),
+  v.forward(
+    v.partialCheck(
+      [["password"], ["passwordConfirmation"]],
+      ({ password, passwordConfirmation }) => password === passwordConfirmation,
+      "Les mots de passe ne correspondent pas",
+    ),
+    ["passwordConfirmation"],
   ),
 );
 

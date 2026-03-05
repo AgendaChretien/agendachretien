@@ -8,6 +8,7 @@ import { toast } from "sonner";
 
 import { loginFormSchema, useAuth } from "~/lib/auth";
 
+import { ForgotPasswordDialog, forgotPasswordDialogHandle } from "./forgot-password-dialog";
 import { registerDialogHandle } from "./register-dialog";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
@@ -16,8 +17,6 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
 export const loginDialogHandle = DialogPrimitive.createHandle();
-
-const resetPasswordDialogHandle = DialogPrimitive.createHandle();
 
 function Content() {
   const fetcher = useFetcher<{ ok: true; firstName: string }>();
@@ -96,14 +95,15 @@ function Content() {
             <Button type="submit" disabled={isSubmitting} className="w-full">
               {isSubmitting ? "Connexion..." : "Se connecter"}
             </Button>
-            <DialogTrigger
-              handle={resetPasswordDialogHandle}
-              render={
-                <Button className="" variant="ghost">
-                  Mot de passe perdu
-                </Button>
-              }
-            />
+            <formisch.Field of={form} path={["email"]}>
+              {(field) => (
+                <DialogTrigger
+                  handle={forgotPasswordDialogHandle}
+                  payload={{ email: field.input }}
+                  render={<Button variant="ghost">Mot de passe perdu</Button>}
+                />
+              )}
+            </formisch.Field>
           </div>
         </FieldGroup>
       </formisch.Form>
@@ -125,14 +125,6 @@ function Content() {
           }
         />
       </div>
-
-      <Dialog handle={resetPasswordDialogHandle}>
-        <DialogContent className="sm:max-w-sm" keepMounted={false}>
-          <DialogHeader>
-            <DialogTitle>Réinitialiser le mot de passe</DialogTitle>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
     </>
   );
 }
@@ -143,6 +135,7 @@ export function LoginDialog() {
       <DialogContent className="sm:max-w-sm" keepMounted={false}>
         <Content />
       </DialogContent>
+      <ForgotPasswordDialog />
     </Dialog>
   );
 }
