@@ -2,6 +2,7 @@ import { renderToString } from "react-dom/server";
 import * as v from "valibot";
 
 import { registerFormSchema } from "~/lib/auth";
+import { requireHumanUser } from "~/lib/botid.server";
 import client from "~/lib/client.server";
 import { transporter } from "~/lib/email.server";
 
@@ -57,6 +58,9 @@ function sendEmail(id: string, values: v.InferOutput<typeof registerFormSchema>)
 }
 
 export async function action({ request }: { request: Request }) {
+  // Verify the request is from a human user, not a bot
+  await requireHumanUser();
+
   const formData = await request.formData();
 
   const entry = Object.fromEntries(formData);

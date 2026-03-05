@@ -15,6 +15,7 @@ import { Field, FieldError } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { resetPasswordFormSchema } from "~/lib/auth";
+import { requireHumanUser } from "~/lib/botid.server";
 import client from "~/lib/client.server";
 
 import type { Route } from "./+types/auth.reset-password";
@@ -24,6 +25,9 @@ export function loader() {
 }
 
 export async function action({ request }: Route.ActionArgs) {
+  // Verify the request is from a human user, not a bot
+  await requireHumanUser();
+
   const formData = await request.formData();
   const entry = Object.fromEntries(formData);
 

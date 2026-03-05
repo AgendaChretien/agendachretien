@@ -2,12 +2,16 @@ import { data as json } from "react-router";
 import * as v from "valibot";
 
 import { loginFormSchema } from "~/lib/auth";
+import { requireHumanUser } from "~/lib/botid.server";
 import client from "~/lib/client.server";
 import { commitSession, getSession } from "~/lib/session.server";
 
 import type { Route } from "./+types/auth.login";
 
 export async function action({ request }: Route.ActionArgs) {
+  // Verify the request is from a human user, not a bot
+  await requireHumanUser();
+
   const formData = await request.formData();
   const entry = Object.fromEntries(formData);
   const { issues, output, success } = v.safeParse(loginFormSchema, entry);

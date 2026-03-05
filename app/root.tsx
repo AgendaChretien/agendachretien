@@ -2,6 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
 import "./app.css";
+import { BotIdClient } from "botid/client";
+import {} from "botid/client/core";
 import { MenuIcon } from "lucide-react";
 import {
   isRouteErrorResponse,
@@ -17,7 +19,6 @@ import {
 import type { Route } from "./+types/root";
 import { AuthButton } from "./components/auth-button";
 import { Brand } from "./components/brand";
-import { ForgotPasswordDialog } from "./components/forgot-password-dialog";
 import { GlobalSpinner } from "./components/global-spinner";
 import { LoginDialog } from "./components/login-dialog";
 import { Logo } from "./components/logo";
@@ -136,7 +137,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
             `,
           }}
         ></script>
+
         <Links />
+
+        <BotIdClient
+          protect={
+            import.meta.env.PROD
+              ? [
+                  { path: "/auth/login*", method: "POST" },
+                  { path: "/auth/register*", method: "POST" },
+                  { path: "/auth/forgot-password*", method: "POST" },
+                  { path: "/auth/reset-password*", method: "POST" },
+                  { path: "/suggest-event*", method: "POST" },
+                ]
+              : []
+          }
+        />
       </head>
       <body>
         <ThemeProvider>
