@@ -67,7 +67,7 @@ export async function action({ request }: { request: Request }) {
     return { ok: false };
   }
 
-  const { confirmPassword: _, comment: __, ...values } = output;
+  const { passwordConfirmation: _, comment: __, ...values } = output;
 
   const { data, error } = await client.POST("/auth/local/register", {
     body: { ...values, username: values.email },
