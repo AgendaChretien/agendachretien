@@ -1,11 +1,15 @@
 import { parseFormData } from "@remix-run/form-data-parser";
 import * as v from "valibot";
 
+import { requireHumanUser } from "~/lib/botid.server";
 import client from "~/lib/client.server";
 import { eventFormSchema } from "~/lib/post-event";
 import { postEvent, sendEmail } from "~/lib/post-event.server";
 
 export async function action({ request }: { request: Request }) {
+  // Verify the request is from a human user, not a bot
+  await requireHumanUser();
+
   try {
     const formData = await parseFormData(request);
 
