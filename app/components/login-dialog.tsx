@@ -17,6 +17,8 @@ import { Label } from "./ui/label";
 
 export const loginDialogHandle = DialogPrimitive.createHandle();
 
+const resetPasswordDialogHandle = DialogPrimitive.createHandle();
+
 function Content() {
   const fetcher = useFetcher<{ ok: true; firstName: string }>();
   const { user } = useAuth();
@@ -39,6 +41,8 @@ function Content() {
   const submitForm: formisch.SubmitHandler<typeof loginFormSchema> = async (values) => {
     fetcher.submit(values, { method: "post", action: "/auth/login" });
   };
+
+  const isSubmitting = fetcher.state === "submitting";
 
   return (
     <>
@@ -88,9 +92,19 @@ function Content() {
             )}
           </formisch.Field>
 
-          <Button type="submit" disabled={form.isSubmitting} className="w-full">
-            {form.isSubmitting ? "Connexion..." : "Se connecter"}
-          </Button>
+          <div className="flex flex-col gap-2">
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting ? "Connexion..." : "Se connecter"}
+            </Button>
+            <DialogTrigger
+              handle={resetPasswordDialogHandle}
+              render={
+                <Button className="" variant="ghost">
+                  Mot de passe perdu
+                </Button>
+              }
+            />
+          </div>
         </FieldGroup>
       </formisch.Form>
 
@@ -111,6 +125,14 @@ function Content() {
           }
         />
       </div>
+
+      <Dialog handle={resetPasswordDialogHandle}>
+        <DialogContent className="sm:max-w-sm" keepMounted={false}>
+          <DialogHeader>
+            <DialogTitle>Réinitialiser le mot de passe</DialogTitle>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
