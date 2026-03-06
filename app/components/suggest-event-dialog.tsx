@@ -198,7 +198,7 @@ function Part1({ form, disabled, className }: PartProps) {
           onCheckedChange={(checked) => setMultiDays(checked)}
         />
         <FieldContent>
-          <FieldLabel htmlFor="multiDays">événement sur plusieurs jours</FieldLabel>
+          <FieldLabel htmlFor="multiDays">Événement sur plusieurs jours</FieldLabel>
         </FieldContent>
       </Field>
     </FieldGroup>

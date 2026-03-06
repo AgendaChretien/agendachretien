@@ -181,7 +181,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   <DialogTrigger
                     handle={suggestEventDialogHandle}
                     tabIndex={-1}
-                    render={<Button className="max-sm:hidden">Proposer un évènement</Button>}
+                    render={<Button className="max-sm:hidden">Proposer un événement</Button>}
                   />
                   <AuthButton />
 
@@ -198,7 +198,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                         <DialogTrigger
                           handle={suggestEventDialogHandle}
                           tabIndex={-1}
-                          render={<DropdownMenuItem>Proposer un évènement</DropdownMenuItem>}
+                          render={<DropdownMenuItem>Proposer un événement</DropdownMenuItem>}
                         />
                         <ThemeSwitcherSubMenu />
                       </DropdownMenuGroup>

@@ -275,7 +275,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         <Separator />
 
         <div className="space-y-8">
-          <h2 className="text-lg">événements</h2>
+          <h2 className="text-lg">Événements</h2>
           <Calendar period={period} onChange={setPeriod} />
           <Events
             period={period}
