@@ -326,7 +326,7 @@ export default function Event({ loaderData: { event, calendarUrls } }: Route.Com
             {event.address && (
               <div className="space-y-2">
                 <div className="text-muted-foreground">Adresse</div>
-                <div>{event.address}</div>
+                <div className="whitespace-pre-line">{event.address}</div>
                 <Button
                   variant="secondary"
                   render={
