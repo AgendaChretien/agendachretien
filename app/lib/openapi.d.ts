@@ -1148,8 +1148,8 @@ export interface operations {
             }[];
         populate?:
           | "*"
-          | ("city" | "picture" | "attachments")
-          | ("city" | "picture" | "attachments")[];
+          | ("city" | "picture" | "extraPictures")
+          | ("city" | "picture" | "extraPictures")[];
       };
       header?: never;
       path?: never;
@@ -1174,7 +1174,7 @@ export interface operations {
               /** @description A string field */
               title: string;
               /** @description A blocks field */
-              description?: BlocksContent;
+              description?: BlocksContent[];
               /** @description A date field */
               startDate: string;
               /** @description A date field */
@@ -1208,7 +1208,7 @@ export interface operations {
               /** @description A media field */
               picture?: components["schemas"]["PluginUploadFileDocument"];
               /** @description A media field */
-              attachments?: components["schemas"]["PluginUploadFileDocument"][];
+              extraPictures?: components["schemas"]["PluginUploadFileDocument"][];
             }[];
           };
         };
@@ -1271,8 +1271,8 @@ export interface operations {
         )[];
         populate?:
           | "*"
-          | ("city" | "picture" | "attachments")
-          | ("city" | "picture" | "attachments")[];
+          | ("city" | "picture" | "extraPictures")
+          | ("city" | "picture" | "extraPictures")[];
       };
       header?: never;
       path?: never;
@@ -1285,7 +1285,7 @@ export interface operations {
             /** @description A string field */
             title: string;
             /** @description A blocks field */
-            description?: BlocksContent;
+            description?: BlocksContent[];
             /** @description A date field */
             startDate: string;
             /** @description A date field */
@@ -1318,7 +1318,7 @@ export interface operations {
             /** @description A media field */
             picture?: unknown;
             /** @description A media field */
-            attachments?: unknown[];
+            extraPictures?: unknown[];
           };
         };
       };
@@ -1341,7 +1341,7 @@ export interface operations {
               /** @description A string field */
               title: string;
               /** @description A blocks field */
-              description?: BlocksContent;
+              description?: BlocksContent[];
               /** @description A date field */
               startDate: string;
               /** @description A date field */
@@ -1375,7 +1375,7 @@ export interface operations {
               /** @description A media field */
               picture?: components["schemas"]["PluginUploadFileDocument"];
               /** @description A media field */
-              attachments?: components["schemas"]["PluginUploadFileDocument"][];
+              extraPictures?: components["schemas"]["PluginUploadFileDocument"][];
             };
           };
         };
@@ -1437,8 +1437,8 @@ export interface operations {
         )[];
         populate?:
           | "*"
-          | ("city" | "picture" | "attachments")
-          | ("city" | "picture" | "attachments")[];
+          | ("city" | "picture" | "extraPictures")
+          | ("city" | "picture" | "extraPictures")[];
         filters?: {
           [key: string]: unknown;
         };
@@ -1505,7 +1505,7 @@ export interface operations {
               /** @description A string field */
               title: string;
               /** @description A blocks field */
-              description?: BlocksContent;
+              description?: BlocksContent[];
               /** @description A date field */
               startDate: string;
               /** @description A date field */
@@ -1539,7 +1539,7 @@ export interface operations {
               /** @description A media field */
               picture?: components["schemas"]["PluginUploadFileDocument"];
               /** @description A media field */
-              attachments?: components["schemas"]["PluginUploadFileDocument"][];
+              extraPictures?: components["schemas"]["PluginUploadFileDocument"][];
             };
           };
         };
@@ -1601,8 +1601,8 @@ export interface operations {
         )[];
         populate?:
           | "*"
-          | ("city" | "picture" | "attachments")
-          | ("city" | "picture" | "attachments")[];
+          | ("city" | "picture" | "extraPictures")
+          | ("city" | "picture" | "extraPictures")[];
       };
       header?: never;
       path: {
@@ -1650,7 +1650,7 @@ export interface operations {
             /** @description A media field */
             picture?: unknown;
             /** @description A media field */
-            attachments?: unknown[];
+            extraPictures?: unknown[];
           };
         };
       };
@@ -1673,7 +1673,7 @@ export interface operations {
               /** @description A string field */
               title: string;
               /** @description A blocks field */
-              description?: BlocksContent;
+              description?: BlocksContent[];
               /** @description A date field */
               startDate: string;
               /** @description A date field */
@@ -1707,7 +1707,7 @@ export interface operations {
               /** @description A media field */
               picture?: components["schemas"]["PluginUploadFileDocument"];
               /** @description A media field */
-              attachments?: components["schemas"]["PluginUploadFileDocument"][];
+              extraPictures?: components["schemas"]["PluginUploadFileDocument"][];
             };
           };
         };
@@ -1769,8 +1769,8 @@ export interface operations {
         )[];
         populate?:
           | "*"
-          | ("city" | "picture" | "attachments")
-          | ("city" | "picture" | "attachments")[];
+          | ("city" | "picture" | "extraPictures")
+          | ("city" | "picture" | "extraPictures")[];
         filters?: {
           [key: string]: unknown;
         };
@@ -1800,7 +1800,7 @@ export interface operations {
               /** @description A string field */
               title: string;
               /** @description A blocks field */
-              description?: BlocksContent;
+              description?: BlocksContent[];
               /** @description A date field */
               startDate: string;
               /** @description A date field */
@@ -1834,7 +1834,7 @@ export interface operations {
               /** @description A media field */
               picture?: components["schemas"]["PluginUploadFileDocument"];
               /** @description A media field */
-              attachments?: components["schemas"]["PluginUploadFileDocument"][];
+              extraPictures?: components["schemas"]["PluginUploadFileDocument"][];
             };
           };
         };
