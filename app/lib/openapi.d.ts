@@ -3519,7 +3519,9 @@ export interface operations {
   };
   "users-permissions/get/auth_email_confirmation": {
     parameters: {
-      query?: never;
+      query?: {
+        confirmation: string;
+      };
       header?: never;
       path?: never;
       cookie?: never;

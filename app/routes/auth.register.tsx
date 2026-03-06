@@ -75,6 +75,9 @@ export async function action({ request }: { request: Request }) {
 
   const { data, error } = await client.POST("/auth/local/register", {
     body: { ...values, username: values.email },
+    headers: {
+      Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+    },
   });
 
   if (error || !data) {
