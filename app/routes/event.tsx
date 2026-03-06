@@ -1,5 +1,6 @@
 import { BlocksRenderer } from "@strapi/blocks-react-renderer";
 import { google, outlook, yahoo, type CalendarEvent } from "calendar-link";
+import { isAfter } from "date-fns";
 import { Calendar, Calendar1, ExternalLink, File } from "lucide-react";
 import Zoom from "react-medium-image-zoom";
 import ReactPlayer from "react-player";
@@ -23,9 +24,8 @@ import client from "~/lib/client";
 import { formatToText } from "~/lib/rich-text";
 import { uploadUrl } from "~/lib/utils";
 
-import type { Route } from "./+types/event";
-
 import "react-medium-image-zoom/dist/styles.css";
+import type { Route } from "./+types/event";
 
 type Event = Route.ComponentProps["loaderData"]["event"];
 type Media = NonNullable<Event["extraPictures"]>[number];
@@ -85,13 +85,13 @@ export async function loader({ params }: Route.LoaderArgs) {
 
   const event = data.data;
 
+  const endDate = event.endDate || event.startDate;
+
   const calendarEvent: CalendarEvent = {
     title: event.title,
     description: formatToText(event.description),
     start: event.startDate + (event.startTime ? `T${event.startTime}` : ""),
-    end: event.endDate
-      ? event.endDate + (event.endTime ? `T${event.endTime}` : "")
-      : event.startDate + (event.startTime ? `T${event.startTime}` : ""),
+    end: endDate + (event.endTime ? `T${event.endTime}` : ""),
     location: event.address,
   };
 
@@ -289,6 +289,85 @@ function AddToCalendar({ urls }: { urls: CalendarUrls }) {
   );
 }
 
+function MetaData({ event, calendarUrls }: { event: Event; calendarUrls: CalendarUrls }) {
+  const isDone = isAfter(new Date(), event.endDate || event.startDate);
+
+  if (isDone) {
+    return (
+      <div className="rounded-sm bg-muted p-4 text-muted-foreground">Cet événement est terminé</div>
+    );
+  }
+
+  return (
+    <>
+      <div className="space-y-2">
+        <div className="text-muted-foreground">Date</div>
+        <div className="mb-4">{displayDate(event)}</div>
+        <div>
+          <AddToCalendar urls={calendarUrls} />
+        </div>
+      </div>
+
+      {event.address && (
+        <div className="space-y-2">
+          <div className="text-muted-foreground">Adresse</div>
+          <div className="whitespace-pre-line">{event.address}</div>
+          <Button
+            variant="secondary"
+            render={
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.address)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              />
+            }
+          >
+            Voir sur Google Maps <ExternalLink className="h-4" />
+          </Button>
+        </div>
+      )}
+
+      {event.email && (
+        <div className="space-y-2">
+          <div className="text-muted-foreground">Email</div>
+          <div className="max-w-full truncate">
+            <a className="underline" href={`mailto:${event.email}`} title={event.email}>
+              {event.email}
+            </a>
+          </div>
+        </div>
+      )}
+
+      {event.phone && (
+        <div className="space-y-2">
+          <div className="text-muted-foreground">Téléphone</div>
+          <div className="max-w-full truncate">
+            <a className="underline" href={`tel:${event.phone}`}>
+              {event.phone}
+            </a>
+          </div>
+        </div>
+      )}
+
+      {event.url && (
+        <div className="space-y-2">
+          <div className="text-muted-foreground">Site internet</div>
+          {event.url && (
+            <Button
+              variant="secondary"
+              render={
+                <a href={event.url} target="_blank" rel="noopener noreferrer" className="block" />
+              }
+            >
+              Ouvrir <ExternalLink className="h-4" />
+            </Button>
+          )}
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function Event({ loaderData: { event, calendarUrls } }: Route.ComponentProps) {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col items-start justify-start gap-12 px-4">
@@ -315,78 +394,9 @@ export default function Event({ loaderData: { event, calendarUrls } }: Route.Com
 
         <div className="@container row-span-2">
           <div className="grid gap-8 md:sticky md:top-[calc(var(--header-height)+1rem)] @md:grid-cols-2">
-            <div className="space-y-2">
-              <div className="text-muted-foreground">Date</div>
-              <div className="mb-4">{displayDate(event)}</div>
-              <div>
-                <AddToCalendar urls={calendarUrls} />
-              </div>
-            </div>
-
-            {event.address && (
-              <div className="space-y-2">
-                <div className="text-muted-foreground">Adresse</div>
-                <div className="whitespace-pre-line">{event.address}</div>
-                <Button
-                  variant="secondary"
-                  render={
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.address)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    />
-                  }
-                >
-                  Voir sur Google Maps <ExternalLink className="h-4" />
-                </Button>
-              </div>
-            )}
-
-            {event.email && (
-              <div className="space-y-2">
-                <div className="text-muted-foreground">Email</div>
-                <div className="max-w-full truncate">
-                  <a className="underline" href={`mailto:${event.email}`} title={event.email}>
-                    {event.email}
-                  </a>
-                </div>
-              </div>
-            )}
-
-            {event.phone && (
-              <div className="space-y-2">
-                <div className="text-muted-foreground">Téléphone</div>
-                <div className="max-w-full truncate">
-                  <a className="underline" href={`tel:${event.phone}`}>
-                    {event.phone}
-                  </a>
-                </div>
-              </div>
-            )}
-
-            {event.url && (
-              <div className="space-y-2">
-                <div className="text-muted-foreground">Site internet</div>
-                {event.url && (
-                  <Button
-                    variant="secondary"
-                    render={
-                      <a
-                        href={event.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block"
-                      />
-                    }
-                  >
-                    Ouvrir <ExternalLink className="h-4" />
-                  </Button>
-                )}
-              </div>
-            )}
+            <MetaData event={event} calendarUrls={calendarUrls} />
           </div>
         </div>
-
         <Separator className="block md:hidden" />
 
         <div className="space-y-12 space-x-6 opacity-100 transition-[opacity,translate] delay-500 starting:translate-y-2 starting:opacity-0">
