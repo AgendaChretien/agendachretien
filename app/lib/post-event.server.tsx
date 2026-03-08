@@ -80,8 +80,6 @@ export function sendEmail(id: string, values: v.InferOutput<typeof eventFormSche
 
   const html = renderToString(
     <div>
-      <h3>Nouvelle inscription sur Agenda Chrétien</h3>
-
       {Object.entries(values).map(([key, value]) => {
         if (Array.isArray(value)) {
           return (

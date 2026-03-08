@@ -11,7 +11,6 @@ function sendEmail(id: string, values: v.InferOutput<typeof registerFormSchema>)
 
   const html = renderToString(
     <div>
-      <h3>Nouvelle inscription sur Agenda Chrétien</h3>
       <p>
         <strong>Prénom :</strong> {values.firstName}
       </p>
