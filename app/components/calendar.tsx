@@ -156,7 +156,9 @@ function CalendarMonth({
 
   return (
     <div className={clsx("grid h-auto w-full grid-cols-7 gap-y-1", className)}>
-      <div className="col-span-7 mb-4 flex-center h-9 text-sm">{format(day1, "MMMM yyyy")}</div>
+      <div className="col-span-7 mb-4 flex-center h-9 text-sm capitalize">
+        {format(day1, "MMMM yyyy")}
+      </div>
 
       {["L", "M", "M", "J", "V", "S", "D"].map((day, index) => (
         <div key={index} className="mb-2 flex-center text-xs font-black text-foreground/20">

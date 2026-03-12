@@ -4,6 +4,8 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 import "./app.css";
 import { BotIdClient } from "botid/client";
 import {} from "botid/client/core";
+import { setDefaultOptions } from "date-fns";
+import { fr } from "date-fns/locale";
 import { MenuIcon } from "lucide-react";
 import {
   isRouteErrorResponse,
@@ -37,6 +39,8 @@ import {
 import { Separator } from "./components/ui/separator";
 import { Toaster } from "./components/ui/sonner";
 import { getSession } from "./lib/session.server";
+
+setDefaultOptions({ locale: fr });
 
 export const links: Route.LinksFunction = () => [
   {
