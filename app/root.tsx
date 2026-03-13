@@ -163,7 +163,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <QueryClientProvider client={queryClient}>
             {isNavigating && <GlobalSpinner />}
 
-            <div className="isolate flex min-h-lvh flex-col gap-8">
+            <div className="isolate flex min-h-lvh flex-col gap-8 transition-colors">
               <header className="@container sticky top-0 z-10 mx-auto my-2 flex h-(--header-height) w-full max-w-5xl items-center justify-between bg-background/50 px-6 backdrop-blur-sm md:my-4">
                 <div className="relative flex items-center gap-4">
                   <Link
@@ -259,8 +259,8 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="container mx-auto p-4 pt-16">
-      <h1>{message}</h1>
+    <main className="container mx-auto max-w-4xl p-4 pt-16">
+      <h1 className="text-5xl font-bold">{message}</h1>
       <p>{details}</p>
       {stack && (
         <pre className="w-full overflow-x-auto p-4">

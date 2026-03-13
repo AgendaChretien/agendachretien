@@ -1,11 +1,7 @@
 "use client";
-
-import { Dialog as DialogPrimitive } from "@base-ui/react";
 import * as formisch from "@formisch/react";
 import { CheckIcon } from "lucide-react";
-import { useEffect, useState } from "react";
 import { redirect, useFetcher, useSearchParams } from "react-router";
-import { toast } from "sonner";
 import * as v from "valibot";
 
 import { loginDialogHandle } from "~/components/login-dialog";

@@ -1194,6 +1194,8 @@ export interface operations {
               email?: string;
               /** @description A string field */
               phone?: string;
+              /** @description A number field */
+              privacyLevel: number;
               /** @description A datetime field */
               createdAt?: string;
               /** @description A datetime field */
@@ -3105,6 +3107,7 @@ export interface operations {
               firstName: string;
               lastName: string;
               provider: string;
+              accessLevel: number;
               confirmed: boolean;
               blocked: boolean;
               role?:

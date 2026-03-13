@@ -6,6 +6,7 @@ export default [
   route("/events/:eventId", "routes/event.tsx"),
   route("/events/:eventId.ics", "routes/event.ics.tsx"),
   route("/suggest-event", "routes/suggest-event.tsx"),
+  route("/api/events", "routes/api.events.tsx"),
 
   ...prefix("/auth", [
     route("/login", "routes/auth.login.tsx"),

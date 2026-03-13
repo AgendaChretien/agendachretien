@@ -1,5 +1,6 @@
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
+import { LockIcon } from "lucide-react";
+import qs from "qs";
 import { useRef } from "react";
 import { NavLink } from "react-router";
 import { create } from "zustand";
@@ -15,98 +16,25 @@ import {
   CarouselPrevious,
 } from "~/components/ui/carousel";
 import { Separator } from "~/components/ui/separator";
-import client from "~/lib/client";
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip";
+import { EVENTS_PAGE_SIZE } from "~/lib/config";
+import { fetchEvents, fetchLastAddedEvents, type Event, type Period } from "~/lib/events.server";
+import { getSession } from "~/lib/session.server";
 import { uploadUrl } from "~/lib/utils";
 
 import type { Route } from "./+types/home";
-import Event from "./event";
 
-type Event = Awaited<ReturnType<typeof fetchEvents>>[number];
+export async function loader({ request }: { request: Request }) {
+  const session = await getSession(request);
+  const token = session.get("jwt");
 
-type Period = [Date, Date];
+  const events = await fetchEvents({ token, page: 1 });
+  const lastAddedEvents = await fetchLastAddedEvents({ token });
 
-const PAGE_SIZE = 12;
-
-async function fetchLastAddedEvents() {
-  const { data } = await client.GET("/events", {
-    params: {
-      query: {
-        populate: "picture",
-        sort: { createdAt: "desc" },
-        pagination: {
-          page: 1,
-          pageSize: 6,
-        },
-      },
-    },
-  });
-
-  return data?.data ?? [];
-}
-
-async function fetchEvents({ page, period }: { page: number; period?: Period }) {
-  const filters: Record<string, any> = {};
-
-  if (period) {
-    filters["$or"] = [
-      {
-        startDate: {
-          $gte: format(period[0], "yyyy-MM-dd"),
-          $lte: format(period[1], "yyyy-MM-dd"),
-        },
-        endDate: {
-          $null: true,
-        },
-      },
-      {
-        startDate: {
-          $lte: format(period[1], "yyyy-MM-dd"),
-        },
-        endDate: {
-          $gte: format(period[0], "yyyy-MM-dd"),
-        },
-      },
-    ];
-  } else {
-    filters["$or"] = [
-      {
-        startDate: {
-          $gte: format(new Date(), "yyyy-MM-dd"),
-        },
-        endDate: {
-          $null: true,
-        },
-      },
-      {
-        endDate: {
-          $gte: format(new Date(), "yyyy-MM-dd"),
-        },
-      },
-    ];
-  }
-
-  const { data } = await client.GET("/events", {
-    params: {
-      query: {
-        populate: "picture",
-        sort: { startDate: "asc" },
-        filters,
-        pagination: {
-          page,
-          pageSize: PAGE_SIZE,
-        },
-      },
-    },
-  });
-
-  return data?.data ?? [];
-}
-
-export async function loader() {
-  const events = await fetchEvents({ page: 1 });
-  const lastAddedEvents = await fetchLastAddedEvents();
   return { events, lastAddedEvents };
 }
+
+export async function action() {}
 
 function formatTime(time: string) {
   const [hours, minutes] = time.split(":");
@@ -154,7 +82,25 @@ function EventCard({ event }: { event: Event }) {
         <div className="flex-1" data-event-title>
           {event.title}
         </div>
-        <div className="text-sm text-muted-foreground">{displayDate(event)}</div>
+        <div className="flex items-center gap-2">
+          <div className="text-sm text-muted-foreground">{displayDate(event)}</div>
+          {event.privacyLevel > 1 && (
+            <Tooltip>
+              <TooltipTrigger>
+                <span className="flex-center size-5 rounded-full border border-primary-5 bg-primary-1 text-primary-6 dark:bg-primary-3 dark:text-primary-8">
+                  <LockIcon className="size-2.5 stroke-3" />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                Cet événement n'est visible que par les utilisateurs identifés comme{" "}
+                {event.privacyLevel === 2
+                  ? "appartenant à une communauté chrétienne"
+                  : "chrétien engagé"}
+                .
+              </TooltipContent>
+            </Tooltip>
+          )}
+        </div>
       </div>
     </NavLink>
   );
@@ -171,7 +117,10 @@ function Events({
 }) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ["events", period],
-    queryFn: ({ pageParam }) => fetchEvents({ page: pageParam, period }),
+    queryFn: async ({ pageParam }) => {
+      const res = await fetch(`/api/events?${qs.stringify({ page: pageParam, period })}`);
+      return (await res.json()) as Event[];
+    },
     initialPageParam: 1,
     initialData: period
       ? undefined
@@ -181,7 +130,7 @@ function Events({
         },
     placeholderData: keepPreviousData,
     getNextPageParam: (lastPage, _allPages, lastPageParam) =>
-      lastPage.length === PAGE_SIZE ? lastPageParam + 1 : undefined,
+      lastPage.length === EVENTS_PAGE_SIZE ? lastPageParam + 1 : undefined,
   });
 
   if (data?.pages[0]?.length === 0) {

@@ -1,6 +1,6 @@
 import ics, { type EventAttributes } from "ics";
 
-import client from "~/lib/client";
+import client from "~/lib/client.server";
 import { formatToText } from "~/lib/rich-text";
 
 import type { Route } from "./+types/event.ics";

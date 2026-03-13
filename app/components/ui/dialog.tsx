@@ -65,8 +65,8 @@ function DialogContent({
                 ref={popupRef}
                 initialFocus={popupRef}
                 className={cn(
-                  "relative w-[min(40rem,calc(100vw-2rem))] mx-auto my-4 md:my-12 bg-neutral-2 data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 ring-foreground/5 grid max-w-[calc(100%-2rem)] gap-12 rounded-4xl p-6 text-sm ring-1 duration-100 sm:max-w-md",
-                  "top-[calc(50%+1.25rem*var(--nested-dialogs))] scale-[calc(1-0.1*var(--nested-dialogs))] opacity-[calc(1-0.5*var(--nested-dialogs))] data-nested-dialog-open:after:absolute data-nested-dialog-open:after:inset-0 data-nested-dialog-open:after:rounded-[inherit] [nested-dialog-open]:after:rounded-[inherit] data-nested-dialog-open:after:bg-black/5",
+                  "relative w-[min(40rem,calc(100vw-2rem))] mx-auto my-4 md:my-12 bg-neutral-1 dark:bg-neutral-2 data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 ring-foreground/5 grid max-w-[calc(100%-2rem)] gap-12 rounded-4xl p-6 text-sm ring-1 duration-100 sm:max-w-md",
+                  "top-[calc(50%+1.25rem*var(--nested-dialogs))] scale-[calc(1-0.05*var(--nested-dialogs))] opacity-[calc(1-0.5*var(--nested-dialogs))] data-nested-dialog-open:after:absolute data-nested-dialog-open:after:inset-0 data-nested-dialog-open:after:rounded-[inherit] [nested-dialog-open]:after:rounded-[inherit] data-nested-dialog-open:after:bg-black/5",
                   className,
                 )}
                 {...props}
