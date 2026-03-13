@@ -8,6 +8,7 @@ export interface User {
   lastName: string;
   email: string;
   confirmed: boolean;
+  accessLevel?: number;
 }
 
 interface AuthContext {

@@ -1,7 +1,7 @@
 import { data as json } from "react-router";
 import * as v from "valibot";
 
-import { loginFormSchema } from "~/lib/auth";
+import { loginFormSchema, type User } from "~/lib/auth";
 import { requireHumanUser } from "~/lib/botid.server";
 import client from "~/lib/client.server";
 import { commitSession, getSession } from "~/lib/session.server";
@@ -34,14 +34,22 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   const session = await getSession(request);
+
   session.set("jwt", data.jwt);
-  session.set("user", {
+
+  const user: User = {
     id: data.user.id,
     firstName: data.user.firstName,
     lastName: data.user.lastName,
     email: data.user.email,
     confirmed: data.user.confirmed,
-  });
+  };
+
+  if (data.user.accessLevel) {
+    user.accessLevel = data.user.accessLevel;
+  }
+
+  session.set("user", user);
 
   return json(
     { ok: true, firstName: data.user.firstName },

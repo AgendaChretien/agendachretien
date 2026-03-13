@@ -1,10 +1,10 @@
 import { renderToString } from "react-dom/server";
 import * as v from "valibot";
 
-import client from "./client";
+import client from "./client.server";
 import { transporter } from "./email.server";
 import type { paths } from "./openapi";
-import { eventFormSchema } from "./post-event";
+import { type EventFormSchema } from "./post-event";
 
 type PostData = Exclude<
   paths["/events"]["post"]["requestBody"],
@@ -20,7 +20,7 @@ export function postEvent({
   documents: __,
   description,
   ...data
-}: v.InferOutput<typeof eventFormSchema>) {
+}: v.InferOutput<EventFormSchema>) {
   const postData: PostData = {
     ...data,
   };
@@ -49,7 +49,7 @@ export function postEvent({
   });
 }
 
-const labels: Record<keyof v.InferOutput<typeof eventFormSchema>, string> = {
+const labels: Record<keyof v.InferOutput<EventFormSchema>, string> = {
   title: "Titre",
   description: "Description",
   startDate: "Date de début",
@@ -61,10 +61,15 @@ const labels: Record<keyof v.InferOutput<typeof eventFormSchema>, string> = {
   phone: "Téléphone",
   url: "URL",
   documents: "Documents",
+  privacyLevel: "Visibilité",
   submitter_comment: "Commentaire",
 };
 
-function formatLongText(text: string) {
+function formatLongText(text: string | number) {
+  if (typeof text === "number") {
+    return text;
+  }
+
   return text.split("\n").map((line, index) => (
     <span key={index}>
       {line}
@@ -73,7 +78,7 @@ function formatLongText(text: string) {
   ));
 }
 
-export function sendEmail(id: string, values: v.InferOutput<typeof eventFormSchema>) {
+export function sendEmail(id: string, values: v.InferOutput<EventFormSchema>) {
   const editUrl = `${process.env.VITE_STRAPI_URL}/admin/content-manager/collection-types/api::event.event/${id}`;
 
   const notDefined = <em>Non renseigné</em>;

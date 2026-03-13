@@ -2,13 +2,18 @@ import { Dialog as DialogPrimitive } from "@base-ui/react";
 import * as formisch from "@formisch/react";
 import { clsx } from "clsx";
 import { Check, Send, TrashIcon } from "lucide-react";
-import { Fragment, useEffect, useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useFetcher } from "react-router";
 import { toast } from "sonner";
 
 import { useAuth } from "~/lib/auth";
 import { filterEmpty } from "~/lib/form";
-import { documentTypes, eventFormSchema, extensions } from "~/lib/post-event";
+import {
+  documentTypes,
+  getEventFormSchema,
+  extensions,
+  type EventFormSchema,
+} from "~/lib/post-event";
 
 import { loginDialogHandle } from "./login-dialog";
 import { registerDialogHandle } from "./register-dialog";
@@ -47,15 +52,14 @@ import {
 } from "./ui/field";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { Separator } from "./ui/separator";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Textarea } from "./ui/textarea";
 
 export const suggestEventDialogHandle = DialogPrimitive.createHandle();
 
 interface PartProps {
-  form: formisch.FormStore<typeof eventFormSchema>;
+  form: formisch.FormStore<EventFormSchema>;
   disabled: boolean;
-  className?: string;
 }
 
 function formatSize(size: number) {
@@ -70,11 +74,11 @@ function formatSize(size: number) {
   }
 }
 
-function Part1({ form, disabled, className }: PartProps) {
+function GeneralInfo({ form, disabled }: PartProps) {
   const [multiDays, setMultiDays] = useState(false);
 
   return (
-    <FieldGroup className={className}>
+    <FieldGroup className="gap-4">
       <formisch.Field of={form} path={["title"]}>
         {(field) => (
           <Field>
@@ -87,6 +91,7 @@ function Part1({ form, disabled, className }: PartProps) {
               value={field.input ?? ""}
               aria-invalid={!field.isValid}
               disabled={disabled}
+              autoComplete="off"
             />
             {field.errors && <FieldError>{field.errors[0]}</FieldError>}
           </Field>
@@ -205,31 +210,97 @@ function Part1({ form, disabled, className }: PartProps) {
   );
 }
 
-function Part2({ form, disabled, className }: PartProps) {
+function Visibility({ form, disabled }: PartProps) {
+  const { user } = useAuth();
+
+  const accessLevel = user?.accessLevel ?? 1;
+
+  if (accessLevel <= 1) {
+    return null;
+  }
+
   return (
-    <FieldGroup className={className}>
-      <formisch.Field of={form} path={["description"]}>
+    <FieldSet>
+      <FieldLegend variant="label">Visibilité</FieldLegend>
+      <FieldDescription>Indiquez qui peut voir votre événement.</FieldDescription>
+
+      <formisch.Field of={form} path={["privacyLevel"]}>
         {(field) => (
-          <Field>
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              {...field.props}
-              id="description"
-              className="field-sizing-content min-h-48"
-              value={field.input ?? ""}
-              disabled={disabled}
-            />
-            {field.errors && <FieldError>{field.errors[0]}</FieldError>}
-          </Field>
+          <RadioGroup
+            defaultValue="1"
+            name={field.props.name}
+            value={field.input}
+            disabled={disabled}
+            onValueChange={(value) => field.onChange(value)}
+            inputRef={field.props.ref}
+          >
+            <Field orientation="horizontal" data-disabled={disabled}>
+              <RadioGroupItem value="1" id="public" disabled={disabled} />
+              <FieldContent>
+                <FieldLabel htmlFor="public" className="font-normal">
+                  Public
+                </FieldLabel>
+                <FieldDescription>
+                  Votre événement sera visible par tous les utilisateurs.
+                </FieldDescription>
+              </FieldContent>
+            </Field>
+            <Field orientation="horizontal" data-disabled={disabled}>
+              <RadioGroupItem value="2" id="community" disabled={disabled} />
+              <FieldContent>
+                <FieldLabel htmlFor="community" className="font-normal">
+                  Communauté
+                </FieldLabel>
+                <FieldDescription>
+                  Votre événement sera visible par les internautes reconnus comme appartenant à une
+                  communauté chrétienne (église, association, etc.).
+                </FieldDescription>
+              </FieldContent>
+            </Field>
+            {accessLevel >= 3 && (
+              <Field orientation="horizontal" data-disabled={disabled}>
+                <RadioGroupItem value="3" id="christians-only" disabled={disabled} />
+                <FieldContent>
+                  <FieldLabel htmlFor="christians-only" className="font-normal">
+                    Engagé
+                  </FieldLabel>
+                  <FieldDescription>
+                    Votre événement sera visible uniquement par les internautes reconnus comme étant
+                    engagés dans des activités chrétiennes.
+                  </FieldDescription>
+                </FieldContent>
+              </Field>
+            )}
+          </RadioGroup>
         )}
       </formisch.Field>
-    </FieldGroup>
+    </FieldSet>
   );
 }
 
-function Part3({ form, disabled, className }: PartProps) {
+function Description({ form, disabled }: PartProps) {
   return (
-    <FieldGroup className={className}>
+    <formisch.Field of={form} path={["description"]}>
+      {(field) => (
+        <Field>
+          <Label htmlFor="description">Description</Label>
+          <Textarea
+            {...field.props}
+            id="description"
+            className="field-sizing-content min-h-48"
+            value={field.input ?? ""}
+            disabled={disabled}
+          />
+          {field.errors && <FieldError>{field.errors[0]}</FieldError>}
+        </Field>
+      )}
+    </formisch.Field>
+  );
+}
+
+function ExtraDetails({ form, disabled }: PartProps) {
+  return (
+    <FieldGroup className="gap-4">
       <formisch.Field of={form} path={["address"]}>
         {(field) => (
           <Field>
@@ -295,109 +366,109 @@ function Part3({ form, disabled, className }: PartProps) {
   );
 }
 
-function Part4({ form, disabled, className }: PartProps) {
+function Documents({ form, disabled }: PartProps) {
   return (
-    <FieldGroup className={className}>
-      <FieldSet>
-        <FieldLegend>Documents</FieldLegend>
-        <FieldDescription>
-          Fournissez les documents associés à l'événement (affiche, programme, etc.).
-        </FieldDescription>
+    <FieldSet>
+      <FieldLegend>Documents</FieldLegend>
+      <FieldDescription>
+        Fournissez les documents associés à l'événement (affiche, programme, etc.).
+      </FieldDescription>
 
-        <formisch.FieldArray of={form} path={["documents"]}>
-          {(fieldArray) => (
-            <div className={clsx("flex flex-col gap-2", fieldArray.items.length === 0 && "hidden")}>
-              {fieldArray.items.map((item, index) => (
-                <formisch.Field key={item} of={form} path={["documents", index]}>
-                  {(field) => (
-                    <>
-                      {index > 0 && <FieldSeparator />}
-                      <Field>
-                        <div className="flex items-center gap-2 rounded-sm">
-                          <div className="flex-1 space-y-1">
-                            <div>{field.input ? field.input.name : "Choisissez un fichier"}</div>
-                            <div className="text-sm text-muted-foreground">
-                              {field.input
-                                ? formatSize(field.input.size)
-                                : ".jpg, .png, .pdf, .doc, .docx"}
-                            </div>
+      <formisch.FieldArray of={form} path={["documents"]}>
+        {(fieldArray) => (
+          <div className={clsx("flex flex-col gap-2", fieldArray.items.length === 0 && "hidden")}>
+            {fieldArray.items.map((item, index) => (
+              <formisch.Field key={item} of={form} path={["documents", index]}>
+                {(field) => (
+                  <>
+                    {index > 0 && <FieldSeparator />}
+                    <Field>
+                      <div className="flex items-center gap-2 rounded-sm">
+                        <div className="flex-1 space-y-1">
+                          <div>{field.input ? field.input.name : "Choisissez un fichier"}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {field.input
+                              ? formatSize(field.input.size)
+                              : ".jpg, .png, .pdf, .doc, .docx"}
                           </div>
-                          <Button
-                            disabled={disabled}
-                            render={<label htmlFor={`document-${index}`} />}
-                            variant="secondary"
-                          >
-                            {field.input ? "Modifier" : "Sélectionner"}
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            type="button"
-                            disabled={disabled}
-                            onClick={() =>
-                              formisch.remove(form, { path: ["documents"], at: index })
-                            }
-                          >
-                            <TrashIcon />
-                          </Button>
                         </div>
-                        <Input
-                          {...field.props}
-                          id={`document-${index}`}
-                          type="file"
+                        <Button
                           disabled={disabled}
-                          placeholder="foo"
-                          className="sr-only"
-                          accept={[...extensions, ...documentTypes].join(",")}
-                        />
-                        {field.errors && <FieldError>{field.errors[0]}</FieldError>}
-                      </Field>
-                    </>
-                  )}
-                </formisch.Field>
-              ))}
-            </div>
-          )}
-        </formisch.FieldArray>
-
-        <Button
-          type="button"
-          disabled={disabled}
-          onClick={() => {
-            formisch.insert(form, {
-              path: ["documents"],
-            });
-          }}
-        >
-          Ajouter un document
-        </Button>
-      </FieldSet>
-      <FieldSeparator />
-      <formisch.Field of={form} path={["submitter_comment"]}>
-        {(field) => (
-          <Field>
-            <Label htmlFor="submitter_comment">Commentaire</Label>
-            <FieldDescription>
-              Utilisez ce champ pour ajouter des commentaires que vous souhaitez partager avec notre
-              équipe.
-            </FieldDescription>
-            <Textarea
-              {...field.props}
-              id="submitter_comment"
-              className="field-sizing-content"
-              value={field.input ?? ""}
-              disabled={disabled}
-            />
-            {field.errors && <FieldError>{field.errors[0]}</FieldError>}
-          </Field>
+                          render={<label htmlFor={`document-${index}`} />}
+                          variant="secondary"
+                        >
+                          {field.input ? "Modifier" : "Sélectionner"}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          type="button"
+                          disabled={disabled}
+                          onClick={() => formisch.remove(form, { path: ["documents"], at: index })}
+                        >
+                          <TrashIcon />
+                        </Button>
+                      </div>
+                      <Input
+                        {...field.props}
+                        id={`document-${index}`}
+                        type="file"
+                        disabled={disabled}
+                        placeholder="foo"
+                        className="sr-only"
+                        accept={[...extensions, ...documentTypes].join(",")}
+                      />
+                      {field.errors && <FieldError>{field.errors[0]}</FieldError>}
+                    </Field>
+                  </>
+                )}
+              </formisch.Field>
+            ))}
+          </div>
         )}
-      </formisch.Field>
-    </FieldGroup>
+      </formisch.FieldArray>
+
+      <Button
+        type="button"
+        disabled={disabled}
+        onClick={() => {
+          formisch.insert(form, {
+            path: ["documents"],
+          });
+        }}
+      >
+        Ajouter un document
+      </Button>
+    </FieldSet>
+  );
+}
+
+function SubmitterComment({ form, disabled }: PartProps) {
+  return (
+    <formisch.Field of={form} path={["submitter_comment"]}>
+      {(field) => (
+        <Field>
+          <Label htmlFor="submitter_comment">Commentaire</Label>
+          <FieldDescription>
+            Utilisez ce champ pour ajouter des commentaires que vous souhaitez partager avec notre
+            équipe.
+          </FieldDescription>
+          <Textarea
+            {...field.props}
+            id="submitter_comment"
+            className="field-sizing-content"
+            value={field.input ?? ""}
+            disabled={disabled}
+          />
+          {field.errors && <FieldError>{field.errors[0]}</FieldError>}
+        </Field>
+      )}
+    </formisch.Field>
   );
 }
 
 interface ContentProps {
-  form: formisch.FormStore<typeof eventFormSchema>;
+  form: formisch.FormStore<EventFormSchema>;
 }
 
 function Content({ form }: ContentProps) {
@@ -407,7 +478,7 @@ function Content({ form }: ContentProps) {
   const disabled = fetcher.state !== "idle";
   // const disabled = true;
 
-  const submitForm: formisch.SubmitHandler<typeof eventFormSchema> = async (values) => {
+  const submitForm: formisch.SubmitHandler<EventFormSchema> = async (values) => {
     const formData = new FormData();
     for (const [key, value] of Object.entries(filterEmpty(values))) {
       if (Array.isArray(value)) {
@@ -451,13 +522,17 @@ function Content({ form }: ContentProps) {
 
   return (
     <>
-      <formisch.Form id={formId} of={form} onSubmit={submitForm} className="flex flex-col gap-6">
-        {[Part1, Part2, Part3, Part4].map((Component, index) => (
-          <Fragment key={index}>
-            {index > 0 && <Separator />}
-            <Component form={form} disabled={disabled} />
-          </Fragment>
-        ))}
+      <formisch.Form
+        id={formId}
+        of={form}
+        onSubmit={submitForm}
+        className="space-y-6 divide-y divide-border *:pb-6 *:last:pb-0"
+      >
+        {[GeneralInfo, Description, ExtraDetails, Documents, Visibility, SubmitterComment].map(
+          (Component, index) => (
+            <Component key={index} form={form} disabled={disabled} />
+          ),
+        )}
       </formisch.Form>
       <DialogFooter>
         <DialogClose
@@ -517,7 +592,7 @@ export function SuggestEventDialog() {
   const [confirmationOpen, setConfirmationOpen] = useState(false);
 
   const form = formisch.useForm({
-    schema: eventFormSchema,
+    schema: getEventFormSchema(user?.accessLevel ?? 1),
   });
 
   return (

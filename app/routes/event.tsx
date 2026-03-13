@@ -20,11 +20,13 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Separator } from "~/components/ui/separator";
-import client from "~/lib/client";
+import client from "~/lib/client.server";
 import { formatToText } from "~/lib/rich-text";
-import { uploadUrl } from "~/lib/utils";
+import { getSession } from "~/lib/session.server";
 
 import "react-medium-image-zoom/dist/styles.css";
+import { uploadUrl } from "~/lib/utils";
+
 import type { Route } from "./+types/event";
 
 type Event = Route.ComponentProps["loaderData"]["event"];
@@ -69,13 +71,19 @@ function displayDate(event: Event) {
   return `Du ${new Date(startDate).toLocaleDateString("fr-FR")} au ${new Date(endDate).toLocaleDateString("fr-FR")}`;
 }
 
-export async function loader({ params }: Route.LoaderArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
+  const session = await getSession(request);
+  const token = session.get("jwt");
+
   const { data } = await client.GET("/events/{id}", {
     params: {
       path: { id: params.eventId },
       query: {
         populate: ["picture", "extraPictures"],
       },
+    },
+    headers: {
+      Authorization: token,
     },
   });
 
