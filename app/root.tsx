@@ -75,18 +75,65 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-export function meta() {
-  return [
-    {
-      name: "description",
-      content: "Les rendez-vous chrétiens à ne pas manquer dans votre ville.",
-    },
-    {
-      name: "viewport",
-      content: "width=device-width, initial-scale=1",
-    },
-  ];
-}
+// export function meta({ location }: Route.MetaArgs) {
+//   const baseUrl = "https://agendachretien.fr";
+//   const currentUrl = `${baseUrl}${location.pathname}`;
+
+//   return [
+//     {
+//       title: "Agenda Chrétien - Les rendez-vous chrétiens à Lyon et sa région",
+//     },
+//     {
+//       name: "description",
+//       content:
+//         "Découvrez les événements chrétiens à ne pas manquer à Lyon et sa région. Messes, conférences, retraites et rencontres religieuses.",
+//     },
+//     {
+//       name: "keywords",
+//       content: "agenda chrétien, événements religieux, Lyon, messe, église, conférence, retraite",
+//     },
+//     {
+//       name: "viewport",
+//       content: "width=device-width, initial-scale=1",
+//     },
+//     {
+//       property: "og:title",
+//       content: "Agenda Chrétien - Les rendez-vous chrétiens à Lyon",
+//     },
+//     {
+//       property: "og:description",
+//       content: "Découvrez les événements chrétiens à ne pas manquer à Lyon et sa région.",
+//     },
+//     {
+//       property: "og:type",
+//       content: "website",
+//     },
+//     {
+//       property: "og:url",
+//       content: currentUrl,
+//     },
+//     {
+//       property: "og:locale",
+//       content: "fr_FR",
+//     },
+//     {
+//       name: "twitter:card",
+//       content: "summary_large_image",
+//     },
+//     {
+//       name: "twitter:title",
+//       content: "Agenda Chrétien - Les rendez-vous chrétiens à Lyon",
+//     },
+//     {
+//       name: "twitter:description",
+//       content: "Découvrez les événements chrétiens à ne pas manquer à Lyon et sa région.",
+//     },
+//     {
+//       rel: "canonical",
+//       href: currentUrl,
+//     },
+//   ];
+// }
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -109,9 +156,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const isNavigating = Boolean(navigation.location);
 
   return (
-    <html lang="en">
+    <html lang="fr">
       <head>
         <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <script
           dangerouslySetInnerHTML={{
@@ -144,6 +192,30 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
         <Links />
 
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Agenda Chrétien",
+              description: "Les rendez-vous chrétiens à ne pas manquer à Lyon et sa région",
+              url: "https://agendachretien.fr",
+              logo: "https://agendachretien.fr/favicon.ico",
+              sameAs: [],
+              contactPoint: {
+                "@type": "ContactPoint",
+                contactType: "General",
+              },
+              areaServed: {
+                "@type": "City",
+                name: "Lyon",
+                url: "https://fr.wikipedia.org/wiki/Lyon",
+              },
+            }),
+          }}
+        />
+
         <BotIdClient
           protect={
             import.meta.env.PROD
@@ -170,6 +242,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     to="/"
                     className="absolute inset-0"
                     aria-label="Retour à la page d'accueil"
+                    title="Retour à la page d'accueil"
                   />
                   <Logo className="h-8 fill-primary-8 md:h-10 dark:fill-neutral-12" />
                   <div className="flex flex-col items-start">

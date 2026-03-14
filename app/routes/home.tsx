@@ -2,7 +2,8 @@ import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { LockIcon } from "lucide-react";
 import qs from "qs";
 import { useRef } from "react";
-import { NavLink } from "react-router";
+import { NavLink, useSearchParams } from "react-router";
+import * as v from "valibot";
 import { create } from "zustand";
 
 import Calendar from "~/components/calendar";
@@ -24,17 +25,21 @@ import { uploadUrl } from "~/lib/utils";
 
 import type { Route } from "./+types/home";
 
-export async function loader({ request }: { request: Request }) {
+const pageSchema = v.nullish(v.pipe(v.string(), v.toNumber(), v.minValue(1)), "1");
+
+export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request);
   const token = session.get("jwt");
 
-  const events = await fetchEvents({ token, page: 1 });
+  const url = new URL(request.url);
+  const params = new URLSearchParams(url.search);
+  const page = v.parse(pageSchema, params.get("page"));
+
+  const events = await fetchEvents({ token, page });
   const lastAddedEvents = await fetchLastAddedEvents({ token });
 
   return { events, lastAddedEvents };
 }
-
-export async function action() {}
 
 function formatTime(time: string) {
   const [hours, minutes] = time.split(":");
@@ -61,6 +66,40 @@ function displayDate(event: Event) {
   }
 
   return `${new Date(startDate).toLocaleDateString("fr-FR")} - ${new Date(endDate).toLocaleDateString("fr-FR")}`;
+}
+
+const title = "Agenda Chrétien - Les rendez-vous chrétiens à Lyon et sa région";
+
+const description =
+  "Agenda Chrétien rassemble les événements organisés par les églises et associations chrétiennes de la région lyonnaise pour favoriser visibilité, communion et témoignage.";
+
+function Meta() {
+  const [searchParams] = useSearchParams();
+  const baseUrl = import.meta.env.VITE_BASE_URL;
+
+  const page = v.parse(pageSchema, searchParams.get("page"));
+
+  const currentUrl = page === 1 ? baseUrl : `${baseUrl}/?page=${page}`;
+  const prevUrl = page > 2 ? `${baseUrl}/?page=${page - 1}` : page === 2 ? baseUrl : undefined;
+  const nextUrl = `${baseUrl}/?page=${page + 1}`;
+
+  return (
+    <>
+      <title>{title}</title>
+      <meta name="description" content={description} />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content={currentUrl} />
+      <meta property="og:locale" content="fr_FR" />
+      <meta property="og:image" content={`${baseUrl}/og-image.png`} />
+      <meta property="x:image" content={`${baseUrl}/og-image.png`} />
+      <link rel="canonical" href={currentUrl} />
+      <link rel="next" href={nextUrl} />
+      {prevUrl && <link rel="prev" href={prevUrl} />}
+      {page > 1 && <meta name="robots" content="noindex, follow" />}
+    </>
+  );
 }
 
 function EventCard({ event }: { event: Event }) {
@@ -196,15 +235,15 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
   return (
     <>
-      <title>Agenda Chrétien</title>
+      <Meta />
 
       <div className="mx-auto flex w-full max-w-4xl flex-col items-start gap-8 px-4 py-12 md:py-20">
-        <div className="text-3xl/snug font-extralight sm:text-5xl/snug">
+        <h1 className="text-3xl/snug font-extralight sm:text-5xl/snug">
           L'agenda des
           <br />
           rendez-vous chrétiens
           <br />à Lyon et sa région.
-        </div>
+        </h1>
         <Button
           size="xl"
           variant="outline-primary"

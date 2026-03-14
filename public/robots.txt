@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /auth/
+Disallow: /api/
+Disallow: /noop
+
+Sitemap: https://agendachretien.fr/sitemap.xml

@@ -116,6 +116,81 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   return { event: data.data, calendarUrls };
 }
 
+function getMetaDescription(event: Event) {
+  if (event.description) {
+    return formatToText(event.description).replace(/\W/g, " ").slice(0, 160);
+  }
+
+  return event.title;
+}
+
+function Meta({ event }: { event: Event }) {
+  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const eventUrl = `${baseUrl}/events/${event.documentId}`;
+  const description = getMetaDescription(event);
+  const imageUrl = event.picture ? uploadUrl(event.picture.url) : undefined;
+
+  return (
+    <>
+      <title>{event.title + " - Agenda Chrétien"}</title>
+      <meta name="description" content={description} />
+      <meta property="og:title" content={event.title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:type" content="event" />
+      <meta property="og:url" content={eventUrl} />
+      <meta property="og:locale" content="fr_FR" />
+      {imageUrl && <meta property="og:image" content={imageUrl} />}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={event.title} />
+      <meta name="twitter:description" content={description} />
+      {imageUrl && <meta name="twitter:image" content={imageUrl} />}
+      <link rel="canonical" href={eventUrl} />
+    </>
+  );
+}
+
+function StructuredData({ event }: { event: Event }) {
+  const eventSchema = {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: event.title,
+    description: getMetaDescription(event),
+    startDate: event.startDate + (event.startTime ? `T${event.startTime}` : ""),
+    endDate: (event.endDate || event.startDate) + (event.endTime ? `T${event.endTime}` : ""),
+    ...(event.picture && {
+      image: uploadUrl(event.picture.url),
+    }),
+    ...(event.address && {
+      location: {
+        "@type": "Place",
+        name: event.address,
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: event.address,
+          addressCountry: "FR",
+        },
+      },
+    }),
+    ...(event.url && {
+      url: event.url,
+    }),
+    organizer: {
+      "@type": "Organization",
+      name: "Agenda Chrétien",
+      url: "https://agendachretien.fr",
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify(eventSchema),
+      }}
+    />
+  );
+}
+
 function Pictures({ pictures }: { pictures: Media[] }) {
   if (!pictures || pictures.length === 0) {
     return null;
@@ -379,16 +454,11 @@ function MetaData({ event, calendarUrls }: { event: Event; calendarUrls: Calenda
 export default function Event({ loaderData: { event, calendarUrls } }: Route.ComponentProps) {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col items-start justify-start gap-12 px-4">
-      <title>{event.title}</title>
-      <meta property="og:title" content={event.title} />
-      {event.description && (
-        <meta property="og:description" content={formatToText(event.description)} />
-      )}
-      {event.picture && <meta property="og:image" content={uploadUrl(event.picture.url)} />}
-      <meta property="og:type" content="event" />
-
+      <Meta event={event} />
+      <StructuredData event={event} />
       <img
         src={uploadUrl(event.picture?.url)}
+        alt={event.title}
         className="aspect-16/7 w-full rounded-lg object-cover object-center"
         style={{ viewTransitionName: "event-picture" }}
       />
