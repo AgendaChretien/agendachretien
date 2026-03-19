@@ -278,7 +278,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         </Button>
       </div>
 
-      <div className="mx-auto flex w-full max-w-4xl flex-col gap-14 px-4">
+      <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 px-4 sm:gap-14">
         <div>
           <h2 className="mb-8 text-lg">Ajoutés récemment</h2>
           <LastAddedEvents events={lastAddedEvents} />
