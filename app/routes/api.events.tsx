@@ -9,6 +9,7 @@ import type { Route } from "./+types/api.events";
 const paramsSchema = v.object({
   page: v.optional(v.pipe(v.string(), v.toNumber()), "1"),
   period: v.optional(v.tuple([v.pipe(v.string(), v.toDate()), v.pipe(v.string(), v.toDate())])),
+  categoryId: v.optional(v.string()),
 });
 
 export async function loader({ request }: Route.LoaderArgs) {

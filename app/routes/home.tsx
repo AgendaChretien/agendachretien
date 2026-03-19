@@ -1,4 +1,5 @@
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
+import { clsx } from "clsx";
 import { format, isSameDay, isSameYear } from "date-fns";
 import { LockIcon, XIcon } from "lucide-react";
 import qs from "qs";
@@ -17,10 +18,23 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "~/components/ui/carousel";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 import { Separator } from "~/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip";
 import { EVENTS_PAGE_SIZE } from "~/lib/config";
-import { fetchEvents, fetchLastAddedEvents, type Event, type Period } from "~/lib/events.server";
+import {
+  fetchCategories,
+  fetchEvents,
+  fetchLastAddedEvents,
+  type Event,
+  type Period,
+} from "~/lib/events.server";
 import { getSession } from "~/lib/session.server";
 import { uploadUrl } from "~/lib/utils";
 
@@ -38,8 +52,9 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const events = await fetchEvents({ token, page });
   const lastAddedEvents = await fetchLastAddedEvents({ token });
+  const categories = await fetchCategories();
 
-  return { events, lastAddedEvents };
+  return { events, lastAddedEvents, categories };
 }
 
 function formatTime(time: string) {
@@ -172,26 +187,31 @@ function EventCard({ event }: { event: Event }) {
 
 function Events({
   period,
+  categoryId,
   initialData,
-  onPeriodReset,
+  onFiltersReset,
 }: {
   period: Period | undefined;
+  categoryId: string | undefined;
   initialData: Route.ComponentProps["loaderData"]["events"];
-  onPeriodReset: () => void;
+  onFiltersReset: () => void;
 }) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: ["events", period],
+    queryKey: ["events", period, categoryId],
     queryFn: async ({ pageParam }) => {
-      const res = await fetch(`/api/events?${qs.stringify({ page: pageParam, period })}`);
+      const res = await fetch(
+        `/api/events?${qs.stringify({ page: pageParam, period, categoryId })}`,
+      );
       return (await res.json()) as Event[];
     },
     initialPageParam: 1,
-    initialData: period
-      ? undefined
-      : {
-          pages: [initialData],
-          pageParams: [1],
-        },
+    initialData:
+      period || categoryId
+        ? undefined
+        : {
+            pages: [initialData],
+            pageParams: [1],
+          },
     placeholderData: keepPreviousData,
     getNextPageParam: (lastPage, _allPages, lastPageParam) =>
       lastPage.length === EVENTS_PAGE_SIZE ? lastPageParam + 1 : undefined,
@@ -200,10 +220,10 @@ function Events({
   if (data?.pages[0]?.length === 0) {
     return (
       <div className="flex flex-col items-center gap-4 py-12 text-center">
-        <span>Aucun événement pour cette période.</span>
+        <span>Aucun événement</span>
 
-        <Button variant="default" onClick={onPeriodReset}>
-          Effacer la période
+        <Button variant="default" onClick={onFiltersReset}>
+          Effacer tous les filtres
         </Button>
       </div>
     );
@@ -244,18 +264,24 @@ function LastAddedEvents({ events }: { events: Event[] }) {
 
 interface State {
   period: Period | undefined;
+  categoryId: string | undefined;
   setPeriod: (period: Period | undefined) => void;
+  setCategoryId: (categoryId: string | undefined) => void;
 }
 
 const useStore = create<State>()((set) => ({
   period: undefined,
+  categoryId: undefined,
   setPeriod: (period) => set({ period }),
+  setCategoryId: (categoryId) => set({ categoryId }),
 }));
 
 export default function Home({ loaderData }: Route.ComponentProps) {
   const period = useStore((state) => state.period);
   const setPeriod = useStore((state) => state.setPeriod);
-  const { lastAddedEvents } = loaderData;
+  const categoryId = useStore((state) => state.categoryId);
+  const setCategoryId = useStore((state) => state.setCategoryId);
+  const { lastAddedEvents, categories } = loaderData;
   const eventsAnchorRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -291,19 +317,45 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           <h2 className="text-lg">Événements</h2>
           <Calendar period={period} onChange={setPeriod} />
 
-          {period && (
-            <div className="flex">
+          <div className="flex gap-2">
+            <Select
+              value={categoryId}
+              itemToStringLabel={(id) =>
+                categories.find((category) => category.documentId === id)?.name ?? ""
+              }
+              onValueChange={(value) => {
+                setCategoryId(value ?? undefined);
+              }}
+            >
+              <SelectTrigger size="sm" className={clsx(categoryId && "border-primary")}>
+                <SelectValue placeholder="Catégorie" />
+              </SelectTrigger>
+              <SelectContent side="left">
+                <SelectItem value={undefined}>Toutes</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category.documentId} value={category.documentId}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {period && (
               <Button size="sm" variant="outline-primary" onClick={() => setPeriod(undefined)}>
                 {displayPeriod(period)}
                 <XIcon />
               </Button>
-            </div>
-          )}
+            )}
+          </div>
 
           <Events
             period={period}
+            categoryId={categoryId}
             initialData={loaderData.events}
-            onPeriodReset={() => setPeriod(undefined)}
+            onFiltersReset={() => {
+              setPeriod(undefined);
+              setCategoryId(undefined);
+            }}
           />
         </div>
       </div>

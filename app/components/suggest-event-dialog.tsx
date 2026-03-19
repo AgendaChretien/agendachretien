@@ -476,7 +476,6 @@ function Content({ form }: ContentProps) {
   const fetcher = useFetcher<{ ok: boolean }>();
 
   const disabled = fetcher.state !== "idle";
-  // const disabled = true;
 
   const submitForm: formisch.SubmitHandler<EventFormSchema> = async (values) => {
     const formData = new FormData();
@@ -484,7 +483,7 @@ function Content({ form }: ContentProps) {
       if (Array.isArray(value)) {
         value.forEach((v) => formData.append(`${key}[]`, v));
       } else {
-        formData.append(key, value);
+        formData.append(key, String(value));
       }
     }
 

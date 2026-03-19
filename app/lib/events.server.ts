@@ -10,10 +10,12 @@ export type Event = Awaited<ReturnType<typeof fetchEvents>>[number];
 export async function fetchEvents({
   page,
   period,
+  categoryId,
   token,
 }: {
   page: number;
   period?: Period;
+  categoryId?: string;
   token?: string;
 }) {
   const filters: Record<string, any> = {};
@@ -56,6 +58,14 @@ export async function fetchEvents({
     ];
   }
 
+  if (categoryId) {
+    filters.categories = {
+      documentId: {
+        $eq: categoryId,
+      },
+    };
+  }
+
   const { data } = await client.GET("/events", {
     params: {
       query: {
@@ -92,6 +102,12 @@ export async function fetchLastAddedEvents({ token }: { token?: string }) {
       Authorization: token,
     },
   });
+
+  return data?.data ?? [];
+}
+
+export async function fetchCategories() {
+  const { data } = await client.GET("/categories");
 
   return data?.data ?? [];
 }
