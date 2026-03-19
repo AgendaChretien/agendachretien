@@ -75,66 +75,6 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-// export function meta({ location }: Route.MetaArgs) {
-//   const baseUrl = "https://agendachretien.fr";
-//   const currentUrl = `${baseUrl}${location.pathname}`;
-
-//   return [
-//     {
-//       title: "Agenda Chrétien - Les rendez-vous chrétiens à Lyon et sa région",
-//     },
-//     {
-//       name: "description",
-//       content:
-//         "Découvrez les événements chrétiens à ne pas manquer à Lyon et sa région. Messes, conférences, retraites et rencontres religieuses.",
-//     },
-//     {
-//       name: "keywords",
-//       content: "agenda chrétien, événements religieux, Lyon, messe, église, conférence, retraite",
-//     },
-//     {
-//       name: "viewport",
-//       content: "width=device-width, initial-scale=1",
-//     },
-//     {
-//       property: "og:title",
-//       content: "Agenda Chrétien - Les rendez-vous chrétiens à Lyon",
-//     },
-//     {
-//       property: "og:description",
-//       content: "Découvrez les événements chrétiens à ne pas manquer à Lyon et sa région.",
-//     },
-//     {
-//       property: "og:type",
-//       content: "website",
-//     },
-//     {
-//       property: "og:url",
-//       content: currentUrl,
-//     },
-//     {
-//       property: "og:locale",
-//       content: "fr_FR",
-//     },
-//     {
-//       name: "twitter:card",
-//       content: "summary_large_image",
-//     },
-//     {
-//       name: "twitter:title",
-//       content: "Agenda Chrétien - Les rendez-vous chrétiens à Lyon",
-//     },
-//     {
-//       name: "twitter:description",
-//       content: "Découvrez les événements chrétiens à ne pas manquer à Lyon et sa région.",
-//     },
-//     {
-//       rel: "canonical",
-//       href: currentUrl,
-//     },
-//   ];
-// }
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -160,6 +100,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta property="og:locale" content="fr_FR" />
         <Meta />
         <script
           dangerouslySetInnerHTML={{
