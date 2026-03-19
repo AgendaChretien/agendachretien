@@ -1,5 +1,6 @@
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
-import { LockIcon } from "lucide-react";
+import { format, isSameDay, isSameYear } from "date-fns";
+import { LockIcon, XIcon } from "lucide-react";
 import qs from "qs";
 import { useRef } from "react";
 import { NavLink, useSearchParams } from "react-router";
@@ -66,6 +67,30 @@ function displayDate(event: Event) {
   }
 
   return `${new Date(startDate).toLocaleDateString("fr-FR")} - ${new Date(endDate).toLocaleDateString("fr-FR")}`;
+}
+
+function displayPeriod(period: Period) {
+  const now = new Date();
+  const [start, end] = period;
+
+  if (isSameDay(start, end)) {
+    if (isSameDay(start, now)) {
+      return "Aujourd'hui";
+    }
+    if (isSameYear(start, now)) {
+      return format(start, "d MMMM");
+    }
+    if (isSameYear(start, now) && isSameYear(end, now)) {
+      return format(start, "d MMMM");
+    }
+    return format(start, "d MMMM yyyy");
+  }
+
+  if (isSameYear(start, now) && isSameYear(end, now)) {
+    return `${format(start, "d MMMM")} - ${format(end, "d MMMM")}`;
+  }
+
+  return `${format(start, "d/MM/yyyy")} - ${format(end, "d/MM/yyyy")}`;
 }
 
 const title = "Agenda Chrétien - Les rendez-vous chrétiens à Lyon et sa région";
@@ -265,6 +290,16 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         <div className="space-y-8">
           <h2 className="text-lg">Événements</h2>
           <Calendar period={period} onChange={setPeriod} />
+
+          {period && (
+            <div className="flex">
+              <Button size="sm" variant="outline-primary" onClick={() => setPeriod(undefined)}>
+                {displayPeriod(period)}
+                <XIcon />
+              </Button>
+            </div>
+          )}
+
           <Events
             period={period}
             initialData={loaderData.events}

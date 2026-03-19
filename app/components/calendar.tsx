@@ -19,7 +19,7 @@ import {
   startOfWeek,
   sub,
 } from "date-fns";
-import { ChevronLeft, ChevronRight, XIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState, type ComponentProps } from "react";
 
 import { Button } from "./ui/button";
@@ -204,7 +204,6 @@ export default function Calendar({ period, onChange }: CalendarProps) {
   const [endDate, setEndDate] = useState(period?.[1]);
   const [selecting, setSelecting] = useState(false);
   const [hoveredDate, setHoveredDate] = useState<Date | null>(null);
-  const [currentPreset, setCurrentPreset] = useState<string | null>(null);
   const nextMonth = add(currentMonth, { months: 1 });
 
   useEffect(() => {
@@ -222,8 +221,6 @@ export default function Calendar({ period, onChange }: CalendarProps) {
   };
 
   const handleSelect = (date: Date) => {
-    setCurrentPreset(null);
-
     if (!selecting || !startDate) {
       setSelecting(true);
       setStartDate(date);
@@ -253,13 +250,13 @@ export default function Calendar({ period, onChange }: CalendarProps) {
   }
 
   return (
-    <div className="space-y-6">
-      <div
-        className={clsx(
-          "@container relative transition-colors",
-          selecting && "rounded-md outline outline-offset-8 outline-primary",
-        )}
-      >
+    <div
+      className={clsx(
+        "space-y-6 rounded-md border border-border bg-muted/30 p-4 max-sm:-mx-4 max-sm:rounded-none max-sm:border-x-0",
+        selecting && "border-primary",
+      )}
+    >
+      <div className={clsx("@container relative transition-colors")}>
         <div className="relative mx-auto flex items-start gap-8 @max-[620px]:max-w-100">
           <div className="absolute top-0 left-0">
             <Button
@@ -311,53 +308,35 @@ export default function Calendar({ period, onChange }: CalendarProps) {
             onHover={handleHover}
           />
         </div>
-
-        {selecting && (
-          <div className="absolute top-full mt-4 flex-center w-full gap-1">
-            <Button size="xs" className="pointer-events-none">
-              Choisissez une date de fin
-            </Button>
-            <Button
-              size="xs"
-              variant="outline"
-              onClick={() => {
-                setSelecting(false);
-                setStartDate(period?.[0]);
-                setEndDate(period?.[1]);
-              }}
-            >
-              Annuler
-            </Button>
-          </div>
-        )}
       </div>
 
-      <div className="flex gap-2">
-        {period && (
+      {selecting ? (
+        <div className="mt-4 flex-center gap-1">
+          <Button size="xs" variant="ghost" className="pointer-events-none">
+            Choisissez une date de fin
+          </Button>
           <Button
-            size="sm"
-            variant="default"
+            size="xs"
+            variant="secondary"
             onClick={() => {
-              onChange(undefined);
-              setCurrentPreset(null);
+              setSelecting(false);
+              setStartDate(period?.[0]);
+              setEndDate(period?.[1]);
             }}
           >
-            <XIcon />
-            Effacer
+            Annuler
           </Button>
-        )}
-
-        <ScrollArea className={clsx("max-w-full", selecting && "invisible")}>
-          <div className="flex gap-2">
+        </div>
+      ) : (
+        <ScrollArea>
+          <div className="flex justify-center gap-2">
             {presets.map((preset) => (
               <Button
                 key={preset.key}
-                size="sm"
+                size="xs"
                 variant="outline"
-                className={clsx(currentPreset === preset.key && "border-primary!")}
                 onClick={() => {
                   onChange(preset.getPeriod(today.current));
-                  setCurrentPreset(preset.key);
                 }}
               >
                 {preset.label}
@@ -365,7 +344,7 @@ export default function Calendar({ period, onChange }: CalendarProps) {
             ))}
           </div>
         </ScrollArea>
-      </div>
+      )}
     </div>
   );
 }
