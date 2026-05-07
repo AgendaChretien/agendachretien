@@ -6,11 +6,49 @@ import { formatToText } from "~/lib/rich-text";
 import type { Route } from "./+types/event.ics";
 
 function sanitizeFilename(input: string): string {
-  const cleaned = input
-    .normalize("NFKD")
-    .replace(/[^\p{L}\p{N}\s\-.]/gu, "")
-    .trim()
-    .replace(/\s+/g, "_");
+  const charMap: Record<string, string> = {
+    à: "a",
+    á: "a",
+    â: "a",
+    ä: "a",
+    ã: "a",
+    è: "e",
+    é: "e",
+    ê: "e",
+    ë: "e",
+    ì: "i",
+    í: "i",
+    î: "i",
+    ï: "i",
+    ò: "o",
+    ó: "o",
+    ô: "o",
+    ö: "o",
+    õ: "o",
+    ù: "u",
+    ú: "u",
+    û: "u",
+    ü: "u",
+    ñ: "n",
+    ç: "c",
+    œ: "oe",
+    æ: "ae",
+  };
+
+  let cleaned = input.toLowerCase();
+
+  // Replace special characters with their ASCII equivalents
+  cleaned = cleaned.replace(/./g, (char) => charMap[char] || char);
+
+  // Remove diacritics (backup for characters not in the map)
+  cleaned = cleaned.normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
+
+  // Keep only ASCII letters, numbers, spaces, hyphens, dots
+  cleaned = cleaned.replace(/[^a-z0-9\s\-.]/g, "");
+
+  // Trim and replace spaces with underscores
+  cleaned = cleaned.trim().replace(/\s+/g, "_");
+
   return cleaned || "event";
 }
 
