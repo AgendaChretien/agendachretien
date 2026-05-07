@@ -1,3 +1,4 @@
+import { TZDate } from "@date-fns/tz";
 import ics, { type EventAttributes } from "ics";
 
 import client from "~/lib/client.server";
@@ -52,6 +53,11 @@ function sanitizeFilename(input: string): string {
   return cleaned || "event";
 }
 
+function getDateTime(date: string, time?: string): Date {
+  const dateTimeString = time ? `${date}T${time}` : date;
+  return new TZDate(dateTimeString);
+}
+
 export async function loader({ params }: Route.LoaderArgs) {
   const { data } = await client.GET("/events/{id}", {
     params: {
@@ -68,23 +74,25 @@ export async function loader({ params }: Route.LoaderArgs) {
 
   const event = data.data;
 
-  const startDate = new Date(event.startDate);
-  const endDate = new Date(event.endDate ?? event.startDate);
+  const startDate = getDateTime(event.startDate, event.startTime);
+  const endDate = getDateTime(event.endDate ? event.endDate : event.startDate, event.endTime);
 
-  const start = [startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate()];
-  const end = [endDate.getFullYear(), endDate.getMonth() + 1, endDate.getDate()];
+  const start = [startDate.getUTCFullYear(), startDate.getUTCMonth() + 1, startDate.getUTCDate()];
+  const end = [endDate.getUTCFullYear(), endDate.getUTCMonth() + 1, endDate.getUTCDate()];
 
   if (event.startTime && event.endTime) {
-    start.push(...(event.startTime.split(":").map(Number) as [number, number]));
-    end.push(...(event.endTime.split(":").map(Number) as [number, number]));
+    start.push(startDate.getUTCHours(), startDate.getUTCMinutes());
+    end.push(endDate.getUTCHours(), endDate.getUTCMinutes());
   }
 
   const icsData: EventAttributes = {
     uid: `event-${event.documentId}@agendachretien.fr`,
-    title: event.title,
-    description: formatToText(event.description),
+    title: event.title.trim(),
+    description: formatToText(event.description).trim(),
     start: start as [number, number, number],
+    startInputType: "utc",
     end: end as [number, number, number],
+    endInputType: "utc",
     url: `https://agendachretien.fr/events/${event.documentId}`,
   };
 
